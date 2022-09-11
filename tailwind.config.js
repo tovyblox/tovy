@@ -6,6 +6,9 @@ module.exports = {
   ],
   theme: {
     extend: {},
+	backgroundImage: {
+		'infobg': "url('/tovybackground.svg')",
+	}
   },
   plugins: [],
 }
