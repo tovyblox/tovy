@@ -4,10 +4,23 @@ import styles from "../styles/Home.module.css";
 import Image from "next/image";
 
 const Login: NextPage = () => {
+  const colors = [
+    "[#2196f3]",
+    "blue-500",
+    "red-5",
+    "green",
+    "yellow",
+    "orange",
+    "purple",
+    "pink",
+    "black",
+    "white",
+    "gray",
+  ];
   return (
     <div className="flex bg-infobg h-screen bg-no-repeat bg-cover bg-center ">
       <p className="text-md -mt-1 text-white absolute top-4 left-4 xs:hidden md:text-6xl font-extrabold">
-        Welcome <br/> to <span className="text-[#2196f3] "> Tovy </span>
+        Welcome <br /> to <span className="text-[#2196f3] "> Tovy </span>
       </p>
       <a className="bg-white h-96 w-11/12 sm:w-4/6 md:3/6 xl:w-5/12 block mx-auto my-auto rounded-3xl">
         <div className="m-6">
@@ -28,6 +41,14 @@ const Login: NextPage = () => {
           </div>
           <div className="mt-7">
             <label className="text-gray-500 text-sm">Color </label>
+            <div className="grid grid-cols-12">
+              {colors.map((color, i) => (
+                <a
+                  key={i}
+                  className={`h-10 w-10 block rounded-full bg-${color}`}
+                />
+              ))}
+            </div>
           </div>
         </div>
       </a>
