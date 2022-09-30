@@ -1,11 +1,52 @@
 import type { NextPage } from "next";
-import { useState, useEffect } from "react";
-import styles from "../styles/Home.module.css";
-import { Transition } from "@headlessui/react";
-
+import React, { useState, useEffect } from "react";
+import { loginState } from "../state";
+import { useRecoilState } from "recoil";
+import { useForm, FormProvider } from "react-hook-form";
+import Router from "next/router";
+import Slider from "../components/slider";
+import Input from "../components/input";
+import axios, { Axios, AxiosResponse } from "axios";
+type FormData = {
+	username: string;
+	password: string;
+	verifypassword: string;
+};
 const Login: NextPage = ({ }) => {
 	const [selectedColor, setSelectedColor] = useState("bg-[#2196f3]");
+	const [login, setLogin] = useRecoilState(loginState);
+	const methods = useForm<{groupid: String}>();
+	const signupform = useForm<FormData>();
+	const { register, handleSubmit, watch, formState: { errors } } = methods;
 	const [selectedSlide, setSelectedSlide] = useState(0);
+
+	async function createAccount() {
+		let request
+		try {
+			request = await axios.post('/api/setupworkspace', {
+				groupid: methods.getValues("groupid"),
+				username: signupform.getValues("username"),
+				password: signupform.getValues("password"),
+				color: selectedColor,
+			})
+		}
+		catch (e: any) {
+			if (e?.response?.status === 404) {
+				signupform.setError("username", { type: "custom", message: e.response.data.error })
+				return;
+			}
+		}
+		finally {
+			if (!request) return;
+			setLogin(request.data.user);
+			Router.push('/')
+			console.log(request)
+		}
+	}
+
+	const nextSlide = () => {
+		setSelectedSlide(selectedSlide + 1);
+	};
 
 	const colors = [
 		"bg-[#2196f3]",
@@ -26,111 +67,77 @@ const Login: NextPage = ({ }) => {
 			<p className="text-md -mt-1 text-white absolute top-4 left-4 xs:hidden md:text-6xl font-extrabold">
 				Welcome <br /> to <span className="text-[#2196f3] "> Tovy </span>
 			</p>
-			<div
-				className={`bg-white h-auto overflow-clip w-11/12 sm:w-4/6 md:3/6 xl:w-5/12 mx-auto my-auto block rounded-3xl`}
-			>
-
-				<div
-					className="flex transition translate-x-[calc(var(--active)*-100%)] duration-700 "
-					style={{ "--active": selectedSlide } as React.CSSProperties}
-				>
-					<div className="w-full shrink-0 p-6 " id="1">
-						<p className="font-bold text-2xl ">Lets get started</p>
-						<p className="text-md -mt-1 text-gray-500 ">
-							To configure your Tovy instance, we'll need some infomation
-						</p>
-
-						<div className="mt-2">
-							<label htmlFor="groupid" className="text-gray-500 text-sm">
-								helo
-							</label>
-							<input
-								placeholder="dog"
+			<Slider activeSlide={selectedSlide}>
+				<div>
+					<p className="font-bold text-2xl ">Lets get started</p>
+					<p className="text-md -mt-1 text-gray-500 dark:text-gray-200">
+						To configure your Tovy instance, we'll need some infomation
+					</p>
+					<FormProvider {...methods}>
+						<form className="mt-2" onSubmit={handleSubmit(nextSlide)}>
+							<Input
+								placeholder="5468933"
+								label="Group ID"
 								id="groupid"
-								className="text-gray-600 rounded-lg p-2 border-2 border-grey-300 w-full bg-gray-50 focus:ring-blue-500 focus:border-blue-500 focus:outline-none"
+								{...register("groupid", { required: { value: true, message: "This field is required" } })}
 							/>
-						</div>
+						</form>
+					</FormProvider>
 
-						<div className="mt-7">
-							<label className="text-gray-500 text-sm">Color</label>
-							<div className="grid grid-cols-5 md:grid-cols-7 lg:grid-cols-11 xl:grid-cols-10 gap-y-3 mb-8 mt-2">
-								{colors.map((color, i) => (
-									<a
-										key={i}
-										onClick={() => setSelectedColor(color)}
-										className={`h-12 w-12 block rounded-full transform ease-in-out ${color} ${selectedColor === color ? "border-black border-4" : ""
-											}`}
-									/>
-								))}
-							</div>
-						</div>
-						<div className="flex">
-							<button className="border-[#2196F3] border-2 py-3 text-sm rounded-xl px-6 text-gray-600 font-bold hover:bg-blue-300 transition ">
-								Documentatiom
-							</button>
-							<button
-								onClick={() => setSelectedSlide(1)}
-								className="ml-auto bg-[#2196F3] py-3 text-sm rounded-xl px-6  text-white font-bold hover:bg-blue-300 transition "
-							>
-								Continue
-							</button>
+					<div className="mt-7">
+						<label className="text-gray-500 text-sm dark:text-gray-200">Color</label>
+						<div className="grid grid-cols-5 md:grid-cols-7 lg:grid-cols-11 xl:grid-cols-10 gap-y-3 mb-8 mt-2">
+							{colors.map((color, i) => (
+								<a
+									key={i}
+									onClick={() => setSelectedColor(color)}
+									className={`h-12 w-12 block rounded-full transform ease-in-out ${color} ${selectedColor === color ? "border-black border-4 dark:border-white" : ""
+										}`}
+								/>
+							))}
 						</div>
 					</div>
-					<div className="w-full shrink-0 p-6"><p className="font-bold text-2xl" id="2">Make your Tovy account</p>
-						<p className="text-md -mt-1 text-gray-500 ">
-							You need to create a Tovy account to continue
-						</p>
-
-						<div className="mt-2">
-							<label htmlFor="groupid" className="text-gray-500 text-sm">
-								Roblox username
-							</label>
-							<input
-								placeholder="TheCakeChicken"
-								id="groupid"
-								className="text-gray-600 rounded-lg p-2 border-2 border-grey-300 w-full bg-gray-50 focus:ring-blue-500 focus:border-blue-500 focus:outline-none"
-							/>
-						</div>
-						<div className=" mt-2">
-							<label htmlFor="groupid" className="text-gray-500 text-sm">
-								Password
-							</label>
-							<input
-								id="groupid"
-								type="password"
-								className="text-gray-600 rounded-lg p-2 border-2 border-grey-300 w-full bg-gray-50 focus:ring-blue-500 focus:border-blue-500 focus:outline-none"
-							/>
-						</div>
-						<div className="mb-7 mt-2">
-							<label htmlFor="groupid" className="text-gray-500 text-sm">
-								Verify password
-							</label>
-							<input
-								id="groupid"
-								type="password"
-								className="text-gray-600 rounded-lg p-2 border-2 border-grey-300 w-full bg-gray-50 focus:ring-blue-500 focus:border-blue-500 focus:outline-none"
-							/>
-						</div>
-
-						<div className="flex">
-							<button
-								onClick={() => setSelectedSlide(0)}
-								className="bg-[#2196F3] ml-auto py-3 text-sm rounded-xl px-6 text-white font-bold hover:bg-blue-300 transition"
-							>
-								Back
-							</button>
-							<button
-								onClick={() => setSelectedSlide(1)}
-								className="ml-4 bg-[#2196F3] py-3 text-sm rounded-xl px-6  text-white font-bold hover:bg-blue-300 transition "
-							>
-								Continue
-							</button>
-						</div>
+					<div className="flex">
+						<button className="border-[#2196F3] border-2 py-3 text-sm rounded-xl px-6 text-gray-600 dark:text-white font-bold hover:bg-blue-300 dark:hover:bg-blue-400 transition ">
+							Documentatiom
+						</button>
+						<button
+							onClick={handleSubmit(nextSlide)}
+							className="ml-auto bg-[#2196F3] py-3 text-sm rounded-xl px-6  text-white font-bold hover:bg-blue-300 transition "
+						>
+							Continue
+						</button>
 					</div>
 				</div>
+				<div >
+					<p className="font-bold text-2xl" id="2">
+						Make your Tovy account
+					</p>
+					<p className="text-md -mt-1 text-gray-500 dark:text-gray-200">
+						You need to create a Tovy account to continue
+					</p>
+					<FormProvider {...signupform}>
+					   <Input  {...signupform.register("username")} label="Username" />
+						<Input type="password" {...signupform.register("password", { required: { value: true, message: "You must enter a password, silly" } })} label="Password" />
+						<Input type="password" {...signupform.register("verifypassword", { required: { value: true, message: "This field is required"}, validate: { checkpassword: (d) => d === signupform.getValues('password') || 'Passwords must match' }})} label="Verify password" />
+					</FormProvider>
 
-			</div>
-
+					<div className="mt-7 flex">
+						<button
+							onClick={() => setSelectedSlide(0)}
+							className="bg-[#2196F3] ml-auto py-3 text-sm rounded-xl px-6 text-white font-bold hover:bg-blue-300 transition"
+						>
+							Back
+						</button>
+						<button
+							onClick={signupform.handleSubmit(createAccount)}
+							className="ml-4 bg-[#2196F3] py-3 text-sm rounded-xl px-6  text-white font-bold hover:bg-blue-300 transition "
+						>
+							Continue
+						</button>
+					</div>
+				</div>
+			</Slider>
 		</div>
 	);
 };

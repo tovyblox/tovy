@@ -10,24 +10,36 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model workspace {
+  groupId Int      @id @unique
+  config  config[]
+  roles   role[]
+}
+
 model config {
-  id        Int      @default(autoincrement()) @id
-  key       String   @unique
-  value     Json?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id        Int      @id @default(autoincrement())
+  key              String 
+  value            Json
+  createdAt        DateTime   @default(now())
+  updatedAt        DateTime   @updatedAt
+  workspace        workspace? @relation(fields: [workspaceGroupId], references: [groupId])
+  workspaceGroupId Int
 }
 
 model user {
-  userid        Int  @unique   
-  passwordhash  String
-  tfa String?
-  role Int[]
-  roleid Int
+  userid       Int      @id @unique
+  passwordhash String
+  tfa          String?
+  isOwner      Boolean?
+  roles		role[]
 }
 
 model role {
-  id String @db.Uuid() @unique
+  id String @id @unique @db.Uuid() @default(uuid())
   permissions Json[]
+  isOwnerRole Boolean?
+  workspace workspace? @relation(fields: [workspaceGroupId], references: [groupId])
+  members user[] 
+  workspaceGroupId Int
   name String
 }
