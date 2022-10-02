@@ -38,8 +38,8 @@ const Login: NextPage = ({ }) => {
 		}
 		finally {
 			if (!request) return;
-			setLogin(request.data.user);
 			Router.push('/')
+			Router.reload()
 			console.log(request)
 		}
 	}

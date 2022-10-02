@@ -1,5 +1,5 @@
 import { NextPage } from "next";
-import { useForm, FormProvider } from 'react-hook-form';
+import { useForm, FormProvider, SubmitHandler } from 'react-hook-form';
 import React, { useState, useEffect } from "react";
 import { loginState } from "../state";
 import { useRecoilState } from "recoil";
@@ -19,7 +19,9 @@ const Login: NextPage = ({ }) => {
 
 	const [loading, setLoading] = useState(false);
 	const [login, setLogin] = useRecoilState(loginState);
-	const onSubmit = async (data: form) => {
+	const onSubmit: SubmitHandler<form> = async (data) => {
+		console.log('uwu')
+		console.log(data);
 		setLoading(true);
 		let req;
 		try {
@@ -41,7 +43,10 @@ const Login: NextPage = ({ }) => {
 			setError('password', { type: 'custom', message: 'Something went wrong' })
 		} finally {
 			if (!req) return;
-			setLogin(req.data.user);
+			setLogin({
+				...req?.data.user,
+				workspaces: req?.data.workspaces,
+			});
 			Router.push('/')
 			setLoading(false);
 		}
@@ -55,14 +60,11 @@ const Login: NextPage = ({ }) => {
 						You'll need to login to Tovy to use this page
 					</p>
 					<FormProvider {...methods}>
-					<form className="mt-2 mb-8" onSubmit={handleSubmit(onSubmit)}>
-						<Input label="Username" placeholder="TheCakeChicken" id="username" {...register("username", { required: { value: true, message: "This field is required" } })} />
-						
-
-						<Input label="Password" type="password" id="password" {...register("password", { required: { value: true, message: "This field is required" } })} />
-
-						
-					</form>
+						<form className="mt-2 mb-8" onSubmit={handleSubmit(onSubmit)}>
+							<Input label="Username" placeholder="TheCakeChicken" id="username" {...register("username", { required: { value: true, message: "This field is required" } })}/>
+							<Input label="Password" type="password" id="password" {...register("password", { required: { value: true, message: "This field is required" } })} />
+							<input type="submit" className="hidden" />
+						</form>
 					</FormProvider>
 
 

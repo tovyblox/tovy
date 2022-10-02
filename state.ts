@@ -1,6 +1,11 @@
 import { atom, selector } from "recoil";
 import Router from "next/router";
 import axios from "axios";
+export type workspaceinfo = {
+	groupId: number;
+				groupThumbnail: string;
+				groupName: string
+}
 const loginState = atom({
 	key: "loginState",
 	default: {
@@ -8,6 +13,7 @@ const loginState = atom({
 		username: '',
 		displayname: '',
 		thumbnail: '',
+		workspaces: [] as workspaceinfo[]
 	},
 });
 

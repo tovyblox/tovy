@@ -17,6 +17,7 @@ const Topbar: NextPage = () => {
 			username: '',
 			displayname: '',
 			thumbnail: '',
+			workspaces: []
 		});
 		router.push('/login');
 	}
@@ -28,7 +29,7 @@ const Topbar: NextPage = () => {
 				<div className="flex flex-row my-auto ml-auto">
 					<Menu as="div" className="relative inline-block text-left">
 						<div className="">
-							<Menu.Button className="h-auto flex flex-row ml-auto rounded-sm py-1 hover:bg-gray-200 px-2 transition cursor-pointer">
+							<Menu.Button className="h-auto flex flex-row ml-auto rounded-sm py-1 hover:bg-gray-200 dark:hover:bg-gray-800 px-2 transition cursor-pointer">
 								<img
 									src={login?.thumbnail}
 									className="rounded-full bg-gray-400 h-8 w-8 my-auto"
@@ -38,7 +39,7 @@ const Topbar: NextPage = () => {
 								</p>
 							</Menu.Button>
 						</div>
-						<Menu.Items className="absolute right-0 z-20 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+						<Menu.Items className="absolute right-0 z-20 mt-2 w-56 origin-top-right rounded-md bg-white dark:bg-gray-800 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
 							<div className="py-1">
 								<Menu.Item>
 									<a className="flex flex-row px-4 py-2 text-sm">
@@ -50,11 +51,11 @@ const Topbar: NextPage = () => {
 											<span className="font-medium"> ItsWHOOOP </span> </div>
 									</a>
 								</Menu.Item>
-								<div className="w-full h-px bg-gray-200"></div>
+								<div className="w-full h-px bg-gray-200 dark:bg-gray-600"></div>
 								<Menu.Item>
 									{({ active }) => (
 										<a
-											className={`${active ? "bg-tovybg text-white" : "text-gray-700"
+											className={`${active ? "bg-tovybg text-white" : "text-gray-700 dark:text-white"
 												}  px-3 py-2 text-sm rounded-md m-1 mb-0 font-medium flex flex-row cursor-pointer`}
 										>
 											<IconSettings size={22} className="inline-block" />
@@ -65,7 +66,7 @@ const Topbar: NextPage = () => {
 								<Menu.Item>
 									{({ active }) => (
 										<a
-											className={`${active ? "bg-tovybg text-white" : "text-gray-700"
+											className={`${active ? "bg-tovybg text-white" : "text-gray-700 dark:text-white"
 												}  px-3 py-2 text-sm rounded-md m-1 mb-0 font-medium flex flex-row cursor-pointer`}
 											onClick={logout}
 										>

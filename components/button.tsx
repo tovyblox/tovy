@@ -1,4 +1,5 @@
 import React, { FC, Children, ReactNode, useState, useEffect } from "react";
+import { twMerge } from "tailwind-merge";
 
 type Props = {
 	children: ReactNode;
@@ -11,11 +12,11 @@ const Button: FC<Props> = ({ children, onPress, loading, classoverride }: Props)
 	return (
 		<button
 			onClick={onPress}
-			className={"ml-auto bg-[#2196F3] dark:bg-white py-3 text-sm rounded-xl px-6  text-white dark:text-black font-bold hover:bg-blue-300 transition " + classoverride}
+			className={twMerge(`ml-auto bg-[#2196F3] py-3 px-6 dark:bg-white text-sm rounded-xl text-white dark:text-black font-bold hover:bg-blue-300 dark:hover:bg-gray-300 transition`, classoverride)}
 		>
 			{loading ? (
 				<svg
-				className="animate-spin mx-auto h-5 w-5 text-white"
+				className="animate-spin mx-auto h-5 w-5 text-white dark:text-black"
 					xmlns="http://www.w3.org/2000/svg"
 					fill="none"
 					viewBox="0 0 24 24"

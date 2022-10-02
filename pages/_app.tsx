@@ -31,7 +31,10 @@ function MyApp({ Component, pageProps }: AppProps) {
 				}
 
 			} finally {
-				setRecoil(loginState, req?.data.user);
+				setRecoil(loginState, {
+					...req?.data.user,
+					workspaces: req?.data.workspaces,
+				});
 				setLoading(false)
 			}
 		};

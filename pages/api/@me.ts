@@ -17,6 +17,11 @@ type Data = {
 	success: boolean
 	error?: string
 	user?: User
+	workspaces?: { 
+		groupId: number
+		groupthumbnail: string
+		groupname: string
+	}[]
 }
 
 export default withSessionRoute(handler);
@@ -42,6 +47,16 @@ export async function handler(
 			roles: true
 		}
 	})
+	let roles: any[] = [];
+	if (tovyuser?.roles.length) {
+		for (const role of tovyuser.roles) {
+			roles.push({
+				groupId: role.workspaceGroupId,
+				groupThumbnail: await noblox.getLogo(role.workspaceGroupId),
+				groupName: await noblox.getGroup(role.workspaceGroupId).then(group => group.name),
+			})
+		}
+	}
 	console.log(tovyuser)
-	res.status(200).json({ success: true, user })
+	res.status(200).json({ success: true, user, workspaces: roles })
 }

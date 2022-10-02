@@ -15,10 +15,16 @@ type User = {
 	displayname: string
 	thumbnail: string
 }
+
 type response = {
 	success: boolean
 	error?: string
 	user?: User
+	workspaces?: { 
+		groupId: number
+		groupthumbnail: string
+		groupname: string
+	}[]
 }
 
 export async function handler(
@@ -31,6 +37,9 @@ export async function handler(
 	const user = await prisma.user.findUnique({
 		where: {
 			userid: id
+		},
+		include: {
+			roles: true
 		}
 	})
 	if (!user) return res.status(401).json({ success: false, error: 'Invalid username or password' })
@@ -39,12 +48,23 @@ export async function handler(
 	req.session.userid = id
 	await req.session?.save()
 
+
 	const tovyuser: User = {
 		userId: req.session.userid,
 		username: await getUsername(req.session.userid),
 		displayname: await getDisplayName(req.session.userid),
 		thumbnail: await getThumbnail(req.session.userid)
 	}
+	let roles: any[] = [];
+	if (user?.roles.length) {
+		for (const role of user.roles) {
+			roles.push({
+				groupId: role.workspaceGroupId,
+				groupThumbnail: await noblox.getLogo(role.workspaceGroupId),
+				groupName: await noblox.getGroup(role.workspaceGroupId).then(group => group.name),
+			})
+		}
+	}
 
-	res.status(200).json({ success: true, user: tovyuser })
+	res.status(200).json({ success: true, user: tovyuser, workspaces: roles })
 }
