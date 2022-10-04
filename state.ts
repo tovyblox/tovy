@@ -17,4 +17,14 @@ const loginState = atom({
 	},
 });
 
-export {loginState};
+const workspacestate = atom({
+	key: "workspacestate",
+	default: {
+		groupId: 1,
+		groupThumbnail: '',
+		groupName: '',
+		groupTheme: ''
+	}
+});
+
+export {loginState, workspacestate};
