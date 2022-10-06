@@ -4,7 +4,6 @@ import { useRecoilState } from "recoil";
 import { Menu } from "@headlessui/react";
 import { useRouter } from "next/router";
 import { IconLogout, IconSettings } from "@tabler/icons";
-import Image from "next/image";
 import axios from "axios";
 
 const Topbar: NextPage = () => {
@@ -39,7 +38,7 @@ const Topbar: NextPage = () => {
 								</p>
 							</Menu.Button>
 						</div>
-						<Menu.Items className="absolute right-0 z-20 mt-2 w-56 origin-top-right rounded-md bg-white dark:bg-gray-800 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+						<Menu.Items className="absolute right-0 z-20 mt-2 w-56 origin-top-right rounded-md bg-white dark:bg-gray-800 shadow-lg ring-1 ring-black ring-opacity-5 focus-visible:outline-none">
 							<div className="py-1">
 								<Menu.Item>
 									<a className="flex flex-row px-4 py-2 text-sm">

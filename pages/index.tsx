@@ -1,13 +1,17 @@
 import type { NextPage } from "next";
 import Head from "next/head";
-import Image from "next/image";
 import Topbar from "../components/topbar";
+import { useRouter } from "next/router";
 import { loginState } from "../state";
 import Button from "../components/button";
 import { useRecoilState } from "recoil";
 
 const Home: NextPage = () => {
 	const [login, setLogin] = useRecoilState(loginState);
+	const router = useRouter();
+	const gotoWorkspace = (id: number) => {
+		router.push(`/workspace/${id}`);
+	};
 	return (
 		<div>
 			<Head>
@@ -29,7 +33,7 @@ const Home: NextPage = () => {
 								<div className={`bg-gray-500 rounded-t-xl h-24 bg-no-repeat bg-center bg-cover`} style={{backgroundImage: `url(${workspace.groupThumbnail})`}}/>
 								<div className="h-14 bg-white dark:bg-gray-600 rounded-b-xl relative bottom-0 flex flex-row px-3">
 									<p className="my-auto text-xl font-bold"> Tovy </p>
-									<Button classoverride="py-2 px-2 my-2">
+									<Button classoverride="py-2 px-2 my-2" onPress={() => gotoWorkspace(workspace.groupId)}>
 										<svg
 											xmlns="http://www.w3.org/2000/svg"
 											className="icon icon-tabler icon-tabler-chevron-right"

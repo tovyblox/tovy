@@ -19,6 +19,7 @@ const Login: NextPage = ({ }) => {
 
 	const [loading, setLoading] = useState(false);
 	const [login, setLogin] = useRecoilState(loginState);
+	
 	const onSubmit: SubmitHandler<form> = async (data) => {
 		console.log('uwu')
 		console.log(data);

@@ -8,6 +8,7 @@ module.exports = {
     extend: {
       colors: {
         tovybg: "#2196f3",
+		primary: 'rgb(var(--group-theme) / <alpha-value>)',
       },
     },
     backgroundImage: {

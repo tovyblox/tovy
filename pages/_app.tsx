@@ -1,12 +1,11 @@
 import "../styles/globals.css";
 import type { AppProps } from "next/app";
 import { loginState } from "../state";
-import { RecoilRoot, useRecoilState } from "recoil";
+import { RecoilRoot } from "recoil";
 import { pageWithLayout } from "../layoutTypes";
 import RecoilNexus from "recoil-nexus";
-import { getRecoil, setRecoil } from "recoil-nexus";
+import { setRecoil } from "recoil-nexus";
 import { useEffect, useState, ReactNode, ReactElement } from "react";
-import { NextPage } from "next";
 import Router from "next/router";
 import axios from "axios";
 

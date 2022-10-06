@@ -1,14 +1,16 @@
 import type { NextPage } from "next";
-import { loginState } from "../state";
+import { loginState, workspacestate} from "../state";
 import { useRecoilState } from "recoil";
 import { Menu } from "@headlessui/react";
 import { useRouter } from "next/router";
-import { IconHome, IconWall, IconClipboardList, IconSpeakerphone, IconUsers, IconSettings } from "@tabler/icons";
+import { IconHome, IconWall, IconClipboardList, IconSpeakerphone, IconUsers, IconSettings, IconChevronDown } from "@tabler/icons";
 import Image from "next/image";
 import axios from "axios";
+import workspace from "../layouts/workspace";
 
 const Topbar: NextPage = () => {
 	const [login, setLogin] = useRecoilState(loginState);
+	const [workspace, setWorkspace] = useRecoilState(workspacestate);
 	const pages = [
 		{
 			name: "Home",
@@ -42,19 +44,21 @@ const Topbar: NextPage = () => {
 		},
 		{
 			name: "Settings",
-			href: "/workspace/[id]/wall",
+			href: "/workspace/[id]/settings",
 			icon: IconSettings,
 			current: false,
 		},
-
-
 	]
+
+	const gotopage = (page: string) => {
+		router.push(page.replace("[id]", workspace.groupId.toString()));
+	}
 	const router = useRouter();
 
 	return (
-		<aside className="h-screen w-48 bg-white drop-shadow dark:bg-gray-900 ">
-			<div className="flex flex-col py-3 px-3 gap-2">
-				<a className="h-auto flex flex-row rounded-xl py-1 hover:bg-gray-200 dark:hover:bg-gray-800 px-2 transition cursor-pointer">
+		<div className="h-screen w-48 bg-white drop-shadow dark:bg-gray-900">
+			<div className="flex flex-col py-3 px-3 gap-2 focus-visible:bg-blue-200">
+				<button className="h-auto flex flex-row rounded-xl py-1 hover:bg-gray-200 dark:hover:bg-gray-800 dark:focus-visible:bg-gray-800 px-2 transition cursor-pointer focus-visible:bg-gray-200 focus-visible:outline-none" tabIndex={0} role="button">
 					<img
 						src={login?.thumbnail}
 						className="rounded-full bg-tovybg h-12 w-12 my-auto"
@@ -64,27 +68,28 @@ const Topbar: NextPage = () => {
 						<br />
 						<span className="font-bold"> {login?.displayname}</span>
 					</p>
-				</a>
-				<a className="h-auto flex flex-row rounded-xl py-1 hover:bg-gray-200 dark:hover:bg-gray-800 px-2 transition cursor-pointer outline-1 outline-[#AAAAAA] outline mb-1">
+				</button>
+				<button className="h-auto flex flex-row rounded-xl py-1 hover:bg-gray-200 dark:hover:bg-gray-800 dark:focus-visible:bg-gray-800 px-2 transition cursor-pointer outline-1 outline-[#AAAAAA] outline mb-1 focus-visible:bg-gray-200" tabIndex={0} role="button">
 					<img
-						src="/Icon_Transparent.svg"
-						className="rounded-full bg-tovybg h-[34px] w-[34px] my-auto p-1"
+						src={workspace.groupThumbnail}
+						className="rounded-full h-[36px] w-[36px] my-auto p-1"
 					/>
-					<p className="my-auto text-xl pl-3 font-medium">
+					<p className="my-auto text-xl pl-2 font-medium">
 						Tovy
 					</p>
-				</a>
+					<IconChevronDown size={18} color="#AAAAAA" className="my-auto ml-auto" />
+				</button>
 				<div className="h-[1px] rounded-xl w-full px-3 bg-gray-300 mb-1"/> 
 				{pages.map((page) => (
-					<a className={`h-auto flex flex-row rounded-xl  dark:hover:bg-gray-800 py-1 px-2 transition cursor-pointer  ${router.pathname === page.href ? `bg-tovybg text-white hover:bg-blue-300` : "text-black hover:bg-gray-200"}`}>
-					<page.icon size={36} className="my-auto p-1" />
-					<p className="my-auto text-xl pl-2 font-medium">
-						{page.name}
-					</p>
-				</a>
+					<button className={`h-auto flex flex-row rounded-xl  py-1 px-2 transition cursor-pointer focus-visible:outline-none  ${router.pathname === page.href ? `bg-primary text-white hover:bg-primary/50 focus-visible:bg-primary/50 dark:text-black dark:bg-white dark:focus-visible:bg-gray-300 dark:hover:bg-gray-300` : "text-black dark:text-white hover:bg-gray-200 focus-visible:bg-gray-200 dark:hover:bg-gray-800 dark:focus-visible:bg-gray-800"}`} tabIndex={0} role="button" onClick={() => gotopage(page.href)}>
+						<page.icon size={36} className="my-auto p-1" />
+						<p className="my-auto text-xl pl-2 font-medium">
+							{page.name}
+						</p>
+					</button>
 				))}
 			</div>
-		</aside>
+		</div>
 	);
 };
 

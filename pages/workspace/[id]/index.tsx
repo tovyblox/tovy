@@ -1,7 +1,4 @@
 import type { pageWithLayout } from "../../../layoutTypes";
-import Head from "next/head";
-import Image from "next/image";
-import Topbar from "../../../components/topbar";
 import { loginState } from "../../../state";
 import Button from "../../../components/button";
 import Workspace from "../../../layouts/workspace";

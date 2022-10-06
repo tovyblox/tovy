@@ -8,11 +8,33 @@ import axios from 'axios'
 import { useRecoilState } from "recoil";
 import { workspacestate } from "../state";
 import { useRouter } from "next/router";
+import * as colors from 'tailwindcss/colors'
 import { useEffect } from "react";
 
 const workspace: LayoutProps = ({ children }) => {
 	const [workspace, setWorkspace] = useRecoilState(workspacestate);
 	const router = useRouter()
+	
+	const useTheme = (groupTheme: string) => {
+		const themes: any = {
+			"bg-[#2196f3]": "33 150 243",
+			"bg-blue-500": colors.blue[500],
+			"bg-red-500": colors.red[500],
+			"bg-red-700": colors.red[700],
+			"bg-green-500": colors.green[500],
+			"bg-green-600": colors.green[600],
+			"bg-yellow-500": colors.yellow[500],
+			"bg-orange-500": colors.orange[500],
+			"bg-purple-500": colors.purple[500],
+			"bg-pink-500": colors.pink[500],
+			"bg-black": colors.black,
+			"bg-gray-500": colors.gray[500],
+		}
+		const theme = themes[groupTheme]
+		return theme
+	}
+	
+		
 	useEffect(() => {
 		async function getworkspace() {
 			let res;
@@ -30,6 +52,10 @@ const workspace: LayoutProps = ({ children }) => {
 				return;
 			}
 			if (!res) return;
+			res.data.workspace.groupTheme.color = useTheme(res.data.workspace.groupTheme.color)
+			//set the css var
+			document.documentElement.style.setProperty('--group-theme', res.data.workspace.groupTheme.color);
+			console.log(res.data.workspace.groupTheme)
 			setWorkspace(res.data.workspace);
 		}
 		getworkspace();
@@ -40,8 +66,8 @@ const workspace: LayoutProps = ({ children }) => {
 				<title>{workspace.groupName}</title>
 			</Head>
 			<div className="flex">
-				<div className="w-48"> <Sidebar /></div>
-				<main className="bg-gray-100 w-full"> {children} </main>
+				<div className="w-48" id="sidebar"> <Sidebar /></div>
+				<main className="bg-gray-100 dark:bg-gray-700 w-full"> {children} </main>
 			</div>
 		</div>
 	)

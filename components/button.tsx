@@ -1,18 +1,20 @@
-import React, { FC, Children, ReactNode, useState, useEffect } from "react";
+import React, { FC, ReactNode } from "react";
 import { twMerge } from "tailwind-merge";
-
+import { workspacestate} from "../state";
+import { useRecoilState } from "recoil";
 type Props = {
 	children: ReactNode;
 	onPress?: () => void;
 	classoverride?: string;
 	loading?: boolean | false;
+	workspace?: boolean | false;
 };
 
-const Button: FC<Props> = ({ children, onPress, loading, classoverride }: Props) => {
+const Button: FC<Props> = ({ children, onPress, loading, classoverride, workspace }: Props) => {
 	return (
 		<button
 			onClick={onPress}
-			className={twMerge(`ml-auto bg-[#2196F3] py-3 px-6 dark:bg-white text-sm rounded-xl text-white dark:text-black font-bold hover:bg-blue-300 dark:hover:bg-gray-300 transition`, classoverride)}
+			className={twMerge(`ml-auto bg-[#2196F3] py-3 px-6 transition text-sm rounded-xl text-white ${!workspace ? "hover:bg-blue-300  focus-visible:bg-blue-300" : "hover:bg-primary/50 focus-visible:bg-primary/50"} dark:hover:bg-gray-300 dark:focus-visible:bg-gray-300 dark:bg-white dark:text-black font-bold focus-visible:outline-none `, classoverride)}
 		>
 			{loading ? (
 				<svg
