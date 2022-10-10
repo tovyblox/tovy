@@ -1,13 +1,14 @@
 import type { NextPage } from "next";
 import Head from "next/head";
 import Image from "next/image";
-import Sidebar from "../components/sidebar";
+import Sidebar from "@/components/sidebar";
 
-import type { LayoutProps } from "../layoutTypes";
+import type { LayoutProps } from "@/layoutTypes";
 import axios from 'axios'
 import { useRecoilState } from "recoil";
-import { workspacestate } from "../state";
+import { workspacestate } from "@/state";
 import { useRouter } from "next/router";
+import hexRgb from "hex-rgb";
 import * as colors from 'tailwindcss/colors'
 import { useEffect } from "react";
 
@@ -17,7 +18,7 @@ const workspace: LayoutProps = ({ children }) => {
 	
 	const useTheme = (groupTheme: string) => {
 		const themes: any = {
-			"bg-[#2196f3]": "33 150 243",
+			"bg-[#2196f3]": "#2196f3",
 			"bg-blue-500": colors.blue[500],
 			"bg-red-500": colors.red[500],
 			"bg-red-700": colors.red[700],
@@ -30,7 +31,8 @@ const workspace: LayoutProps = ({ children }) => {
 			"bg-black": colors.black,
 			"bg-gray-500": colors.gray[500],
 		}
-		const theme = themes[groupTheme]
+		const hex = hexRgb(themes[groupTheme])
+		const theme = `${hex.red} ${hex.green} ${hex.blue}`
 		return theme
 	}
 	

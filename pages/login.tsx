@@ -1,12 +1,12 @@
 import { NextPage } from "next";
 import { useForm, FormProvider, SubmitHandler } from 'react-hook-form';
 import React, { useState, useEffect } from "react";
-import { loginState } from "../state";
+import { loginState } from "@/state";
 import { useRecoilState } from "recoil";
-import Button from "../components/button";
+import Button from "@/components/button";
 import Router from "next/router";
 import axios, { Axios, AxiosError } from "axios";
-import Input from "../components/input";
+import Input from "@/components/input";
 
 type form = {
 	username: string;

@@ -1,8 +1,8 @@
-import type { pageWithLayout } from "../../../layoutTypes";
-import { loginState } from "../../../state";
+import type { pageWithLayout } from "@/layoutTypes";
+import { loginState } from "@/state";
 import { IconChevronDown } from "@tabler/icons";
 import { Tab, Disclosure, Transition } from "@headlessui/react";
-import Workspace from "../../../layouts/workspace";
+import Workspace from "@/layouts/workspace";
 import { useRecoilState } from "recoil";
 
 const Settings: pageWithLayout = () => {

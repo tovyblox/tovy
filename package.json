@@ -15,6 +15,7 @@
     "@types/bcrypt": "^5.0.0",
     "axios": "^0.27.2",
     "bcrypt": "^5.0.1",
+    "hex-rgb": "^5.0.0",
     "iron-session": "^6.2.1",
     "next": "12.3.0",
     "noblox.js": "^4.13.1",

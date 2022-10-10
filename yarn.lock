@@ -1602,6 +1602,11 @@
   dependencies:
     "function-bind" "^1.1.1"
 
+"hex-rgb@^5.0.0":
+  "integrity" "sha512-NQO+lgVUCtHxZ792FodgW0zflK+ozS9X9dwGp9XvvmPlH7pyxd588cn24TD3rmPm/N0AIRXF10Otah8yKqGw4w=="
+  "resolved" "https://registry.npmjs.org/hex-rgb/-/hex-rgb-5.0.0.tgz"
+  "version" "5.0.0"
+
 "htmlparser2@^8.0.1":
   "integrity" "sha512-4lVbmc1diZC7GUJQtRQ5yBAeUCL1exyMwmForWkRLnwyzWBFxN633SALPMGYaWZvKe9j1pRZJpauvmxENSp/EA=="
   "resolved" "https://registry.npmjs.org/htmlparser2/-/htmlparser2-8.0.1.tgz"

@@ -1,10 +1,10 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { getUsername, getThumbnail, getDisplayName } from '../../utils/userinfoEngine'
-import { User } from '../../index.d'
+import { getUsername, getThumbnail, getDisplayName } from '@/utils/userinfoEngine'
+import { User } from '@/index.d'
 import { PrismaClient } from '@prisma/client'
 import * as noblox from 'noblox.js'
-import { withSessionRoute } from '../../lib/withSession'
+import { withSessionRoute } from '@/lib/withSession'
 import * as bcrypt from 'bcrypt'
 const prisma = new PrismaClient()
 

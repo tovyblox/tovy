@@ -1,11 +1,11 @@
 import type { NextPage } from "next";
 import React, { useState } from "react";
-import { loginState } from "../state";
+import { loginState } from "@/state";
 import { useRecoilState } from "recoil";
 import { useForm, FormProvider } from "react-hook-form";
 import Router from "next/router";
-import Slider from "../components/slider";
-import Input from "../components/input";
+import Slider from "@/components/slider";
+import Input from "@/components/input";
 import axios from "axios";
 type FormData = {
 	username: string;

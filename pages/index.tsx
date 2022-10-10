@@ -1,9 +1,9 @@
 import type { NextPage } from "next";
 import Head from "next/head";
-import Topbar from "../components/topbar";
+import Topbar from "@/components/topbar";
 import { useRouter } from "next/router";
-import { loginState } from "../state";
-import Button from "../components/button";
+import { loginState } from "@/state";
+import Button from "@/components/button";
 import { useRecoilState } from "recoil";
 
 const Home: NextPage = () => {

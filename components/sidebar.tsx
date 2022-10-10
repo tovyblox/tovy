@@ -1,12 +1,12 @@
 import type { NextPage } from "next";
-import { loginState, workspacestate} from "../state";
+import { loginState, workspacestate} from "@/state";
 import { useRecoilState } from "recoil";
 import { Menu } from "@headlessui/react";
 import { useRouter } from "next/router";
 import { IconHome, IconWall, IconClipboardList, IconSpeakerphone, IconUsers, IconSettings, IconChevronDown } from "@tabler/icons";
 import Image from "next/image";
 import axios from "axios";
-import workspace from "../layouts/workspace";
+import workspace from "@/layouts/workspace";
 
 const Topbar: NextPage = () => {
 	const [login, setLogin] = useRecoilState(loginState);
@@ -32,13 +32,13 @@ const Topbar: NextPage = () => {
 		},
 		{
 			name: "Sessions",
-			href: "/workspace/[id]/wall",
+			href: "/workspace/[id]/sessions",
 			icon: IconSpeakerphone,
 			current: false,
 		},
 		{
 			name: "Views",
-			href: "/workspace/[id]/wall",
+			href: "/workspace/[id]/views",
 			icon: IconUsers,
 			current: false,
 		},
@@ -61,7 +61,7 @@ const Topbar: NextPage = () => {
 				<button className="h-auto flex flex-row rounded-xl py-1 hover:bg-gray-200 dark:hover:bg-gray-800 dark:focus-visible:bg-gray-800 px-2 transition cursor-pointer focus-visible:bg-gray-200 focus-visible:outline-none" tabIndex={0} role="button">
 					<img
 						src={login?.thumbnail}
-						className="rounded-full bg-tovybg h-12 w-12 my-auto"
+						className="rounded-full bg-primary h-12 w-12 my-auto"
 					/>
 					<p className="my-auto text-sm pl-3">
 						Signed in as

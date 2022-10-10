@@ -14,6 +14,7 @@ model workspace {
   groupId Int      @id @unique
   config  config[]
   roles   role[]
+  wallposts wallPost[]
 }
 
 model config {
@@ -32,6 +33,7 @@ model user {
   tfa          String?
   isOwner      Boolean?
   roles		role[]
+  wallPosts	wallPost[]
 }
 
 model role {
@@ -42,4 +44,15 @@ model role {
   members user[] 
   workspaceGroupId Int
   name String
+}
+
+model wallPost {
+  id        Int      @id @default(autoincrement())
+  content   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  author    user?    @relation(fields: [authorId], references: [userid])
+  workspace workspace @relation(fields: [workspaceGroupId], references: [groupId])
+  workspaceGroupId Int
+  authorId  Int
 }

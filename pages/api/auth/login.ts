@@ -1,11 +1,11 @@
 //logout of tovy
 
 import { NextApiRequest, NextApiResponse } from "next";
-import { withSessionRoute } from '../../../lib/withSession'
-import { getUsername, getThumbnail, getDisplayName } from '../../../utils/userinfoEngine'
+import { withSessionRoute } from '@/lib/withSession'
+import { getUsername, getThumbnail, getDisplayName } from '@/utils/userinfoEngine'
 import bcrypt from 'bcrypt'
 import * as noblox from 'noblox.js'
-import prisma from '../../../utils/database';
+import prisma from '@/utils/database';
 
 export default withSessionRoute(handler);
 

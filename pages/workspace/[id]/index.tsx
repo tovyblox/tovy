@@ -1,7 +1,7 @@
-import type { pageWithLayout } from "../../../layoutTypes";
-import { loginState } from "../../../state";
-import Button from "../../../components/button";
-import Workspace from "../../../layouts/workspace";
+import type { pageWithLayout } from "@/layoutTypes";
+import { loginState } from "@/state";
+import Button from "@/components/button";
+import Workspace from "@/layouts/workspace";
 import { useRecoilState } from "recoil";
 
 const Home: pageWithLayout = () => {

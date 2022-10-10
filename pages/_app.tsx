@@ -1,8 +1,8 @@
-import "../styles/globals.css";
+import "@/styles/globals.css";
 import type { AppProps } from "next/app";
-import { loginState } from "../state";
+import { loginState } from "@/state";
 import { RecoilRoot } from "recoil";
-import { pageWithLayout } from "../layoutTypes";
+import { pageWithLayout } from "@/layoutTypes";
 import RecoilNexus from "recoil-nexus";
 import { setRecoil } from "recoil-nexus";
 import { useEffect, useState, ReactNode, ReactElement } from "react";
