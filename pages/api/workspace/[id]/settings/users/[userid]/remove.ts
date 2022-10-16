@@ -16,7 +16,34 @@ export async function handler(
 	req: NextApiRequest,
 	res: NextApiResponse<Data>
 ) {
-	if (req.method !== 'POST') return res.status(405).json({ success: false, error: 'Method not allowed' })
+	if (req.method !== 'DELETE') return res.status(405).json({ success: false, error: 'Method not allowed' });
+	const user = await prisma.user.findUnique({
+		where: {
+			userid: parseInt(req.query.userid as string)
+		},
+		include: {
+			roles: {
+				where: {
+					workspaceGroupId: parseInt(req.query.id as string)
+				}
+			}
+		}
+	});
+	if (!user?.roles.length) return res.status(404).json({ success: false, error: 'User not found' });
+	await prisma.user.update({
+		where: {
+			userid: parseInt(req.query.userid as string)
+		},
+		data: {
+			roles: {
+				disconnect: {
+					id: user.roles[0].id
+				}
+			}
+		}
+	});
 	
+
+
 	res.status(200).json({ success: true })
 }

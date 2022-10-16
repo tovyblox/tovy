@@ -1,7 +1,7 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { fetchworkspace, getConfig, setConfig } from '@/utils/configEngine'
-import prisma from '@/utils/database';
+import prisma, { role } from '@/utils/database';
 import { withSessionRoute } from '@/lib/withSession'
 import { getUsername, getThumbnail, getDisplayName } from '@/utils/userinfoEngine'
 import * as noblox from 'noblox.js'
@@ -13,6 +13,7 @@ type Data = {
 		groupId: number
 		groupThumbnail: string
 		groupName: string,
+		roles: role[]
 		groupTheme: string
 	}
 }
@@ -39,16 +40,20 @@ export async function handler(
 
 	if (!workspace) return res.status(400).json({ success: false, error: 'Workspace not found' })
 	const themeconfig = await getConfig('customization', workspace.groupId)
+	const roles = await prisma.role.findMany({
+		where: {
+			workspaceGroupId: workspace.groupId,
+			isOwnerRole: false
+		}
+	})
 	let groupinfo = await noblox.getGroup(workspace.groupId)
 	
-
-
-	
-
 	res.status(200).json({ success: true, workspace: {
 		groupId: workspace.groupId,
 		groupThumbnail: await noblox.getLogo(workspace.groupId),
 		groupName: groupinfo.name,
-		groupTheme: themeconfig
+		groupTheme: themeconfig,
+		roles: roles
+
 	} })
 }

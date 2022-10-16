@@ -39,7 +39,7 @@ model user {
 model role {
   id String @id @unique @db.Uuid() @default(uuid())
   permissions Json[]
-  isOwnerRole Boolean?
+  isOwnerRole Boolean? @default(false)
   workspace workspace? @relation(fields: [workspaceGroupId], references: [groupId])
   members user[] 
   workspaceGroupId Int

@@ -1,5 +1,5 @@
 import type { NextPage } from "next";
-import { loginState } from "@/state";
+import { loginState } from "../state";
 import { useRecoilState } from "recoil";
 import { Menu } from "@headlessui/react";
 import { useRouter } from "next/router";
@@ -15,6 +15,7 @@ const Topbar: NextPage = () => {
 			userId: 1,
 			username: '',
 			displayname: '',
+			canMakeWorkspace: false,
 			thumbnail: '',
 			workspaces: []
 		});

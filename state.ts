@@ -1,5 +1,6 @@
 import { atom, selector } from "recoil";
 import Router from "next/router";
+import { role } from "@prisma/client";
 import axios from "axios";
 export type workspaceinfo = {
 	groupId: number;
@@ -13,6 +14,7 @@ const loginState = atom({
 		username: '',
 		displayname: '',
 		thumbnail: '',
+		canMakeWorkspace: false,
 		workspaces: [] as workspaceinfo[]
 	},
 });
@@ -23,8 +25,10 @@ const workspacestate = atom({
 		groupId: 1,
 		groupThumbnail: '',
 		groupName: '',
-		groupTheme: ''
+		groupTheme: '',
+		roles: [] as role[]
 	}
 });
+
 
 export {loginState, workspacestate};

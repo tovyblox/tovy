@@ -65,11 +65,12 @@ const workspace: LayoutProps = ({ children }) => {
 	return (
 		<div>
 			<Head>
-				<title>{workspace.groupName}</title>
+				<title>{workspace.groupName || 'Loading...'}</title>
+				<link rel="icon" href={`${workspace.groupThumbnail}/isCircular`}/>
 			</Head>
 			<div className="flex">
-				<div className="w-48" id="sidebar"> <Sidebar /></div>
-				<main className="bg-gray-100 dark:bg-gray-700 w-full"> {children} </main>
+				<div className="w-48 h-screen sticky top-0" id="sidebar"> <Sidebar /></div>
+				<main className="bg-gray-100 dark:bg-gray-700 w-full overflow-y-scroll"> {children} </main>
 			</div>
 		</div>
 	)

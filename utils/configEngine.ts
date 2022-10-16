@@ -60,3 +60,7 @@ export async function setConfig(key: string, value: any, groupid: number) {
 	configCahce.set(`${groupid}_${key}`, value);
 }
 
+export async function refresh(key: string, groupid: number) {
+	configCahce.delete(`${groupid}_${key}`);
+}
+

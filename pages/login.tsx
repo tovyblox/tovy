@@ -19,7 +19,7 @@ const Login: NextPage = ({ }) => {
 
 	const [loading, setLoading] = useState(false);
 	const [login, setLogin] = useRecoilState(loginState);
-	
+
 	const onSubmit: SubmitHandler<form> = async (data) => {
 		console.log('uwu')
 		console.log(data);
@@ -62,7 +62,7 @@ const Login: NextPage = ({ }) => {
 					</p>
 					<FormProvider {...methods}>
 						<form className="mt-2 mb-8" onSubmit={handleSubmit(onSubmit)}>
-							<Input label="Username" placeholder="TheCakeChicken" id="username" {...register("username", { required: { value: true, message: "This field is required" } })}/>
+							<Input label="Username" placeholder="TheCakeChicken" id="username" {...register("username", { required: { value: true, message: "This field is required" } })} />
 							<Input label="Password" type="password" id="password" {...register("password", { required: { value: true, message: "This field is required" } })} />
 							<input type="submit" className="hidden" />
 						</form>
@@ -70,9 +70,16 @@ const Login: NextPage = ({ }) => {
 
 
 					<div className="flex">
-
+						<Button
+							onPress={() => Router.push('/signup')}
+							classoverride="mr-auto ml-0"
+							loading={loading}
+						>
+							Signup
+						</Button>
 						<Button
 							onPress={handleSubmit(onSubmit)}
+							classoverride="ml-auto"
 							loading={loading}
 						>
 							Continue

@@ -9,6 +9,7 @@ import * as noblox from 'noblox.js'
 type User = {
 	userId: number
 	username: string
+	canMakeWorkspace: boolean
 	displayname: string
 	thumbnail: string
 }
@@ -33,10 +34,17 @@ export async function handler(
 	if (req.method !== 'GET') return res.status(405).json({ success: false, error: 'Method not allowed' })
 	if (!await prisma.workspace.count()) return res.status(400).json({ success: false, error: 'Workspace not setup' })
 	if (!req.session.userid) return res.status(401).json({ success: false, error: 'Not logged in' });
+	const dbuser = await prisma.user.findUnique({
+		where: {
+			userid: req.session.userid
+		}
+	});
+
 	const user: User = {
 		userId: req.session.userid,
 		username: await getUsername(req.session.userid),
 		displayname: await getDisplayName(req.session.userid),
+		canMakeWorkspace: dbuser?.isOwner || false,
 		thumbnail: await getThumbnail(req.session.userid)
 	}
 	const tovyuser = await prisma.user.findUnique({

@@ -56,7 +56,7 @@ const Topbar: NextPage = () => {
 	const router = useRouter();
 
 	return (
-		<div className="h-screen w-48 bg-white drop-shadow dark:bg-gray-900">
+		<div className="sticky top-0 w-48 h-screen bg-white drop-shadow dark:bg-gray-900">
 			<div className="flex flex-col py-3 px-3 gap-2 focus-visible:bg-blue-200">
 				<button className="h-auto flex flex-row rounded-xl py-1 hover:bg-gray-200 dark:hover:bg-gray-800 dark:focus-visible:bg-gray-800 px-2 transition cursor-pointer focus-visible:bg-gray-200 focus-visible:outline-none" tabIndex={0} role="button">
 					<img

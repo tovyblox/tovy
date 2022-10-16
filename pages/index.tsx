@@ -23,7 +23,7 @@ const Home: NextPage = () => {
 				<div className="lg:px-48 md:px-32 sm:px-20 xs:px-9 px-8 ">
 					<div className=" pt-10 flex">
 						<p className="my-auto text-2xl font-bold"> Select a Workspace </p>
-						<Button >
+						<Button disabled={!login.canMakeWorkspace}>
 							New Workspace
 						</Button>
 					</div>

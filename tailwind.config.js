@@ -15,5 +15,6 @@ module.exports = {
       infobg: "url('/tovybackground.svg')",
     },
   },
-  plugins: [],
+  plugins: [require("@tailwindcss/forms"), require("@tailwindcss/typography")],
+
 };
