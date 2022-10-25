@@ -69,7 +69,7 @@ const Topbar: NextPage = () => {
 						<span className="font-bold"> {login?.displayname}</span>
 					</p>
 				</button>
-				<button className="h-auto flex flex-row rounded-xl py-1 hover:bg-gray-200 dark:hover:bg-gray-800 dark:focus-visible:bg-gray-800 px-2 transition cursor-pointer outline-1 outline-[#AAAAAA] outline mb-1 focus-visible:bg-gray-200" tabIndex={0} role="button">
+				<button className="h-auto flex flex-row rounded-xl py-1 hover:bg-gray-200 dark:hover:bg-gray-800 dark:focus-visible:bg-gray-800 px-2 transition cursor-pointer outline-1 outline-gray-300 outline mb-1 focus-visible:bg-gray-200" tabIndex={0} role="button">
 					<img
 						src={workspace.groupThumbnail}
 						className="rounded-full h-[36px] w-[36px] my-auto p-1"

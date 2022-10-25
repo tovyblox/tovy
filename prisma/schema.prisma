@@ -11,15 +11,16 @@ datasource db {
 }
 
 model workspace {
-  groupId Int      @id @unique
-  config  config[]
-  roles   role[]
-  wallposts wallPost[]
+  groupId      Int           @id @unique
+  config       config[]
+  roles        role[]
+  wallposts    wallPost[]
+  sessionTypes SessionType[]
 }
 
 model config {
-  id        Int      @id @default(autoincrement())
-  key              String 
+  id               Int        @id @default(autoincrement())
+  key              String
   value            Json
   createdAt        DateTime   @default(now())
   updatedAt        DateTime   @updatedAt
@@ -27,32 +28,76 @@ model config {
   workspaceGroupId Int
 }
 
+model instanceConfig {
+  id               Int        @id @default(autoincrement())
+  key              String @unique
+  value            Json
+  createdAt        DateTime   @default(now())
+  updatedAt        DateTime   @updatedAt
+}
+
 model user {
-  userid       Int      @id @unique
+  userid       Int        @id @unique
   passwordhash String
   tfa          String?
   isOwner      Boolean?
-  roles		role[]
-  wallPosts	wallPost[]
+  picture      String?
+  username   	String?
+  roles        role[]
+  wallPosts    wallPost[]
+  sessions     Session[]
 }
 
 model role {
-  id String @id @unique @db.Uuid() @default(uuid())
-  permissions Json[]
-  isOwnerRole Boolean? @default(false)
-  workspace workspace? @relation(fields: [workspaceGroupId], references: [groupId])
-  members user[] 
+  id               String       @id @unique @default(uuid()) @db.Uuid()
+  permissions      Json[]
+  isOwnerRole      Boolean?     @default(false)
+  workspace        workspace?   @relation(fields: [workspaceGroupId], references: [groupId])
+  members          user[]
   workspaceGroupId Int
-  name String
+  name             String
+  SessionType      SessionType[]
 }
 
 model wallPost {
-  id        Int      @id @default(autoincrement())
-  content   String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  author    user?    @relation(fields: [authorId], references: [userid])
-  workspace workspace @relation(fields: [workspaceGroupId], references: [groupId])
+  id               Int       @id @default(autoincrement())
+  content          String
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  author           user?     @relation(fields: [authorId], references: [userid])
+  workspace        workspace @relation(fields: [workspaceGroupId], references: [groupId])
   workspaceGroupId Int
-  authorId  Int
+  authorId         Int
+}
+
+model SessionType {
+  id               String     @id @unique @default(uuid()) @db.Uuid()
+  name             String
+  gameId           Int?
+  schedule         schedule[]
+  allowUnscheduled Boolean
+  sessions         Session[]
+  hostingRoles     role[]
+  workspace        workspace? @relation(fields: [workspaceGroupId], references: [groupId])
+  workspaceGroupId Int
+}
+
+model schedule {
+  id            String      @id @unique @default(uuid()) @db.Uuid()
+  Days          String[]
+  Time          String
+  sessionType   SessionType @relation(fields: [sessionTypeId], references: [id])
+  sessionTypeId String      @db.Uuid()
+  sessions	  Session[]
+}
+
+model Session {
+  id            String      @id @unique @default(uuid()) @db.Uuid()
+  owner         user        @relation(fields: [ownerId], references: [userid])
+  ownerId       Int
+  date 		DateTime
+  sessionType   SessionType @relation(fields: [sessionTypeId], references: [id])
+  sessionTypeId String      @db.Uuid()
+  schedule	   schedule?   @relation(fields: [scheduleId], references: [id])
+  scheduleId    String?     @db.Uuid()
 }

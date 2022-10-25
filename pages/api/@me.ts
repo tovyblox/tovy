@@ -4,6 +4,7 @@ import { fetchworkspace, getConfig, setConfig } from '@/utils/configEngine'
 import prisma from '@/utils/database';
 import { withSessionRoute } from '@/lib/withSession'
 import { getUsername, getThumbnail, getDisplayName } from '@/utils/userinfoEngine'
+import { getRegistry } from '@/utils/registryManager';
 import * as noblox from 'noblox.js'
 
 type User = {
@@ -64,7 +65,18 @@ export async function handler(
 				groupName: await noblox.getGroup(role.workspaceGroupId).then(group => group.name),
 			})
 		}
-	}
+	};
+
+	await getRegistry((req.headers.host as string))
 	console.log(tovyuser)
 	res.status(200).json({ success: true, user, workspaces: roles })
+	await prisma.user.update({
+		where: {
+			userid: req.session.userid
+		},
+		data: {
+			picture: await getThumbnail(req.session.userid),
+			username: await getUsername(req.session.userid),
+		}
+	});
 }

@@ -115,7 +115,7 @@ const Button: FC<Props> = ({ roles, setRoles}) => {
 									<Disclosure
 										as="div"
 										key={role.id}
-										className="bg-white rounded-lg mt-2 transform-all outline outline-[#AAAAAA] outline-[1.75px]"
+										className="bg-white rounded-lg mt-2 transform-all outline outline-gray-300 outline-[1.75px]"
 										tabIndex={0}
 									>
 										{({ open }) => (

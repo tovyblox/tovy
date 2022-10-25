@@ -104,7 +104,7 @@ const Button: FC<Props> = (props) => {
 								Add User
 							</Btn>
 							{users.map((user: any, index: number) => (
-								<div key={user.userid} className="w-auto mt-3 p-4 outline-[#AAAAAA] outline outline-[1.75px] rounded-lg flex">
+								<div key={user.userid} className="w-auto mt-3 p-4 outline-gray-300 outline outline-[1.75px] rounded-lg flex">
 									<img src={user.thumbnail} className="rounded-full bg-primary h-10 my-auto" />
 									<p className="my-auto font-semibold ml-2 leading-5"> {user.displayName} <br />
 										<span className="font-light text-gray-400">

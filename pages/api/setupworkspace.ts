@@ -7,6 +7,7 @@ import * as noblox from 'noblox.js'
 import { withSessionRoute } from '@/lib/withSession'
 import * as bcrypt from 'bcrypt'
 const prisma = new PrismaClient()
+import { setRegistry } from '@/utils/registryManager'
 
 type Data = {
 	success: boolean
@@ -79,6 +80,8 @@ export async function handler(
 		displayname: await getDisplayName(req.session.userid),
 		thumbnail: await getThumbnail(req.session.userid)
 	}
+
+	await setRegistry((req.headers.host as string))
 
 	res.status(200).json({ success: true, user })
 }

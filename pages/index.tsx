@@ -28,7 +28,7 @@ const Home: NextPage = () => {
 						</Button>
 					</div>
 					<div className="grid grid-cols-1 pt-5 gap-x-9 lg:grid-cols-3 2xl:grid-cols-4 md:grid-cols-2 sm:grid-cols-1">
-						{login.workspaces.map((workspace, i) => (
+						{login.workspaces?.map((workspace, i) => (
 							<div className=" rounded-xl h-48" key={i}>
 								<div className={`bg-gray-500 rounded-t-xl h-24 bg-no-repeat bg-center bg-cover`} style={{backgroundImage: `url(${workspace.groupThumbnail})`}}/>
 								<div className="h-14 bg-white dark:bg-gray-600 rounded-b-xl relative bottom-0 flex flex-row px-3">
