@@ -28,3 +28,9 @@ a {
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer components { 
+	.cardBtn {
+		@apply px-5 py-4 bg-white rounded-md mt-3 w-full outline-[1.4px] outline-gray-300 outline text-left hover:bg-gray-100 focus-visible:bg-gray-100
+	}
+}
