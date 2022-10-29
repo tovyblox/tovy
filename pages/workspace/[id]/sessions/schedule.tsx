@@ -7,19 +7,24 @@ import { useRecoilState } from "recoil";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useRouter } from "next/router";
-import prisma, { schedule, SessionType, Session } from "@/utils/database";
+import prisma, { schedule, SessionType, Session,  user } from "@/utils/database";
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 import Image from "next/image";
+import { type } from "node:os";
 export const getServerSideProps: GetServerSideProps = async ({ query }) => {
 	const sessions = await prisma.schedule.findMany({
 		where: {
 			sessionType: {
-				workspaceGroupId: parseInt(query.id as string) 
+				workspaceGroupId: parseInt(query.id as string)
 			}
 		},
 		include: {
 			sessionType: true,
-			sessions: true
+			sessions: {
+				include: {
+					owner: true
+				}
+			}
 		}
 	});
 
@@ -40,18 +45,22 @@ export const getServerSideProps: GetServerSideProps = async ({ query }) => {
 		}
 	}
 };
+type esession = (schedule & {
+	sessionType: SessionType;
+	sessions: (Session & {
+		owner: user
+	})[];
+})
 
 const Home: pageWithLayout<{
-	sessions: (schedule & {
-		sessionType: SessionType;
-		sessions: Session[];
-	})[]
+	sessions: esession[]
 }> = ({ sessions }) => {
 	const [login, setLogin] = useRecoilState(loginState);
 	const router = useRouter();
 	const [selectedDate, setSelectedDate] = useState(new Date());
-	const [activeSessions, setActiveSessions] = useState<(schedule & { sessionType: SessionType; sessions: Session[] })[]>([]);
+	const [activeSessions, setActiveSessions] = useState<esession[]>([]);
 	const [sessionsData, setSessionsData] = useState(sessions);
+	const [doingAction, setDoingAction] = useState(false);
 
 	function getLastThreeDays() {
 		const today = new Date();
@@ -69,21 +78,21 @@ const Home: pageWithLayout<{
 		}
 		return [...lastThreeDays, ...nextThreeDays].sort((a, b) => a.getTime() - b.getTime());
 	};
-	
 
-	const claimSession = async (schedule: any ) => {
+
+	const claimSession = async (schedule: any) => {
+		setDoingAction(true);
 		const res = await axios.post(`/api/workspace/${router.query.id}/sessions/manage/${schedule.id}/claim`, {
 			date: selectedDate
 		});
-	
+
 		if (res.status === 200) {
 			const curentSessions = sessionsData;
 			//filter out the session that was claimed
 			const newSessions = curentSessions.filter((session: any) => session.id !== schedule.id);
 			setSessionsData([...newSessions, res.data.session]);
+			setDoingAction(false);
 		}
-
-
 	};
 
 	useEffect(() => {
@@ -93,7 +102,32 @@ const Home: pageWithLayout<{
 			return session.Days.includes(selectedDate.toLocaleDateString("en-US", { weekday: "short" }))
 		});
 		setActiveSessions(activeSessions);
-	}, [selectedDate]);
+	}, [selectedDate, sessionsData]);
+	
+	const checkDisabled = (session: esession) => {
+		const s = session.sessions.find(e => new Date(e.date).getDate() === selectedDate.getDate());
+		console.log(s)
+		//if the session already started or ended
+		if (selectedDate.getTime() < new Date().getTime()) return { disabled: true, text: "Session Ended" };
+		if (s?.ownerId === login.userId) {
+			return { 
+				disabled: true,
+				text: "You already claimed this session"
+			};
+		}
+		
+		if (!s?.date) return { disabled: false, text: "Claim" };
+		console.log(s.date)
+		if (s.date < new Date()) {
+			return { 
+				disabled: true,
+				text: "Session already started"
+			};
+		}
+		return { disabled: false, text: "Claim" }
+	}
+		
+
 
 
 
@@ -116,14 +150,16 @@ const Home: pageWithLayout<{
 				<div className="w-full lg:4/6 xl:5/6">
 					<div className="bg-[url('https://tr.rbxcdn.com/4a3833e22d4523b58e173057a531a766/768/432/Image/Png')] w-full rounded-md overflow-clip">
 						<div className="px-5 py-4 backdrop-blur flex">
-							<div><p className="text-xl font-semibold"> { session.sessionType.name } </p>
-								<div className="flex mt-1">
-									<img src={login.thumbnail} className="bg-primary rounded-full w-8 h-8 my-auto" />
-									<p className="font-medium pl-2 leading-5 my-auto"> Hosted by ItsWHOOOP <br /> <span className="text-red-500"> Slocked </span> </p>
-								</div>
+							<div><p className="text-xl font-semibold"> {session.sessionType.name} </p>
+								{session.sessions.find(e => new Date(e.date).getDate() === selectedDate.getDate()) ?
+									<div className="flex mt-1">
+										<img src={(session.sessions.find(e => new Date(e.date).getDate() === selectedDate.getDate())?.owner.picture as string)} className="bg-primary rounded-full w-8 h-8 my-auto" />
+										<p className="font-medium pl-2 leading-5 my-auto"> Hosted by {session.sessions.find(e => new Date(e.date).getDate() === selectedDate.getDate())?.owner.username} <br /> <span className="text-primary"> { session.Time } </span> </p>
+									</div>
+								: <p className="font-medium leading-5 my-auto">Unclaimed </p>}
 							</div>
-							<Button classoverride="my-auto ml-auto" onPress={() => claimSession(session, )}> { session.sessions.find(e => new Date(e.date) === selectedDate) ? 'p' : 's'}  </Button>
-							<Button classoverride="my-auto ml-3"> Join </Button>
+							<Button classoverride="my-auto ml-auto" onPress={() => claimSession(session,)} loading={doingAction} disabled={checkDisabled(session).disabled} > Claim  </Button>
+							<Button classoverride="my-auto ml-3"> Join game </Button>
 						</div>
 					</div>
 				</div>
@@ -132,7 +168,7 @@ const Home: pageWithLayout<{
 				<div className="w-full lg:4/6 xl:5/6 rounded-md h-96 bg-white outline-gray-300 outline outline-[1.4px] flex flex-col p-5">
 					<img className="mx-auto my-auto h-full" src={'/conifer-charging-the-battery-with-a-windmill.png'} />
 					<p className="text-center text-xl font-semibold">No sessions scheduled for {selectedDate.toLocaleDateString()}</p>
-					
+
 				</div>
 			)}
 

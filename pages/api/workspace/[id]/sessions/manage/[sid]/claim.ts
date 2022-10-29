@@ -1,14 +1,14 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { fetchworkspace, getConfig, setConfig } from '@/utils/configEngine'
-import prisma, { schedule} from '@/utils/database';
+import prisma, { schedule } from '@/utils/database';
 import { withSessionRoute } from '@/lib/withSession'
 import { getUsername, getThumbnail, getDisplayName } from '@/utils/userinfoEngine'
 import * as noblox from 'noblox.js'
 type Data = {
 	success: boolean
 	error?: string
-	session?: schedule 
+	session?: schedule
 }
 
 export default withSessionRoute(handler);
@@ -43,31 +43,60 @@ export async function handler(
 	});
 	if (findSession) {
 		findSession.ownerId = req.session.userid;
-		await prisma.session.update({
+		const schedulewithsession = await prisma.schedule.update({
 			where: {
-				id: findSession.id
+			   id: schedule.id
 			},
-			data: findSession
-		});
-		return res.status(200).json({ success: true })
+			data: {
+			   sessions: {
+				   update: {
+						where: {
+							id: findSession.id
+						},
+						data: {
+							ownerId: req.session.userid
+						}
+				   }
+			   }
+			}, 
+		   include: {
+			   sessionType: true,
+			   sessions: {
+				   include: {
+					   owner: true
+				   }
+			   }
+		   }	
+	   });
+
+		return res.status(200).json({ success: true, session: schedulewithsession });
 	}
 
 	const schedulewithsession = await prisma.schedule.update({
-		 where: {
+		where: {
 			id: schedule.id
-		 },
-		 data: {
+		},
+		data: {
 			sessions: {
 				create: {
 					date: dateTime,
 					sessionTypeId: schedule.sessionTypeId,
-					ownerId: req.session.userid,					
+					ownerId: req.session.userid,
 				}
 			}
-		 }
+		},
+		include: {
+			sessionType: true,
+			sessions: {
+				include: {
+					owner: true
+				}
+			}
+		}
+
 	});
 
-	
+
 
 	res.status(200).json({ success: true, session: schedulewithsession })
 }

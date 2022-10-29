@@ -96,6 +96,7 @@ model Session {
   owner         user        @relation(fields: [ownerId], references: [userid])
   ownerId       Int
   date 		DateTime
+  ended		DateTime?
   sessionType   SessionType @relation(fields: [sessionTypeId], references: [id])
   sessionTypeId String      @db.Uuid()
   schedule	   schedule?   @relation(fields: [scheduleId], references: [id])
