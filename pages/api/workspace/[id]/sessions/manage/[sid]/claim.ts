@@ -33,7 +33,7 @@ export async function handler(
 		}
 	});
 	if (!schedule) return res.status(400).json({ success: false, error: 'Invalid schedule' });
-	const dateTime = new Date(`${day.toLocaleDateString('en-us')} ${schedule.Time}`);
+	const dateTime = new Date(`${day.toLocaleDateString('en-us')} ${schedule.Hour}:${schedule.Minute}`);
 
 	const findSession = await prisma.session.findFirst({
 		where: {

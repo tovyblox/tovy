@@ -23,6 +23,7 @@ export async function handler(
 	const { days, time, allowUnscheduled } = schedule;
 	if (schedule.enebaled && (!days || !time || !allowUnscheduled)) return res.status(400).json({ success: false, error: 'Missing required fields' });
 	if (schedule.enabled) {
+		console.log(time.split(':')[0])
 		const session = await prisma.sessionType.create({
 			data: {
 				workspaceGroupId: parseInt(req.query.id as string),
@@ -36,7 +37,7 @@ export async function handler(
 				},
 				schedule: {
 					create: [
-						{ Days: days, Time: time },
+						{ Days: days, Hour: parseInt(time.split(':')[0]), Minute: parseInt(time.split(':')[1]) },
 					]
 				}
 				

@@ -7,7 +7,7 @@ import { useRecoilState } from "recoil";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useRouter } from "next/router";
-import prisma, { schedule, SessionType, Session,  user } from "@/utils/database";
+import prisma, { schedule, SessionType, Session, user } from "@/utils/database";
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 import Image from "next/image";
 import { type } from "node:os";
@@ -103,30 +103,30 @@ const Home: pageWithLayout<{
 		});
 		setActiveSessions(activeSessions);
 	}, [selectedDate, sessionsData]);
-	
+
 	const checkDisabled = (session: esession) => {
 		const s = session.sessions.find(e => new Date(e.date).getDate() === selectedDate.getDate());
 		console.log(s)
 		//if the session already started or ended
 		if (selectedDate.getTime() < new Date().getTime()) return { disabled: true, text: "Session Ended" };
 		if (s?.ownerId === login.userId) {
-			return { 
+			return {
 				disabled: true,
 				text: "You already claimed this session"
 			};
 		}
-		
+
 		if (!s?.date) return { disabled: false, text: "Claim" };
 		console.log(s.date)
 		if (s.date < new Date()) {
-			return { 
+			return {
 				disabled: true,
 				text: "Session already started"
 			};
 		}
 		return { disabled: false, text: "Claim" }
 	}
-		
+
 
 
 
@@ -137,38 +137,38 @@ const Home: pageWithLayout<{
 		<button onClick={() => router.push(`/workspace/${router.query.id}/sessions/new`)} className="cardBtn"><p className="font-bold text-2xl leading-5 mt-1"> New session type <br /><span className="text-gray-400 font-normal text-base "> Create a new session type   </span></p> </button>
 		<p className="text-3xl font-medium mt-5">Schedule</p>
 		<div className=" pt-5 flex flex-col lg:flex-row gap-x-3 gap-y-2">
-			<div className="flex flex-col w-full lg:w-2/6 xl:w-1/6 gap-y-3 ">
+			<div className="flex flex-col w-full lg:w-3/6 xl:w-1/6 gap-y-3 ">
 				{getLastThreeDays().map((day, i) => (
 					<button className={`flex flex-col bg-white rounded-md  outline-[1.4px] outline text-left px-3 py-2 hover:bg-gray-100 focus-visible:bg-gray-100 ${selectedDate.getDate() === day.getDate() ? 'outline-primary' : ' outline-gray-300'}`} onClick={() => setSelectedDate(day)}>
 						<p className="text-2xl font-semibold">{day.toLocaleDateString()}</p>
 						<p className="text-xl font-base text-slate-400/75 -mt-1">{day.toLocaleDateString("en-US", { weekday: "long" })}</p>
 					</button>
-
 				))}
 			</div>
-			{activeSessions.map((session) => (
-				<div className="w-full lg:4/6 xl:5/6">
-					<div className="bg-[url('https://tr.rbxcdn.com/4a3833e22d4523b58e173057a531a766/768/432/Image/Png')] w-full rounded-md overflow-clip">
-						<div className="px-5 py-4 backdrop-blur flex">
-							<div><p className="text-xl font-semibold"> {session.sessionType.name} </p>
-								{session.sessions.find(e => new Date(e.date).getDate() === selectedDate.getDate()) ?
-									<div className="flex mt-1">
-										<img src={(session.sessions.find(e => new Date(e.date).getDate() === selectedDate.getDate())?.owner.picture as string)} className="bg-primary rounded-full w-8 h-8 my-auto" />
-										<p className="font-medium pl-2 leading-5 my-auto"> Hosted by {session.sessions.find(e => new Date(e.date).getDate() === selectedDate.getDate())?.owner.username} <br /> <span className="text-primary"> { session.Time } </span> </p>
-									</div>
-								: <p className="font-medium leading-5 my-auto">Unclaimed </p>}
+			<div className="flex flex-col w-full lg:4/6 xl:5/6 gap-y-3">
+				{activeSessions.map((session) => (
+					<div className="">
+						<div className="bg-[url('https://tr.rbxcdn.com/4a3833e22d4523b58e173057a531a766/768/432/Image/Png')] w-full rounded-md overflow-clip">
+							<div className="px-5 py-4 backdrop-blur flex">
+								<div><p className="text-xl font-semibold"> {session.sessionType.name} </p>
+									{session.sessions.find(e => new Date(e.date).getDate() === selectedDate.getDate()) ?
+										<div className="flex mt-1">
+											<img src={(session.sessions.find(e => new Date(e.date).getDate() === selectedDate.getDate())?.owner.picture as string)} className="bg-primary rounded-full w-8 h-8 my-auto" />
+											<p className="font-medium pl-2 leading-5 my-auto"> Hosted by {session.sessions.find(e => new Date(e.date).getDate() === selectedDate.getDate())?.owner.username} <br /> <span className="text-primary"> {`${session.Hour}:${session.Minute}`} </span> </p>
+										</div>
+										: <p className="font-medium leading-5 my-auto">Unclaimed </p>}
+								</div>
+								<Button classoverride="my-auto ml-auto" onPress={() => claimSession(session,)} loading={doingAction} > Claim  </Button>
+								<Button classoverride="my-auto ml-3"> Join game </Button>
 							</div>
-							<Button classoverride="my-auto ml-auto" onPress={() => claimSession(session,)} loading={doingAction} disabled={checkDisabled(session).disabled} > Claim  </Button>
-							<Button classoverride="my-auto ml-3"> Join game </Button>
 						</div>
 					</div>
-				</div>
-			))}
+				))}
+			</div>
 			{!activeSessions.length && (
 				<div className="w-full lg:4/6 xl:5/6 rounded-md h-96 bg-white outline-gray-300 outline outline-[1.4px] flex flex-col p-5">
 					<img className="mx-auto my-auto h-full" src={'/conifer-charging-the-battery-with-a-windmill.png'} />
 					<p className="text-center text-xl font-semibold">No sessions scheduled for {selectedDate.toLocaleDateString()}</p>
-
 				</div>
 			)}
 

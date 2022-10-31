@@ -85,7 +85,8 @@ model SessionType {
 model schedule {
   id            String      @id @unique @default(uuid()) @db.Uuid()
   Days          String[]
-  Time          String
+  Hour          Int
+  Minute        Int
   sessionType   SessionType @relation(fields: [sessionTypeId], references: [id])
   sessionTypeId String      @db.Uuid()
   sessions	  Session[]
@@ -96,6 +97,7 @@ model Session {
   owner         user        @relation(fields: [ownerId], references: [userid])
   ownerId       Int
   date 		DateTime
+  startedAt	DateTime?
   ended		DateTime?
   sessionType   SessionType @relation(fields: [sessionTypeId], references: [id])
   sessionTypeId String      @db.Uuid()
