@@ -6,22 +6,22 @@ import { IconChevronRight } from "@tabler/icons";
 import { useRecoilState } from "recoil";
 import { InferGetServerSidePropsType, GetServerSideProps } from "next";
 import { useRouter } from "next/router";
+import axios from "axios";
 
 
 export const getServerSideProps = async () => {
 	const sessions = await prisma.session.findMany({
 		where: {
 			startedAt: {
-				gte: new Date()
+				not: null
 			},
-			ended: {
-				lt: new Date()
-			}
+			ended: null
 		}
 	});
+	console.log(sessions)
 	return {
 		props: {
-			sessions
+			sessions: (JSON.parse(JSON.stringify(sessions)) as typeof sessions)
 		},
 	}
 }
@@ -32,9 +32,16 @@ const Home: pageWithLayout<pageProps> = ({ sessions }) => {
 
 	const router = useRouter();
 
+	const endSession = async (id: string) => {
+		await axios.post(`/api/workspace/${router.query.id}/sessions/manage/${id}/end`, {});
+		sessions.splice(sessions.findIndex(s => s.id === id), 1);
+	}
+		
+
+
 	return <div className="px-28 py-20">
 		<p className="text-4xl font-bold">Good morning, {login.displayname}</p>
-		<button className="px-6 py-5 border-gray-300 bg-white rounded-md mt-3 w-full border-[1.4px] text-left hover:bg-gray-100 focus-visible:bg-gray-100 focus:outline-none"><p className="font-bold text-2xl leading-5 mt-1"> Host now <br /><span className="text-gray-400 font-normal text-base "> This workspace allows you to host unscheduled sessions   </span></p> </button>
+		<button className="cardBtn"><p className="font-bold text-2xl leading-5 mt-1"> Host now <br /><span className="text-gray-400 font-normal text-base "> This workspace allows you to host unscheduled sessions   </span></p> </button>
 		<p className="text-3xl font-medium mt-5 mb-5">Ongoing sessions</p>
 		{sessions.map(session => (
 			<div className="">

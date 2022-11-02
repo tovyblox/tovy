@@ -127,11 +127,6 @@ const Home: pageWithLayout<{
 		return { disabled: false, text: "Claim" }
 	}
 
-
-
-
-
-
 	return <div className="px-28 py-20">
 		<p className="text-4xl font-bold">Good morning, {login.displayname}</p>
 		<button onClick={() => router.push(`/workspace/${router.query.id}/sessions/new`)} className="cardBtn"><p className="font-bold text-2xl leading-5 mt-1"> New session type <br /><span className="text-gray-400 font-normal text-base "> Create a new session type   </span></p> </button>
@@ -154,7 +149,7 @@ const Home: pageWithLayout<{
 									{session.sessions.find(e => new Date(e.date).getDate() === selectedDate.getDate()) ?
 										<div className="flex mt-1">
 											<img src={(session.sessions.find(e => new Date(e.date).getDate() === selectedDate.getDate())?.owner.picture as string)} className="bg-primary rounded-full w-8 h-8 my-auto" />
-											<p className="font-medium pl-2 leading-5 my-auto"> Hosted by {session.sessions.find(e => new Date(e.date).getDate() === selectedDate.getDate())?.owner.username} <br /> <span className="text-primary"> {`${session.Hour}:${session.Minute}`} </span> </p>
+											<p className="font-medium pl-2 leading-5 my-auto"> Hosted by {session.sessions.find(e => new Date(e.date).getDate() === selectedDate.getDate())?.owner.username} <br /> <span className="text-primary"> {`${session.Hour}:${session.Minute.toString().padStart(2, '0')}`} </span> </p>
 										</div>
 										: <p className="font-medium leading-5 my-auto">Unclaimed </p>}
 								</div>
