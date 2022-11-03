@@ -28,4 +28,4 @@ jobs:
         with:
           context: .
           push: true
-          tags: tovy
+          tags: itswhooop/tovy
