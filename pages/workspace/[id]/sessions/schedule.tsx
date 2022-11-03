@@ -134,7 +134,7 @@ const Home: pageWithLayout<{
 		<div className=" pt-5 flex flex-col lg:flex-row gap-x-3 gap-y-2">
 			<div className="flex flex-col w-full lg:w-3/6 xl:w-1/6 gap-y-3 ">
 				{getLastThreeDays().map((day, i) => (
-					<button className={`flex flex-col bg-white rounded-md  outline-[1.4px] outline text-left px-3 py-2 hover:bg-gray-100 focus-visible:bg-gray-100 ${selectedDate.getDate() === day.getDate() ? 'outline-primary' : ' outline-gray-300'}`} onClick={() => setSelectedDate(day)}>
+					<button key={i} className={`flex flex-col bg-white rounded-md  outline-[1.4px] outline text-left px-3 py-2 hover:bg-gray-100 focus-visible:bg-gray-100 ${selectedDate.getDate() === day.getDate() ? 'outline-primary' : ' outline-gray-300'}`} onClick={() => setSelectedDate(day)}>
 						<p className="text-2xl font-semibold">{day.toLocaleDateString()}</p>
 						<p className="text-xl font-base text-slate-400/75 -mt-1">{day.toLocaleDateString("en-US", { weekday: "long" })}</p>
 					</button>
@@ -142,7 +142,7 @@ const Home: pageWithLayout<{
 			</div>
 			<div className="flex flex-col w-full lg:4/6 xl:5/6 gap-y-3">
 				{activeSessions.map((session) => (
-					<div className="">
+					<div className="" key={session.id}>
 						<div className="bg-[url('https://tr.rbxcdn.com/4a3833e22d4523b58e173057a531a766/768/432/Image/Png')] w-full rounded-md overflow-clip">
 							<div className="px-5 py-4 backdrop-blur flex">
 								<div><p className="text-xl font-semibold"> {session.sessionType.name} </p>

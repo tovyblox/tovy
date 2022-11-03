@@ -27,7 +27,7 @@ const Slider: FC<Props> = ({ children, activeSlide }: Props) => {
 			>
 				{Children.map(children, (child, index) => {
 					return (
-						<div className="w-full my-auto bg-white dark:bg-gray-800 dark:bg-opacity-50 dark:backdrop-blur-lg shrink-0 p-6 rounded-3xl " id={index.toString()} ref={el => elementsRef.current[index] = el}						>
+						<div key={index} className="w-full my-auto bg-white dark:bg-gray-800 dark:bg-opacity-50 dark:backdrop-blur-lg shrink-0 p-6 rounded-3xl " id={index.toString()} ref={el => elementsRef.current[index] = el}						>
 							{child}
 						</div>
 					);

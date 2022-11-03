@@ -71,7 +71,7 @@ const Login: NextPage = ({ }) => {
 
 					<div className="flex">
 						<Button
-							onPress={() => Router.push('/signup')}
+							onPress={() => Router.push("/signup")}
 							classoverride="mr-auto ml-0"
 							loading={loading}
 						>

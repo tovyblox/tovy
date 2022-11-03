@@ -44,7 +44,7 @@ const Home: pageWithLayout<pageProps> = ({ sessions }) => {
 		<button className="cardBtn"><p className="font-bold text-2xl leading-5 mt-1"> Host now <br /><span className="text-gray-400 font-normal text-base "> This workspace allows you to host unscheduled sessions   </span></p> </button>
 		<p className="text-3xl font-medium mt-5 mb-5">Ongoing sessions</p>
 		{sessions.map(session => (
-			<div className="">
+			<div className="" key={session.id}>
 				<div className="bg-[url('https://tr.rbxcdn.com/4a3833e22d4523b58e173057a531a766/768/432/Image/Png')] w-full rounded-md overflow-clip">
 					<div className="px-5 py-4 backdrop-blur flex">
 						<div><p className="text-xl font-bold"> Training session </p>

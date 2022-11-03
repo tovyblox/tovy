@@ -80,8 +80,8 @@ const Topbar: NextPage = () => {
 					<IconChevronDown size={18} color="#AAAAAA" className="my-auto ml-auto" />
 				</button>
 				<div className="h-[1px] rounded-xl w-full px-3 bg-gray-300 mb-1"/> 
-				{pages.map((page) => (
-					<button className={`h-auto flex flex-row rounded-xl  py-1 px-2 transition cursor-pointer focus-visible:outline-none  ${router.pathname === page.href ? `bg-primary text-white hover:bg-primary/50 focus-visible:bg-primary/50 dark:text-black dark:bg-white dark:focus-visible:bg-gray-300 dark:hover:bg-gray-300` : "text-black dark:text-white hover:bg-gray-200 focus-visible:bg-gray-200 dark:hover:bg-gray-800 dark:focus-visible:bg-gray-800"}`} tabIndex={0} role="button" onClick={() => gotopage(page.href)}>
+				{pages.map((page, i) => (
+					<button key={i} className={`h-auto flex flex-row rounded-xl  py-1 px-2 transition cursor-pointer focus-visible:outline-none  ${router.pathname === page.href ? `bg-primary text-white hover:bg-primary/50 focus-visible:bg-primary/50 dark:text-black dark:bg-white dark:focus-visible:bg-gray-300 dark:hover:bg-gray-300` : "text-black dark:text-white hover:bg-gray-200 focus-visible:bg-gray-200 dark:hover:bg-gray-800 dark:focus-visible:bg-gray-800"}`} tabIndex={0} role="button" onClick={() => gotopage(page.href)}>
 						<page.icon size={36} className="my-auto p-1" />
 						<p className="my-auto text-xl pl-2 font-medium">
 							{page.name}
