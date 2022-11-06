@@ -5,12 +5,24 @@ import axios from "axios";
 import { InferGetServerSidePropsType } from "next";
 import { useRecoilState } from "recoil";
 
+type Role = {
+	name: string
+	rank: number
+}
+
+type User = {
+	userId: number
+	username: string
+	displayName: string
+	role: Role
+}
+
 export const getServerSideProps = async () => {
 	const { data: group } = await axios.get(`https://groups.roblox.com/v1/groups/2700627`);
 
 	const { data: { previousPageCursor, nextPageCursor, data: users } } = await axios.get(`https://groups.roblox.com/v1/groups/2700627/users?sortOrder=Asc&limit=25`);
 	const pages = Math.abs(Math.round(group.memberCount / 25));
-	const computedUsers: any[] = [];
+	const computedUsers: User[] = [];
 
 	users.forEach(({ user, role }: any) => {
 		computedUsers.push({
