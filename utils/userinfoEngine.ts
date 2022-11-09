@@ -17,8 +17,8 @@ export async function getUsername(userId: number) {
 }
 
 /** 
- * Returns a cahced thumbnail or fresh thumbnail if not cached already
- * @returns {Promise<string>} 
+ * Returns a cached thumbnail or fresh thumbnail if not cached already
+ * @returns {Promise<string>}
  */
 export async function getThumbnail (userId: number): Promise<string> {
 	const cachedThumbnail = thumbnails.get(userId);
