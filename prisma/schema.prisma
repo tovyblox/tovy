@@ -29,11 +29,11 @@ model config {
 }
 
 model instanceConfig {
-  id               Int        @id @default(autoincrement())
-  key              String @unique
-  value            Json
-  createdAt        DateTime   @default(now())
-  updatedAt        DateTime   @updatedAt
+  id        Int      @id @default(autoincrement())
+  key       String   @unique
+  value     Json
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model user {
@@ -42,17 +42,17 @@ model user {
   tfa          String?
   isOwner      Boolean?
   picture      String?
-  username   	String?
+  username     String?
   roles        role[]
   wallPosts    wallPost[]
   sessions     Session[]
 }
 
 model role {
-  id               String       @id @unique @default(uuid()) @db.Uuid()
+  id               String        @id @unique @default(uuid()) @db.Uuid()
   permissions      Json[]
-  isOwnerRole      Boolean?     @default(false)
-  workspace        workspace?   @relation(fields: [workspaceGroupId], references: [groupId])
+  isOwnerRole      Boolean?      @default(false)
+  workspace        workspace?    @relation(fields: [workspaceGroupId], references: [groupId])
   members          user[]
   workspaceGroupId Int
   name             String
@@ -89,18 +89,27 @@ model schedule {
   Minute        Int
   sessionType   SessionType @relation(fields: [sessionTypeId], references: [id])
   sessionTypeId String      @db.Uuid()
-  sessions	  Session[]
+  sessions      Session[]
 }
 
 model Session {
   id            String      @id @unique @default(uuid()) @db.Uuid()
   owner         user        @relation(fields: [ownerId], references: [userid])
   ownerId       Int
-  date 		DateTime
-  startedAt	DateTime?
-  ended		DateTime?
+  date          DateTime
+  startedAt     DateTime?
+  ended         DateTime?
   sessionType   SessionType @relation(fields: [sessionTypeId], references: [id])
   sessionTypeId String      @db.Uuid()
-  schedule	   schedule?   @relation(fields: [scheduleId], references: [id])
+  schedule      schedule?   @relation(fields: [scheduleId], references: [id])
   scheduleId    String?     @db.Uuid()
+}
+
+model ActivitySession {
+  id        String    @id @unique @default(uuid()) @db.Uuid()
+  userId    Int
+  active    Boolean
+  startTime DateTime
+  endTime   DateTime?
+  idleTime  Int?
 }
