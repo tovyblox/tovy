@@ -54,14 +54,20 @@ const workspace: LayoutProps = ({ children }) => {
 				return;
 			}
 			if (!res) return;
-			res.data.workspace.groupTheme.color = useTheme(res.data.workspace.groupTheme.color)
 			//set the css var
-			document.documentElement.style.setProperty('--group-theme', res.data.workspace.groupTheme.color);
-			console.log(res.data.workspace.groupTheme)
-			setWorkspace(res.data.workspace);
+			setWorkspace({
+				...res.data.workspace,
+				groupTheme: res.data.workspace.groupTheme.color,
+			});
 		}
 		getworkspace();
 	}, []);
+
+	useEffect(() => {
+		const theme = useTheme(workspace.groupTheme || 'bg-[#2196f3]')
+		document.documentElement.style.setProperty('--group-theme', theme);
+	}, [workspace.groupTheme])
+
 	return (
 		<div>
 			<Head>

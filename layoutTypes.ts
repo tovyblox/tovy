@@ -2,7 +2,6 @@ import { NextPage } from "next";
 import type { ReactElement } from "react";
 
 export type pageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
-
 	layout?: LayoutProps
 };
 

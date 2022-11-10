@@ -6,6 +6,8 @@ import { Tab, Disclosure, Transition } from "@headlessui/react";
 import Workspace from "@/layouts/workspace";
 import { useRecoilState } from "recoil";
 import { InferGetServerSidePropsType, GetServerSideProps } from "next";
+import * as All from "@/components/settings/general"
+import toast, { Toaster } from 'react-hot-toast';
 import prisma, { role, user } from '@/utils/database'
 import { getUsername, getThumbnail, getDisplayName } from "@/utils/userinfoEngine";
 export const getServerSideProps: GetServerSideProps = async ({ params, res }) => {
@@ -56,7 +58,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params, res }) =>
 	}))
 	console.log(usersWithInfo)
 
-	
+
 
 
 	return {
@@ -101,31 +103,33 @@ const Settings: pageWithLayout<Props> = ({ users, roles }) => {
 			</Tab.List>
 			<Tab.Panels>
 				<Tab.Panel>
-					<Disclosure as="div" className="bg-white p-4 rounded-lg mt-2 ">
-						<Disclosure.Button as="div" className="text-lg cursor-pointer flex " >Customization <IconChevronDown color="#AAAAAA" className="ml-auto my-auto" size={22} /></Disclosure.Button>
-
-						<Transition
-							enter="transition duration-100 ease-out"
-							enterFrom="transform opacity-0 -translate-y-1"
-							enterTo="transform opacity-100 translate-y-0"
-							leave="transition duration-75 ease-out"
-							leaveFrom="transform translate-y-0"
-							leaveTo="transform opacity-0 -translate-y-1"
-						>
-							<Disclosure.Panel>
-								hi uwu
-								
-							</Disclosure.Panel>
-						</Transition>
-					</Disclosure>
+					{Object.values(All).map((Component, index) => {
+						return (
+							<Disclosure as="div" className="bg-white p-4 rounded-lg mt-2 " key={index}>
+								<Disclosure.Button as="div" className="text-lg cursor-pointer flex " >{Component.title} <IconChevronDown color="#AAAAAA" className="ml-auto my-auto" size={22} /></Disclosure.Button>
+								<Transition
+									enter="transition duration-100 ease-out"
+									enterFrom="transform opacity-0 -translate-y-1"
+									enterTo="transform opacity-100 translate-y-0"
+									leave="transition duration-75 ease-out"
+									leaveFrom="transform translate-y-0"
+									leaveTo="transform opacity-0 -translate-y-1"
+								>
+									<Disclosure.Panel>
+										<Component triggerToast={toast} />
+									</Disclosure.Panel>
+								</Transition>
+							</Disclosure>
+						)
+					})}
 				</Tab.Panel>
 				<Tab.Panel>
-					{users.toString()}
 					<Permissions users={users} roles={roles} />
 				</Tab.Panel>
+
 			</Tab.Panels>
 		</Tab.Group>
-
+		<Toaster position="bottom-center" />
 	</div>;
 };
 
