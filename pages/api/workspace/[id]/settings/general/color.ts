@@ -18,11 +18,7 @@ export async function handler(
 	req: NextApiRequest,
 	res: NextApiResponse<Data>
 ) {
-	if (req.method !== 'PATCH' && req.method !== 'GET') return res.status(405).json({ success: false, error: 'Method not allowed' })
-	if (req.method === 'GET') {
-		const color = await getConfig('color', parseInt(req.query.id as string))
-		return res.status(200).json({ success: true, color })
-	}
+	if (req.method !== 'PATCH') return res.status(405).json({ success: false, error: 'Method not allowed' })
 	setConfig('customization', {
 		color: req.body.color
 	}, parseInt(req.query.id as string));

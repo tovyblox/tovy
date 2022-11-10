@@ -17,6 +17,8 @@ model workspace {
   wallposts    wallPost[]
   sessionTypes SessionType[]
   documents	document[]
+  activitySessions  ActivitySession[]
+  inactivityNotices inactivityNotice[]
 }
 
 model config {
@@ -108,12 +110,24 @@ model Session {
 }
 
 model ActivitySession {
-  id        String    @id @unique @default(uuid()) @db.Uuid()
-  userId    Int
-  active    Boolean
-  startTime DateTime
-  endTime   DateTime?
-  idleTime  Int?
+  id               String     @id @unique @default(uuid()) @db.Uuid()
+  userId           Int
+  active           Boolean
+  startTime        DateTime
+  endTime          DateTime?
+  idleTime         Int?
+  workspace        workspace? @relation(fields: [workspaceGroupId], references: [groupId])
+  workspaceGroupId Int
+}
+
+model inactivityNotice {
+  id               String     @id @unique @default(uuid()) @db.Uuid()
+  userId           Int
+  startTime        DateTime
+  endTime          DateTime?
+  reason           String
+  workspace        workspace? @relation(fields: [workspaceGroupId], references: [groupId])
+  workspaceGroupId Int
 }
 
 model document {
