@@ -3,7 +3,7 @@ import { loginState, workspacestate} from "@/state";
 import { useRecoilState } from "recoil";
 import { Menu } from "@headlessui/react";
 import { useRouter } from "next/router";
-import { IconHome, IconWall, IconClipboardList, IconSpeakerphone, IconUsers, IconSettings, IconChevronDown } from "@tabler/icons";
+import { IconHome, IconWall, IconClipboardList, IconSpeakerphone, IconUsers, IconSettings, IconChevronDown, IconFileText } from "@tabler/icons";
 import Image from "next/image";
 import axios from "axios";
 import workspace from "@/layouts/workspace";
@@ -40,6 +40,12 @@ const Topbar: NextPage = () => {
 			name: "Views",
 			href: "/workspace/[id]/views",
 			icon: IconUsers,
+			current: false,
+		},
+		{
+			name: "Guides",
+			href: "/workspace/[id]/guides",
+			icon: IconFileText,
 			current: false,
 		},
 		{

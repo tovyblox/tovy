@@ -3,6 +3,7 @@ import React from "react";
 import type toast from "react-hot-toast";
 import { useRecoilState } from "recoil";
 import { workspacestate } from "@/state";
+
 import { FC } from '@/types/settingsComponent'
 
 type props = {

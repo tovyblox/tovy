@@ -16,6 +16,7 @@ model workspace {
   roles        role[]
   wallposts    wallPost[]
   sessionTypes SessionType[]
+  documents	document[]
 }
 
 model config {
@@ -46,6 +47,7 @@ model user {
   roles        role[]
   wallPosts    wallPost[]
   sessions     Session[]
+  documents	   document[]
 }
 
 model role {
@@ -112,4 +114,16 @@ model ActivitySession {
   startTime DateTime
   endTime   DateTime?
   idleTime  Int?
+}
+
+model document {
+  id        String    @id @unique @default(uuid()) @db.Uuid()
+  name      String
+  content   String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  owner     user      @relation(fields: [ownerId], references: [userid])
+  ownerId   Int
+  workspace workspace @relation(fields: [workspaceGroupId], references: [groupId])
+  workspaceGroupId Int
 }
