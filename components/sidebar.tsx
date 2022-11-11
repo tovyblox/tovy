@@ -1,9 +1,9 @@
 import type { NextPage } from "next";
-import { loginState, workspacestate} from "@/state";
+import { loginState, workspacestate } from "@/state";
 import { useRecoilState } from "recoil";
 import { Menu } from "@headlessui/react";
 import { useRouter } from "next/router";
-import { IconHome, IconWall, IconClipboardList, IconSpeakerphone, IconUsers, IconSettings, IconChevronDown, IconFileText } from "@tabler/icons";
+import { IconHome, IconWall, IconClipboardList, IconSpeakerphone, IconUsers, IconSettings, IconChevronDown, IconFileText, IconLogout } from "@tabler/icons";
 import Image from "next/image";
 import axios from "axios";
 import workspace from "@/layouts/workspace";
@@ -64,17 +64,47 @@ const Topbar: NextPage = () => {
 	return (
 		<div className="sticky top-0 w-48 h-screen bg-white drop-shadow dark:bg-gray-900">
 			<div className="flex flex-col py-3 px-3 gap-2 focus-visible:bg-blue-200">
-				<button className="h-auto flex flex-row rounded-xl py-1 hover:bg-gray-200 dark:hover:bg-gray-800 dark:focus-visible:bg-gray-800 px-2 transition cursor-pointer focus-visible:bg-gray-200 focus-visible:outline-none" tabIndex={0} role="button">
-					<img
-						src={login?.thumbnail}
-						className="rounded-full bg-primary h-12 w-12 my-auto"
-					/>
-					<p className="my-auto text-sm pl-3 text-left">
-						Signed in as
-						<br />
-						<span className="font-bold">{login?.displayname}</span>
-					</p>
-				</button>
+				<Menu as="div" className="relative inline-block w-full text-left">
+					<div className="w-full">
+						<Menu.Button className="h-auto flex flex-row rounded-xl py-1 hover:bg-gray-200 dark:hover:bg-gray-800 dark:focus-visible:bg-gray-800 px-2 transition cursor-pointer focus-visible:bg-gray-200 focus-visible:outline-none w-full" tabIndex={0} role="button">
+							<img
+								src={login?.thumbnail}
+								className="rounded-full bg-primary h-12 w-12 my-auto"
+							/>
+							<p className="my-auto text-sm pl-3 text-left">
+								Signed in as
+								<br />
+								<span className="font-bold">{login?.displayname}</span>
+							</p>
+						</Menu.Button>
+					</div>
+					<Menu.Items className="absolute left-0 z-20 mt-2 w-56 origin-top-left rounded-xl bg-white dark:bg-gray-800 shadow-lg ring-1 ring-gray-300 focus-visible:outline-none">
+						<div className="py-1">
+							<Menu.Item>
+								{({ active }) => (
+									<a
+										className={`${active ? "bg-tovybg text-white" : "text-gray-700 dark:text-white"
+											}  px-3 py-2 text-sm rounded-md m-1 mb-0 font-medium flex flex-row cursor-pointer`}
+									>
+										<IconSettings size={22} className="inline-block" />
+										<p className="ml-2"> Account settings </p>
+									</a>
+								)}
+							</Menu.Item>
+							<Menu.Item>
+								{({ active }) => (
+									<a
+										className={`${active ? "bg-tovybg text-white" : "text-gray-700 dark:text-white"
+											}  px-3 py-2 text-sm rounded-md m-1 mb-0 font-medium flex flex-row cursor-pointer`}
+									>
+										<IconLogout size={22} className="inline-block" />
+										<p className="ml-2"> Logout </p>
+									</a>
+								)}
+							</Menu.Item>
+						</div>
+					</Menu.Items>
+				</Menu>
 				<button className="h-auto flex flex-row rounded-xl py-1 hover:bg-gray-200 dark:hover:bg-gray-800 dark:focus-visible:bg-gray-800 px-2 transition cursor-pointer outline-1 outline-gray-300 outline mb-1 focus-visible:bg-gray-200" tabIndex={0} role="button">
 					<img
 						src={workspace.groupThumbnail}
@@ -85,7 +115,7 @@ const Topbar: NextPage = () => {
 					</p>
 					<IconChevronDown size={18} color="#AAAAAA" className="my-auto ml-auto" />
 				</button>
-				<div className="h-[1px] rounded-xl w-full px-3 bg-gray-300 mb-1"/> 
+				<div className="h-[1px] rounded-xl w-full px-3 bg-gray-300 mb-1" />
 				{pages.map((page, i) => (
 					<button key={i} className={`h-auto flex flex-row rounded-xl  py-1 px-2 transition cursor-pointer focus-visible:outline-none  ${router.pathname === page.href ? `bg-primary text-white hover:bg-primary/50 focus-visible:bg-primary/50 dark:text-black dark:bg-white dark:focus-visible:bg-gray-300 dark:hover:bg-gray-300` : "text-black dark:text-white hover:bg-gray-200 focus-visible:bg-gray-200 dark:hover:bg-gray-800 dark:focus-visible:bg-gray-800"}`} tabIndex={0} role="button" onClick={() => gotopage(page.href)}>
 						<page.icon size={36} className="my-auto p-1" />
