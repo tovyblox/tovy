@@ -54,13 +54,15 @@ model user {
 
 model role {
   id               String        @id @unique @default(uuid()) @db.Uuid()
-  permissions      Json[]
+  permissions      String[]
   isOwnerRole      Boolean?      @default(false)
   workspace        workspace?    @relation(fields: [workspaceGroupId], references: [groupId])
   members          user[]
   workspaceGroupId Int
   name             String
   SessionType      SessionType[]
+  documents          document[]
+  groupRoles Int[]
 }
 
 model wallPost {
@@ -133,11 +135,12 @@ model inactivityNotice {
 model document {
   id        String    @id @unique @default(uuid()) @db.Uuid()
   name      String
-  content   String
+  content   Json
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   owner     user      @relation(fields: [ownerId], references: [userid])
   ownerId   Int
   workspace workspace @relation(fields: [workspaceGroupId], references: [groupId])
   workspaceGroupId Int
+  roles	 role[]
 }

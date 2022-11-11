@@ -1,13 +1,15 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { fetchworkspace, getConfig, setConfig } from '@/utils/configEngine'
-import prisma from '@/utils/database';
+import prisma, { SessionType, document } from '@/utils/database';
 import { withSessionRoute } from '@/lib/withSession'
 import { getUsername, getThumbnail, getDisplayName } from '@/utils/userinfoEngine'
 import * as noblox from 'noblox.js'
 type Data = {
 	success: boolean
 	error?: string
+	session?: SessionType
+	document?: document
 }
 
 export default withSessionRoute(handler);
@@ -17,22 +19,24 @@ export async function handler(
 	res: NextApiResponse<Data>
 ) {
 	if (req.method !== 'POST') return res.status(405).json({ success: false, error: 'Method not allowed' });
-	const role = await prisma.role.findUnique({
-		where: {
-			id: (req.query.roleid as string)
-		}
-	});
-	if (!role) return res.status(404).json({ success: false, error: 'Role not found' });
-	await prisma.role.update({
-		where: {
-			id: (req.query.roleid as string)
-		},
+	const { name, content, roles } = req.body;
+	if (!name || !content || !roles) return res.status(400).json({ success: false, error: 'Missing required fields' });
+	const { id } = req.query;
+	if (!id) return res.status(400).json({ success: false, error: 'Missing required fields' });
+	
+	const document = await prisma.document.create({
 		data: {
-			name: req.body.name || 'Untitled Role',
-			permissions: req.body.permissions || [],
-			groupRoles: req.body.groupRoles || []
+			workspaceGroupId: parseInt(id as string),
+			name,
+			ownerId: req.session.userid,
+			content,
+			roles: {
+				connect: [
+					...roles.map((role: string) => ({ id: role }))
+				]
+			}
 		}
 	});
-
-	res.status(200).json({ success: true })
+	
+	res.status(200).json({ success: true, document })
 }

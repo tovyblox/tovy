@@ -41,7 +41,7 @@ const Home: pageWithLayout<pageProps> = ({ sessions }) => {
 
 	return <div className="px-28 py-20">
 		<p className="text-4xl font-bold">Good morning, {login.displayname}</p>
-		<button className="cardBtn mt-4"><p className="font-bold text-2xl leading-5 mt-1"> New guide <br /><span className="text-gray-400 font-normal text-base "> Create a new guide for your group   </span></p> </button>
+		<button className="cardBtn mt-4" onClick={() => router.push(`/workspace/${router.query.id}/guides/new`)}><p className="font-bold text-2xl leading-5 mt-1"> New guide <br /><span className="text-gray-400 font-normal text-base "> Create a new guide for your group   </span></p> </button>
 		<p className="text-3xl font-medium mt-5 mb-5">Guides</p>
 		<div className="grid grid-cols-3 gap-5 mt-5">
 		<div className="" >

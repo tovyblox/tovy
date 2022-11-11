@@ -9,11 +9,14 @@ import { useForm } from "react-hook-form";
 import { role } from "@/utils/database";
 import Roles from "@/components/settings/permissions/roles";
 import Users from "@/components/settings/permissions/users";
+import { Role } from "noblox.js";
+
 import { useRecoilState } from "recoil";
 import axios from "axios";
 type Props = {
 	users: any[];
 	roles: role[];
+	grouproles: Role[]
 };
 
 type form = {
@@ -27,8 +30,8 @@ const Button: FC<Props> = (props) => {
 
 	return (
 		<div>
-			<Users  roles={roles} users={props.users} />
-			<Roles setRoles={setRoles} roles={roles}  />
+			<Users roles={roles} users={props.users} />
+			<Roles setRoles={setRoles} roles={roles} grouproles={props.grouproles}  />
 		</div>
 	);
 };

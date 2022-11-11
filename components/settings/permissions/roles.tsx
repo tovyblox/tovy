@@ -6,12 +6,14 @@ import { IconChevronDown } from "@tabler/icons";
 import Btn from "@/components/button";
 import { workspacestate } from "@/state";
 import { useForm } from "react-hook-form";
+import { Role } from "noblox.js";
 import { role } from "@/utils/database";
 import { useRecoilState } from "recoil";
 import axios from "axios";
 type Props = {
 	setRoles: React.Dispatch<React.SetStateAction<role[]>>;
 	roles: role[];
+	grouproles: Role[];
 };
 
 type form = {
@@ -19,14 +21,17 @@ type form = {
 	name: string;
 };
 
-const Button: FC<Props> = ({ roles, setRoles}) => {
+const Button: FC<Props> = ({ roles, setRoles, grouproles }) => {
 	const [workspace] = useRecoilState(workspacestate);
 	const permissions = {
 		"Admin (Manage workspace)": "admin",
-		"Host sessions": "host_sessions",
+		"Manage sessions": "manage_sessions",
 		"Post on wall": "post_on_wall",
 		"View wall": "view_wall",
 		"View members": "view_members",
+		"Manage members": "manage_members",
+		"Manage docs": "manage_docs",
+		"View entire groups activity": "view_entire_groups_activity",
 	};
 
 	const newRole = async () => {
@@ -40,7 +45,7 @@ const Button: FC<Props> = ({ roles, setRoles}) => {
 		}
 	};
 
-	const updateRole = async (value: string, id: number) => {
+	const updateRole = async (value: string, id: string) => {
 		console.log("uas");
 		const role = roles.find((role: any) => role.id === id);
 		if (!role) return;
@@ -49,35 +54,59 @@ const Button: FC<Props> = ({ roles, setRoles}) => {
 		setRoles([...workspace.roles, role]);
 		await axios.post(
 			`/api/workspace/${workspace.groupId}/settings/roles/${id}/update`,
-			{ name: value, permissions: role.permissions }
+			{ name: value, permissions: role.permissions, groupRoles: role.groupRoles }
 		);
 	};
 
-	const togglePermission = async (id: number, permission: string) => {
+	const togglePermission = async (id: string, permission: string) => {
 		const role = roles.find((role: any) => role.id === id);
 		if (!role) return;
 		const rroles = roles.filter((role: any) => role.id !== id);
 		if (role.permissions.includes(permission)) {
-			role.permissions = role.permissions.splice(
-				role.permissions.indexOf(permission),
-				1
+			role.permissions = role.permissions.filter(
+				(perm: any) => perm !== permission
 			);
 		} else {
 			role.permissions.push(permission);
 		}
-		setRoles([...workspace.roles, role]);
+		setRoles([...rroles, role]);
 
 		await axios.post(
 			`/api/workspace/${workspace.groupId}/settings/roles/${id}/update`,
-			{ name: role.name, permissions: role.permissions }
+			{ name: role.name, permissions: role.permissions, groupRoles: role.groupRoles }
 		);
 	};
 
+	const toggleGroupRole = async (id: string, role: Role) => {
+		const rolee = roles.find((role: any) => role.id === id);
+		if (!rolee) return;
+		const rroles = roles.filter((role: any) => role.id !== id);
+		if (rolee.groupRoles.includes(role.id)) {
+			//GET RID OF ROLE
+			rolee.groupRoles = rolee.groupRoles.filter((r) => r !== role.id);
+		} else {
+			rolee.groupRoles.push(role.id);
+		}
+		setRoles([...rroles, rolee])
+		await axios.post(
+			`/api/workspace/${workspace.groupId}/settings/roles/${id}/update`,
+			{ name: rolee.name, permissions: rolee.permissions, groupRoles: rolee.groupRoles }
+		);
+		
+	}
+
+	const aroledoesincludegrouprole = (id: string, role: Role) => {
+		const rs = roles.filter((role: any) => role.id !== id);
+		//loop through roles and check if the role includes the group role
+		for (let i = 0; i < rs.length; i++) {
+			if (rs[i].groupRoles.includes(role.id)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	//rerender when roles change
-	useEffect(() => {
-		console.log(roles);
-		setRoles(roles);
-	}, [roles]);
 
 	return (
 			<Disclosure
@@ -111,7 +140,7 @@ const Button: FC<Props> = ({ roles, setRoles}) => {
 								<Btn compact onPress={newRole}>
 									Add Role
 								</Btn>
-								{roles.map((role: any) => (
+								{roles.map((role) => (
 									<Disclosure
 										as="div"
 										key={role.id}
@@ -154,6 +183,7 @@ const Button: FC<Props> = ({ roles, setRoles}) => {
 																}
 																className="text-gray-600 dark:text-white rounded-lg p-2 border-2 mb-2 dark:border-gray-500 w-full bg-gray-50 focus-visible:outline-none dark:bg-gray-700 "
 															/>
+															<p className="text-md font-semibold"> Permissions </p>
 															{Object.keys(permissions).map(
 																(permission: string, index) => (
 																	<div
@@ -178,6 +208,34 @@ const Button: FC<Props> = ({ roles, setRoles}) => {
 																			className="rounded-sm mr-2 w-4 h-4 transform transition text-primary bg-slate-100 border-gray-300 hover:bg-gray-300 focus-visible:bg-gray-300 checked:hover:bg-primary/75 checked:focus-visible:bg-primary/75 focus:ring-0"
 																		/>
 																		<p>{permission}</p>
+																	</div>
+																)
+															)}
+															<p className="text-md font-semibold"> Group-synced roles </p>
+															{grouproles.map(
+																(r, index) => (
+																	<div
+																		key={index}
+																		className="flex items-center"
+																	>
+																		<input
+																			type="checkbox"
+																			checked={role.groupRoles.includes(
+																				r.id
+																			)}
+																			onChange={() =>
+																				toggleGroupRole(
+																					role.id,
+																					r
+																				)
+																			}
+																			disabled={aroledoesincludegrouprole(
+																				role.id,
+																				r
+																			)}
+																			className="rounded-sm mr-2 w-4 h-4 transform transition text-primary bg-slate-100 border-gray-300 hover:bg-gray-300 focus-visible:bg-gray-300 checked:hover:bg-primary/75 checked:focus-visible:bg-primary/75 disabled:bg-gray-300 focus:ring-0"
+																		/>
+																		<p>{r.name}</p>
 																	</div>
 																)
 															)}

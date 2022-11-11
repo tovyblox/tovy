@@ -34,3 +34,26 @@ a {
 		@apply px-5 py-4 bg-white rounded-md mt-3 w-full outline-[1.4px] outline-gray-300 outline text-left hover:bg-gray-200 focus-visible:bg-gray-200 transition
 	}
 }
+
+ul[data-type="taskList"] {
+	list-style: none;
+	padding: 0;
+  
+	p {
+	  margin: 0;
+	}
+  
+	li {
+	  display: flex;
+  
+	  > label {
+		flex: 0 0 auto;
+		margin-right: 0.5rem;
+		user-select: none;
+	  }
+  
+	  > div {
+		flex: 1 1 auto;
+	  }
+	}
+  }

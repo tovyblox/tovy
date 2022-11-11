@@ -3,19 +3,16 @@ import { loginState, workspacestate } from "@/state";
 import Button from "@/components/button";
 import Input from "@/components/input";
 import Workspace from "@/layouts/workspace";
-import { IconChevronRight } from "@tabler/icons";
 import { useRecoilState } from "recoil";
 import { useEffect, useState } from "react";
 import { useEditor, EditorContent } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
-import { Listbox, Switch } from "@headlessui/react";
-import { IconCheck, IconChevronDown, IconH1, IconH2, IconH3, IconH4, IconBold, IconItalic} from "@tabler/icons";
-import * as noblox from "noblox.js";
+import { IconCheck, IconChevronDown, IconH1, IconH2, IconH3, IconH4, IconBold, IconItalic, IconListDetails} from "@tabler/icons";
 import { useRouter } from "next/router";
-
 import axios from "axios";
+import TaskItem from '@tiptap/extension-task-item'
+import TaskList from '@tiptap/extension-task-list'
 import prisma from "@/utils/database";
-import Switchcomponenet from "@/components/switch";
 
 import { useForm, FormProvider } from "react-hook-form";
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
@@ -51,22 +48,30 @@ const Home: pageWithLayout<InferGetServerSidePropsType<GetServerSideProps>> = ({
 	const [selectedRoles, setSelectedRoles] = useState<string[]>([])
 	const router = useRouter();
 
-	const createSession = async () => {
-		const session = await axios.post(`/api/workspace/${workspace.groupId}/sessions/manage/new`, {
-			name: form.getValues().name,
-			schedule: {
-				enabled,
-				days,
-				time: form.getValues().time,
-				allowUnscheduled,
+	const editor = useEditor({
+		extensions: [
+			StarterKit,
+			
+		],
+		editorProps: {
+			attributes: {
+				class: 'prose lg:prose-lg xl:prose-2xl max-w-full leading-normal outline outline-1 focus:outline-blue-400 mt-2 focus:ring-blue-400 focus:ring-1 focus:ring outline-gray-300 bg-white rounded-md p-5',
 			},
-			permissions: selectedRoles
+		},
+		content: '',
+	});
+
+	const createDoc = async () => {
+		const session = await axios.post(`/api/workspace/${workspace.groupId}/guides/create`, {
+			name: form.getValues().name,
+			content: editor?.getJSON(),
+			roles: selectedRoles
 		}).catch(err => {
 			form.setError("name", { type: "custom", message: err.response.data.error })
 		});
 		if (!session) return;
 		form.clearErrors()
-		router.push(`/workspace/${workspace.groupId}/sessions/schedule`)
+		router.push(`/workspace/${workspace.groupId}/guides/${session.data.document.id}`)
 	}
 
 	const toggleRole = async (role: string) => {
@@ -80,17 +85,7 @@ const Home: pageWithLayout<InferGetServerSidePropsType<GetServerSideProps>> = ({
 		setSelectedRoles(roles);
 	}
 
-	const editor = useEditor({
-		extensions: [
-			StarterKit,
-		],
-		editorProps: {
-			attributes: {
-				class: 'prose lg:prose-lg xl:prose-2xl max-w-none leading-normal outline outline-1 focus:outline-blue-400 mt-2 focus:ring-blue-400 focus:ring-1 focus:ring outline-gray-300 bg-white rounded-md p-5',
-			},
-		},
-		content: '',
-	});
+	
 
 	const buttons = {
 		heading: [
@@ -127,12 +122,19 @@ const Home: pageWithLayout<InferGetServerSidePropsType<GetServerSideProps>> = ({
 				active: () => editor?.isActive('italic'),
 			},
 			
+		],
+		list: [
+			{
+				icon: IconListDetails,
+				function: () => editor?.chain().focus().toggleBulletList().run(),
+				active: () => editor?.isActive('bulletList'),
+			},
 		]
 
 	}
 
 	return <div className="px-6 md:px-20 lg:px-28 py-20">
-		<p className="text-4xl font-bold">New guide</p>
+		<p className="text-4xl font-bold">New document</p>
 		<FormProvider {...form}>
 			<div className=" pt-5 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-3 gap-y-2" >
 				<div className="bg-white p-4 border border-1 border-gray-300  rounded-md">
@@ -162,9 +164,9 @@ const Home: pageWithLayout<InferGetServerSidePropsType<GetServerSideProps>> = ({
 		</FormProvider>
 		<div className="mt-2 rounded-md flex gap-x-2">
 			{Object.values(buttons).map((group, index) => (
-				<div className="bg-tovybg rounded-md overflow-clip my-auto" key={index}>
+				<div className=" rounded-md overflow-clip my-auto" key={index}>
 					{group.map((button, index) => (
-						<button key={index} className={`p-2 focus:outline-none ${button.active() ? 'bg-blue-300 hover:bg-blue-100 focus-visible:bg-blue-100' : 'hover:bg-blue-300 focus-visible:bg-blue-300'}`} onClick={button.function}>
+						<button key={index} className={`p-2 focus:outline-none ${button.active() ? 'bg-primary/75 hover:bg-primary/50 focus-visible:bg-primary/50' : 'bg-primary hover:bg-primary/75 focus-visible:bg-primary/75'}`} onClick={button.function}>
 							<button.icon color="white" />
 						</button>
 					))}
@@ -174,8 +176,8 @@ const Home: pageWithLayout<InferGetServerSidePropsType<GetServerSideProps>> = ({
 		<EditorContent editor={editor} />
 
 		<div className="flex mt-2">
-			<Button classoverride="ml-0"> Back </Button>
-			<Button onPress={form.handleSubmit(createSession)}> Create </Button>
+			<Button classoverride="ml-0" workspace> Back </Button>
+			<Button onPress={form.handleSubmit(createDoc)} workspace> Create </Button>
 		</div>
 
 	</div>;

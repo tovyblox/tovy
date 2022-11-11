@@ -8,6 +8,7 @@ import { useRecoilState } from "recoil";
 import { InferGetServerSidePropsType, GetServerSideProps } from "next";
 import * as All from "@/components/settings/general"
 import toast, { Toaster } from 'react-hot-toast';
+import * as noblox from "noblox.js";
 import prisma, { role, user } from '@/utils/database'
 import { getUsername, getThumbnail, getDisplayName } from "@/utils/userinfoEngine";
 export const getServerSideProps: GetServerSideProps = async ({ params, res }) => {
@@ -17,6 +18,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params, res }) =>
 	}
 
 	//find users with a role that isnt admin
+	const grouproles = await noblox.getRoles(Number(params.id));
 	const users = await prisma.user.findMany({
 		where: {
 			roles: {
@@ -64,7 +66,8 @@ export const getServerSideProps: GetServerSideProps = async ({ params, res }) =>
 	return {
 		props: {
 			users: usersWithInfo,
-			roles
+			roles,
+			grouproles
 		}
 	}
 }
@@ -72,9 +75,10 @@ export const getServerSideProps: GetServerSideProps = async ({ params, res }) =>
 type Props = {
 	roles: []
 	users: []
+	grouproles: []
 };
 
-const Settings: pageWithLayout<Props> = ({ users, roles }) => {
+const Settings: pageWithLayout<Props> = ({ users, roles, grouproles }) => {
 	const [login, setLogin] = useRecoilState(loginState);
 
 	return <div className="px-28 py-20">
@@ -124,7 +128,7 @@ const Settings: pageWithLayout<Props> = ({ users, roles }) => {
 					})}
 				</Tab.Panel>
 				<Tab.Panel>
-					<Permissions users={users} roles={roles} />
+					<Permissions users={users} roles={roles} grouproles={grouproles}/>
 				</Tab.Panel>
 
 			</Tab.Panels>
