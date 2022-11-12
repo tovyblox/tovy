@@ -16,6 +16,7 @@ const loginState = atom({
 		thumbnail: '',
 		canMakeWorkspace: false,
 		workspaces: [] as workspaceinfo[]
+		
 	},
 });
 
@@ -26,7 +27,12 @@ const workspacestate = atom({
 		groupThumbnail: '',
 		groupName: '',
 		groupTheme: '',
-		roles: [] as role[]
+		roles: [] as role[],
+		settings: {
+			guidesEnabled: false,
+			sessionsEnabled: false,
+			noticesEnabled: false
+		}
 	}
 });
 

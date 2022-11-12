@@ -109,7 +109,7 @@ const Settings: pageWithLayout<Props> = ({ users, roles, grouproles }) => {
 				<Tab.Panel>
 					{Object.values(All).map((Component, index) => {
 						return (
-							<Disclosure as="div" className="bg-white p-4 rounded-lg mt-2 " key={index}>
+							<Disclosure as="div" className="bg-white p-4 rounded-xl mt-2 " key={index}>
 								<Disclosure.Button as="div" className="text-lg cursor-pointer flex " >{Component.title} <IconChevronDown color="#AAAAAA" className="ml-auto my-auto" size={22} /></Disclosure.Button>
 								<Transition
 									enter="transition duration-100 ease-out"

@@ -3,13 +3,14 @@ import { loginState } from "@/state";
 import Button from "@/components/button";
 import Workspace from "@/layouts/workspace";
 import { IconChevronRight } from "@tabler/icons";
+import prisma, { Session } from "@/utils/database";
 import { useRecoilState } from "recoil";
 import { InferGetServerSidePropsType, GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import axios from "axios";
 
 
-export const getServerSideProps = async () => {
+export const getServerSideProps: GetServerSideProps = async () => {
 	const sessions = await prisma.session.findMany({
 		where: {
 			startedAt: {
@@ -26,7 +27,9 @@ export const getServerSideProps = async () => {
 	}
 }
 
-type pageProps = InferGetServerSidePropsType<typeof getServerSideProps>
+type pageProps = {
+	sessions: Session[]
+}
 const Home: pageWithLayout<pageProps> = ({ sessions }) => {
 	const [login, setLogin] = useRecoilState(loginState);
 

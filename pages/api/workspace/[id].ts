@@ -14,7 +14,12 @@ type Data = {
 		groupThumbnail: string
 		groupName: string,
 		roles: role[]
-		groupTheme: string
+		groupTheme: string,
+		settings: {
+			guidesEnabled: boolean
+			sessionsEnabled: boolean
+			noticesEnabled: boolean
+		}
 	}
 }
 
@@ -53,7 +58,11 @@ export async function handler(
 		groupThumbnail: await noblox.getLogo(workspace.groupId),
 		groupName: groupinfo.name,
 		groupTheme: themeconfig,
-		roles: roles
-
+		roles: roles,
+		settings: {
+			guidesEnabled: (await getConfig('guides', workspace.groupId))?.enabled || false,
+			sessionsEnabled: (await getConfig('sessions', workspace.groupId))?.enabled || false,
+			noticesEnabled: false
+		}
 	} })
 }

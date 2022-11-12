@@ -2,6 +2,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import prisma from '@/utils/database';
 import { withSessionRoute } from '@/lib/withSession'
+import { red } from 'tailwindcss/colors';
 type Data = {
 	success: boolean
 	error?: string
@@ -14,15 +15,24 @@ export async function handler(
 	res: NextApiResponse<Data>
 ) {
 	if (req.method !== 'POST') return res.status(405).json({ success: false, error: 'Method not allowed' })
-	if (req.headers.authorization !== "12345") return res.status(401).json({ success: false, error: "Unauthorized" })
+	const config = await prisma.config.findFirst({
+		where: {
+			value: {
+				path: ["key"],
+				equals: req.headers.authorization
+			}
+		}
+	})
+	if (!config) return res.status(401).json({ success: false, error: "Unauthorized" })
 	if (!req.body.userid) return res.status(400).json({ success: false, error: "Missing user ID from request body" })
-	if (typeof req.body.userid !== "number") return res.status(400).json({ success: false, error: "User ID not a number" })
+	if (typeof req.body.userid !== "number") return res.status(400).json({ success: false, error: "User ID not a number" });
 
-	if (req.query.type == "create"){
+	if (req.query.type == "create") {
 		const session = await prisma.activitySession.findMany({
 			where: {
 				userId: req.body.userid,
-				active: true
+				active: true,
+				workspaceGroupId: config.workspaceGroupId
 			}
 		})
 	
@@ -32,7 +42,8 @@ export async function handler(
 				data: {
 					userId: req.body.userid,
 					active: true,
-					startTime: new Date()
+					startTime: new Date(),
+					workspaceGroupId: config.workspaceGroupId
 				}
 			});
 		
@@ -45,7 +56,8 @@ export async function handler(
 		const session = await prisma.activitySession.findMany({
 			where: {
 				userId: req.body.userid,
-				active: true
+				active: true,
+				workspaceGroupId: config.workspaceGroupId
 			}
 		})
 
