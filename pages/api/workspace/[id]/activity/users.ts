@@ -25,10 +25,16 @@ export async function handler(
 	if (req.method !== 'GET') return res.status(405).json({ success: false, error: 'Method not allowed' });
 	if (!req.session.userid) return res.status(401).json({ success: false, error: 'Not logged in' });
 
-	const sessions = await prisma.activitySession.findMany();
+	const sessions = await prisma.activitySession.findMany({
+		where: {
+			workspaceGroupId: parseInt(req.query.id as string)
+		}
+	});
+	
 	const activeSession = await prisma.activitySession.findMany({
 		where: {
-			active: true
+			active: true,
+			workspaceGroupId: parseInt(req.query.id as string)
 		},
 		select: {
 			userId: true
@@ -36,7 +42,8 @@ export async function handler(
 	})
 	const inactiveSession = await prisma.activitySession.findMany({
 		where: {
-			active: false
+			active: false,
+			workspaceGroupId: parseInt(req.query.id as string)
 		},
 		select: {
 			userId: true
