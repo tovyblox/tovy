@@ -44,8 +44,8 @@ const Topbar: NextPage = () => {
 			current: false,
 		},
 		{
-			name: "Guides",
-			href: "/workspace/[id]/guides",
+			name: "Docs",
+			href: "/workspace/[id]/docs",
 			icon: IconFileText,
 			accessable: workspace.settings.guidesEnabled,
 			current: false,

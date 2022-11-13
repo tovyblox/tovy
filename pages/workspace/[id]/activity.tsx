@@ -54,7 +54,7 @@ const Views: pageWithLayout = () => {
 			<div className="bg-white p-4 rounded-md">
 				<p className="font-bold text-2xl leading-4 mt-1">Top staff</p>
 				<p className="text-gray-500 text-xl mt-2">Leading members of the staff team in activity</p>
-				<div className="grid gap-1 grid-cols-12">
+				<div className="grid gap-1 grid-cols-6">
 					{topStaff.map((user: any) => (
 						<img
 							key={user.userId}
@@ -68,7 +68,7 @@ const Views: pageWithLayout = () => {
 			<div className="bg-white p-4 rounded-md">
 				<p className="font-bold text-2xl leading-4 mt-1">Inactive right now</p>
 				<p className="text-gray-500 text-xl mt-2">Staff which are not in-game</p>
-				<div className="grid gap-1 grid-cols-12">
+				<div className="grid gap-1 grid-cols-6">
 					{inactiveUsers.map((user: any) => (
 						<img
 							key={user}

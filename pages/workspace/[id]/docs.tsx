@@ -45,14 +45,18 @@ const Home: pageWithLayout<pageProps> = ({ documents }) => {
 
 	const router = useRouter();
 
+	const goToGuide = (id: string) => {
+		router.push(`/workspace/${router.query.id}/docs/${id}`);
+	}
+
 	return <div className="px-28 py-20">
 		<p className="text-4xl font-bold">Good morning, {login.displayname}</p>
-		<button className="cardBtn mt-4" onClick={() => router.push(`/workspace/${router.query.id}/guides/new`)}><p className="font-bold text-2xl leading-5 mt-1"> New guide <br /><span className="text-gray-400 font-normal text-base "> Create a new guide for your group   </span></p> </button>
+		<button className="cardBtn mt-4" onClick={() => router.push(`/workspace/${router.query.id}/docs/new`)}><p className="font-bold text-2xl leading-5 mt-1"> New guide <br /><span className="text-gray-400 font-normal text-base "> Create a new guide for your group   </span></p> </button>
 		<p className="text-3xl font-medium mt-5 mb-5">Guides</p>
 		<div className="grid grid-cols-3 gap-5 mt-5">
 			{documents.map((document) => (
-				<div className="" key={document.id}>
-					<div className="px-5 py-4 backdrop-blur flex cardBtn">
+				<div className="" key={document.id} onClick={() => goToGuide(document.id)}>
+					<div className="px-5 py-4 backdrop-blur flex cardBtn cursor-pointer">
 						<div><p className="text-xl font-bold"> {document.name} </p>
 							<div className="flex mt-1">
 								<img src={document.owner?.picture} className="bg-primary rounded-full w-8 h-8 my-auto" />
