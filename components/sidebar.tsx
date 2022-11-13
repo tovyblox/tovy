@@ -71,6 +71,7 @@ const Topbar: NextPage = () => {
 						<Menu.Button className="h-auto flex flex-row rounded-xl py-1 hover:bg-gray-200 dark:hover:bg-gray-800 dark:focus-visible:bg-gray-800 px-2 transition cursor-pointer focus-visible:bg-gray-200 focus-visible:outline-none w-full" tabIndex={0} role="button">
 							<img
 								src={login?.thumbnail}
+								alt="image url"
 								className="rounded-full bg-primary h-12 w-12 my-auto"
 							/>
 							<p className="my-auto text-sm pl-3 text-left">
@@ -112,6 +113,7 @@ const Topbar: NextPage = () => {
 					<Listbox.Button className="h-auto w-full flex flex-row rounded-xl py-1 hover:bg-gray-200 dark:hover:bg-gray-800 dark:focus-visible:bg-gray-800 px-2 transition cursor-pointer outline-1 outline-gray-300 outline mb-1 focus-visible:bg-gray-200">
 						<img
 							src={workspace.groupThumbnail}
+							alt="group name"
 							className="rounded-full h-[36px] w-[36px] my-auto p-1"
 						/>
 						<p className="my-auto text-xl pl-2 font-medium">
@@ -134,6 +136,7 @@ const Topbar: NextPage = () => {
 											<div className="flex items-center">
 												<img
 													src={workspace.groupThumbnail}
+													alt="group name"
 													className="rounded-full h-[32px] w-[32px] my-auto p-0"
 												/>
 												<span

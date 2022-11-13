@@ -3,18 +3,26 @@ import { pageWithLayout } from "@/layoutTypes";
 import { loginState } from "@/state";
 import { getUsername, getThumbnail, getDisplayName } from '@/utils/userinfoEngine'
 import axios from "axios";
+import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
 
 const Views: pageWithLayout = () => {
+	const router = useRouter();
+	const { id } = router.query;
+
 	const [login, setLogin] = useRecoilState(loginState);
 	const [activeUsers, setActiveUsers] = useState([]);
 	const [inactiveUsers, setInactiveUsers] = useState([]);
 	const [topStaff, setTopStaff] = useState([]);
+
+	async function resetActivity(){
+		await axios.post(`/api/workspace/${id}/activity/reset`)
+	}
 	
 	useEffect(() => {
 		async function fetchUsers(){
-			return await axios.get("/api/activity/users");
+			return await axios.get(`/api/workspace/${id}/activity/users`);
 		}
 
 		function setData(){
@@ -29,7 +37,7 @@ const Views: pageWithLayout = () => {
 		const interval = setInterval(setData, 10000);
 
 		return () => clearInterval(interval);
-	}, []);
+	}, [id]);
 
 	return <div className="px-28 py-20 space-y-4">
 		<p className="text-4xl font-bold">Good morning, {login.displayname}</p>

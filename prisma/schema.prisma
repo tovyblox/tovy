@@ -11,12 +11,12 @@ datasource db {
 }
 
 model workspace {
-  groupId      Int           @id @unique
-  config       config[]
-  roles        role[]
-  wallposts    wallPost[]
-  sessionTypes SessionType[]
-  documents	document[]
+  groupId           Int                @id @unique
+  config            config[]
+  roles             role[]
+  wallposts         wallPost[]
+  sessionTypes      SessionType[]
+  documents         document[]
   activitySessions  ActivitySession[]
   inactivityNotices inactivityNotice[]
 }
@@ -40,16 +40,17 @@ model instanceConfig {
 }
 
 model user {
-  userid       Int        @id @unique
-  passwordhash String
-  tfa          String?
-  isOwner      Boolean?
-  picture      String?
-  username     String?
-  roles        role[]
-  wallPosts    wallPost[]
-  sessions     Session[]
-  documents	   document[]
+  userid            Int                @id @unique
+  passwordhash      String
+  tfa               String?
+  isOwner           Boolean?
+  picture           String?
+  username          String?
+  roles             role[]
+  wallPosts         wallPost[]
+  sessions          Session[]
+  documents         document[]
+  inactivityNotices inactivityNotice[]
 }
 
 model role {
@@ -61,8 +62,8 @@ model role {
   workspaceGroupId Int
   name             String
   SessionType      SessionType[]
-  documents          document[]
-  groupRoles Int[]
+  documents        document[]
+  groupRoles       Int[]
 }
 
 model wallPost {
@@ -128,19 +129,21 @@ model inactivityNotice {
   startTime        DateTime
   endTime          DateTime?
   reason           String
+  approved         Boolean?   @default(false)
+  user             user?      @relation(fields: [userId], references: [userid])
   workspace        workspace? @relation(fields: [workspaceGroupId], references: [groupId])
   workspaceGroupId Int
 }
 
 model document {
-  id        String    @id @unique @default(uuid()) @db.Uuid()
-  name      String
-  content   Json
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  owner     user      @relation(fields: [ownerId], references: [userid])
-  ownerId   Int
-  workspace workspace @relation(fields: [workspaceGroupId], references: [groupId])
+  id               String    @id @unique @default(uuid()) @db.Uuid()
+  name             String
+  content          Json
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  owner            user      @relation(fields: [ownerId], references: [userid])
+  ownerId          Int
+  workspace        workspace @relation(fields: [workspaceGroupId], references: [groupId])
   workspaceGroupId Int
-  roles	 role[]
+  roles            role[]
 }
