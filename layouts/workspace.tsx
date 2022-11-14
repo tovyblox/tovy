@@ -46,6 +46,10 @@ const workspace: LayoutProps = ({ children }) => {
 					router.push('/')
 					return;
 				}
+				if (e?.response?.status === 401) {
+					router.push('/')
+					return;
+				}
 				if (e?.response?.status === 404) {
 					router.push('/')
 					return;

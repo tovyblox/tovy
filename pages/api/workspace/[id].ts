@@ -3,6 +3,7 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 import { fetchworkspace, getConfig, setConfig } from '@/utils/configEngine'
 import prisma, { role } from '@/utils/database';
 import { withSessionRoute } from '@/lib/withSession'
+import { withPermissionCheck } from '@/utils/permissionsManager'
 import { getUsername, getThumbnail, getDisplayName } from '@/utils/userinfoEngine'
 import * as noblox from 'noblox.js'
 
@@ -23,7 +24,7 @@ type Data = {
 	}
 }
 
-export default withSessionRoute(handler);
+export default withPermissionCheck(handler);
 
 export async function handler(
 	req: NextApiRequest,
