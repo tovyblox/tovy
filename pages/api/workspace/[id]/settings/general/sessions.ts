@@ -2,7 +2,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { fetchworkspace, getConfig, setConfig } from '@/utils/configEngine'
 import prisma, {role} from '@/utils/database';
-import { withSessionRoute } from '@/lib/withSession'
+import { withPermissionCheck } from '@/utils/permissionsManager'
 import { getUsername, getThumbnail, getDisplayName } from '@/utils/userinfoEngine'
 import * as noblox from 'noblox.js'
 import { get } from 'react-hook-form';
@@ -12,7 +12,7 @@ type Data = {
 	color?: string
 }
 
-export default withSessionRoute(handler);
+export default withPermissionCheck(handler, 'admin');
 
 export async function handler(
 	req: NextApiRequest,

@@ -10,6 +10,7 @@ import * as noblox from 'noblox.js'
 type Data = {
 	success: boolean
 	error?: string
+	permissions?: string[]
 	workspace?: {
 		groupId: number
 		groupThumbnail: string
@@ -20,6 +21,7 @@ type Data = {
 			guidesEnabled: boolean
 			sessionsEnabled: boolean
 			noticesEnabled: boolean
+			widgets: string[]
 		}
 	}
 }
@@ -53,8 +55,26 @@ export async function handler(
 		}
 	})
 	let groupinfo = await noblox.getGroup(workspace.groupId)
+
+	const user = await prisma.user.findUnique({
+		where: {
+			userid: req.session.userid
+		},
+		include: {
+			roles: {
+				where: {
+					workspaceGroupId: workspace.groupId
+				}
+			}
+		}
+	})
+
+	if (!user) return res.status(401).json({ success: false, error: 'Not logged in' })
+	if (!user.roles.length) return res.status(401).json({ success: false, error: 'Not logged in' })
+
 	
-	res.status(200).json({ success: true, workspace: {
+	
+	res.status(200).json({ success: true, permissions: user.roles[0].permissions, workspace: {
 		groupId: workspace.groupId,
 		groupThumbnail: await noblox.getLogo(workspace.groupId),
 		groupName: groupinfo.name,
@@ -63,7 +83,8 @@ export async function handler(
 		settings: {
 			guidesEnabled: (await getConfig('guides', workspace.groupId))?.enabled || false,
 			sessionsEnabled: (await getConfig('sessions', workspace.groupId))?.enabled || false,
-			noticesEnabled: false
+			noticesEnabled: false,
+			widgets: (await getConfig('home', workspace.groupId))?.widgets || []
 		}
 	} })
 }

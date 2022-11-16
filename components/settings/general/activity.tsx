@@ -88,7 +88,7 @@ const Activity: FC<props> = (props) => {
 
 				</Listbox.Options>
 			</Listbox>
-			<Button onPress={downloadLoader}>
+			<Button onPress={downloadLoader} workspace>
 				Download loader
 			</Button>
 		</div>

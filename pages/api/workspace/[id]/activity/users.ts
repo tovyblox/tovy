@@ -1,6 +1,7 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from 'next'
 import prisma from '@/utils/database';
+import { withPermissionCheck } from '@/utils/permissionsManager'
 import { withSessionRoute } from '@/lib/withSession'
 type Data = {
 	success: boolean
@@ -16,7 +17,7 @@ type TopStaff = {
 	ms: number;
 }
 
-export default withSessionRoute(handler);
+export default withPermissionCheck(handler, 'view_entire_groups_activity');
 
 export async function handler(
 	req: NextApiRequest,

@@ -117,7 +117,7 @@ const Topbar: NextPage = () => {
 							className="rounded-full h-[36px] w-[36px] my-auto p-1"
 						/>
 						<p className="my-auto text-xl pl-2 font-medium">
-							Tovy
+							{workspace.groupName}
 						</p>
 						<IconChevronDown size={18} color="#AAAAAA" className="my-auto ml-auto" />
 					</Listbox.Button>
