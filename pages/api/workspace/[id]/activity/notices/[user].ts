@@ -3,6 +3,7 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 import { fetchworkspace, getConfig, setConfig } from '@/utils/configEngine'
 import prisma from '@/utils/database';
 import { withSessionRoute } from '@/lib/withSession'
+import { withPermissionCheck } from '@/utils/permissionsManager'
 import { getUsername, getThumbnail, getDisplayName } from '@/utils/userinfoEngine'
 import * as noblox from 'noblox.js'
 import { inactivityNotice } from '@prisma/client';
@@ -12,7 +13,7 @@ type Data = {
 	notices?: inactivityNotice[]
 };
 
-export default withSessionRoute(handler);
+export default withPermissionCheck(handler, 'manage_activity');
 
 export async function handler(
 	req: NextApiRequest,

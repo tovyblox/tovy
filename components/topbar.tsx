@@ -56,7 +56,7 @@ const Topbar: NextPage = () => {
 											className="rounded-full bg-gray-400 h-8 w-8 my-auto"
 										/>
 										<div className="ml-2"> Signed in as <br />
-											<span className="font-medium"> ItsWHOOOP </span> </div>
+											<span className="font-medium"> {login.username} </span> </div>
 									</a>
 								</Menu.Item>
 								<div className="w-full h-px bg-gray-200 dark:bg-gray-600"></div>
