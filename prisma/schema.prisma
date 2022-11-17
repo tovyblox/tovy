@@ -130,6 +130,7 @@ model inactivityNotice {
   endTime          DateTime?
   reason           String
   approved         Boolean?   @default(false)
+  reviewed         Boolean?   @default(false)
   user             user?      @relation(fields: [userId], references: [userid])
   workspace        workspace? @relation(fields: [workspaceGroupId], references: [groupId])
   workspaceGroupId Int

@@ -18,14 +18,15 @@ export async function handler(
 ) {
 	if (req.method !== 'POST') return res.status(405).json({ success: false, error: 'Method not allowed' })
 	if (!req.session.userid) return res.status(401).json({ success: false, error: 'Not logged in' });
-	if (!req.body.userId || !req.body.startTime || !req.body.reason) return res.status(400).json({ success: false, error: "Missing data" });
-	if (typeof req.body.userId !== "number" || typeof req.body.startTime !== "number") return res.status(400).json({ success: false, error: "Invalid type(s)" });
+	if (!req.body.startTime || !req.body.endTime || !req.body.reason) return res.status(400).json({ success: false, error: "Missing data" });
+	if (typeof req.body.startTime !== "number" || typeof req.body.endTime !== "number") return res.status(400).json({ success: false, error: "Invalid type(s)" });
 
 	try {
 		await prisma.inactivityNotice.create({
 			data: {
-				userId: req.body.userId,
+				userId: req.session.userid,
 				startTime: new Date(req.body.startTime),
+				endTime: new Date(req.body.endTime),
 				reason: req.body.reason,
 				workspaceGroupId: parseInt(req.query.id as string)
 			}
