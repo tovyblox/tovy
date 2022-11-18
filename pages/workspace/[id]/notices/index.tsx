@@ -64,9 +64,9 @@ const Views: pageWithLayout<pageProps> = ({ notices }) => {
 				loading: "Creating your inactivity notice...",
 				success: () => {
 					setIsOpen(false);
-					return <b>Inactivity notice submitted!</b>;
+					return "Inactivity notice submitted!";
 				},
-				error: <b>Inactivity notice was not created due to an unknown error.</b>
+				error: "Inactivity notice was not created due to an unknown error."
 			}
 		);
 	}
