@@ -5,6 +5,7 @@ import { useRecoilState } from "recoil";
 type Props = {
 	children: ReactNode;
 	onPress?: () => void;
+	onClick?: () => void;
 	classoverride?: string;
 	loading?: boolean | false;
 	workspace?: boolean | false;
@@ -12,10 +13,10 @@ type Props = {
 	disabled?: boolean | false;
 };
 
-const Button: FC<Props> = ({ children, onPress, loading, classoverride, workspace, compact, disabled }: Props) => {
+const Button: FC<Props> = ({ children, onPress, loading, classoverride, workspace, compact, disabled, onClick }: Props) => {
 	return (
 		<button
-			onClick={onPress}
+			onClick={onPress || onClick}
 			disabled={disabled}
 			className={twMerge(`ml-auto bg-[#2196F3] ${compact ? 'py-2 px-4' : 'py-3 px-6'} transition text-sm rounded-xl text-white ${!workspace ? "hover:bg-blue-300  focus-visible:bg-blue-300 disabled:bg-blue-300/50" : "bg-primary hover:bg-primary/50 focus-visible:bg-primary/50 disabled:bg-primary/50"} dark:hover:bg-gray-300 dark:focus-visible:bg-gray-300 dark:bg-white dark:disabled:bg-white/50 dark:text-black font-bold focus-visible:outline-none `, classoverride)}
 		>

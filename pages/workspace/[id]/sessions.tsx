@@ -7,6 +7,7 @@ import prisma, { Session } from "@/utils/database";
 import { useRecoilState } from "recoil";
 import { InferGetServerSidePropsType, GetServerSideProps } from "next";
 import { useRouter } from "next/router";
+import { useState } from "react";
 import axios from "axios";
 
 
@@ -30,21 +31,21 @@ export const getServerSideProps: GetServerSideProps = async () => {
 type pageProps = {
 	sessions: Session[]
 }
-const Home: pageWithLayout<pageProps> = ({ sessions }) => {
+const Home: pageWithLayout<pageProps> = (props) => {
 	const [login, setLogin] = useRecoilState(loginState);
+	const [sessions, setSessions] = useState(props.sessions);
 
 	const router = useRouter();
 
 	const endSession = async (id: string) => {
-		await axios.post(`/api/workspace/${router.query.id}/sessions/manage/${id}/end`, {});
-		sessions.splice(sessions.findIndex(s => s.id === id), 1);
+		await axios.delete(`/api/workspace/${router.query.id}/sessions/manage/${id}/end`, {});
+		setSessions(sessions.filter((session) => session.id !== id));
 	}
 		
 
 
 	return <div className="px-28 py-20">
 		<p className="text-4xl font-bold">Good morning, {login.displayname}</p>
-		<button className="cardBtn"><p className="font-bold text-2xl leading-5 mt-1"> Host now <br /><span className="text-gray-400 font-normal text-base "> This workspace allows you to host unscheduled sessions   </span></p> </button>
 		<p className="text-3xl font-medium mt-5 mb-5">Ongoing sessions</p>
 		{sessions.map(session => (
 			<div className="" key={session.id}>
@@ -56,7 +57,7 @@ const Home: pageWithLayout<pageProps> = ({ sessions }) => {
 								<p className="font-semibold pl-2 leading-5 my-auto"> Hosted by ItsWHOOOP <br /> <span className="text-red-500"> Slocked </span> </p>
 							</div>
 						</div>
-						<Button classoverride="my-auto ml-auto"> End </Button>
+						<Button classoverride="my-auto ml-auto" onClick={() => endSession(session.id)}> End </Button>
 						<Button classoverride="my-auto ml-3 py-3 px-3"> <IconChevronRight size={22} /> </Button>
 					</div>
 				</div>
