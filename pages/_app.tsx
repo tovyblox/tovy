@@ -8,11 +8,32 @@ import { setRecoil } from "recoil-nexus";
 import { useEffect, useState, ReactNode, ReactElement } from "react";
 import Router from "next/router";
 import axios from "axios";
+import {
+	Chart as ChartJS,
+	CategoryScale,
+	LinearScale,
+	BarElement,
+	Title,
+	Tooltip,
+	Legend,
+	PointElement,
+	LineElement
+} from "chart.js";
 
 type AppPropsWithLayout = AppProps & {
 	Component: pageWithLayout
 };
 
+ChartJS.register(
+	CategoryScale,
+	LinearScale,
+	BarElement,
+	Title,
+	Tooltip,
+	Legend,
+	PointElement,
+	LineElement
+);
 
 function MyApp({ Component, pageProps }: AppPropsWithLayout) {
   const [loading, setLoading] = useState(true);

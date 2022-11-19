@@ -3,7 +3,7 @@ import { loginState, workspacestate } from "@/state";
 import { useRecoilState } from "recoil";
 import { Menu, Listbox } from "@headlessui/react";
 import { useRouter } from "next/router";
-import { IconHome, IconWall, IconClipboardList, IconSpeakerphone, IconUsers, IconSettings, IconChevronDown, IconFileText, IconLogout, IconCheck } from "@tabler/icons";
+import { IconHome, IconWall, IconClipboardList, IconSpeakerphone, IconUsers, IconSettings, IconChevronDown, IconFileText, IconLogout, IconCheck, IconUser } from "@tabler/icons";
 import Image from "next/image";
 import axios from "axios";
 import workspace from "@/layouts/workspace";
@@ -83,6 +83,18 @@ const Topbar: NextPage = () => {
 					</div>
 					<Menu.Items className="absolute left-0 z-20 mt-2 w-56 origin-top-left rounded-xl bg-white dark:bg-gray-800 shadow-lg ring-1 ring-gray-300 focus-visible:outline-none">
 						<div className="py-1">
+							<Menu.Item>
+								{({ active }) => (
+									<a
+										className={`${active ? "bg-tovybg text-white" : "text-gray-700 dark:text-white"
+											}  px-3 py-2 text-sm rounded-md m-1 mb-0 font-medium flex flex-row cursor-pointer`}
+										href={`/workspace/${workspace.groupId}/profile/${login.userId}`}
+									>
+										<IconUser size={22} className="inline-block" />
+										<p className="ml-2"> Profile </p>
+									</a>
+								)}
+							</Menu.Item>
 							<Menu.Item>
 								{({ active }) => (
 									<a
