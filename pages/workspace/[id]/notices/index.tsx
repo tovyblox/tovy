@@ -46,7 +46,7 @@ export const getServerSideProps = withSessionSsr(
 )
 
 type pageProps = InferGetServerSidePropsType<typeof getServerSideProps>
-const Views: pageWithLayout<pageProps> = ({ notices }) => {
+const Notices: pageWithLayout<pageProps> = ({ notices }) => {
 	const router = useRouter();
 	const { id } = router.query;
 	
@@ -156,6 +156,6 @@ const Views: pageWithLayout<pageProps> = ({ notices }) => {
 	</>;
 }
 
-Views.layout = workspace
+Notices.layout = workspace
 
-export default Views
+export default Notices

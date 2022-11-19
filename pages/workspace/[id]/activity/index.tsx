@@ -8,7 +8,7 @@ import { useEffect, useState, Fragment } from "react";
 import { useRecoilState } from "recoil";
 import toast, { Toaster } from 'react-hot-toast';
 
-const Views: pageWithLayout = () => {
+const Activity: pageWithLayout = () => {
 	const router = useRouter();
 	const { id } = router.query;
 
@@ -122,6 +122,6 @@ const Views: pageWithLayout = () => {
 	</>;
 }
 
-Views.layout = workspace
+Activity.layout = workspace
 
-export default Views
+export default Activity
