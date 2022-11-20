@@ -3,21 +3,37 @@ import Book from "@/components/profile/book";
 import Notices from "@/components/profile/notices";
 import workspace from "@/layouts/workspace";
 import { pageWithLayout } from "@/layoutTypes";
+import { withSessionSsr } from "@/lib/withSession";
 import { loginState } from "@/state";
 import { Tab } from "@headlessui/react";
 import { InferGetServerSidePropsType } from "next";
+import { GetServerSideProps } from "next/types";
 import { useRecoilState } from "recoil";
 
-export const getServerSideProps = async () => {
-	return {
-		props: {
-			
-		}
-	};
-}
+export const getServerSideProps = withSessionSsr(
+	async ({ params, req }) => {
+		const notices = await prisma.inactivityNotice.findMany({
+			where: {
+				userId: req.session.userid,
+				workspaceGroupId: parseInt(params?.id as string),
+			},
+			orderBy: [
+				{
+					startTime: "desc"
+				}
+			]
+		});
+	
+		return {
+			props: {
+				notices: (JSON.parse(JSON.stringify(notices)) as typeof notices)
+			}
+		};
+	}
+)
 
 type pageProps = InferGetServerSidePropsType<typeof getServerSideProps>
-const Profile: pageWithLayout<pageProps> = () => {
+const Profile: pageWithLayout<pageProps> = ({ notices }) => {
 	const [login, setLogin] = useRecoilState(loginState)
 
 	return <div className="px-28 py-20">
@@ -52,13 +68,13 @@ const Profile: pageWithLayout<pageProps> = () => {
 			
 			<Tab.Panels>
 				<Tab.Panel>
-					<Activity test="ok" />
+					<Activity timeSpent={280} timesPlayed={12} data="test" />
 				</Tab.Panel>
 				<Tab.Panel>
 					<Book />
 				</Tab.Panel>
 				<Tab.Panel>
-					<Notices />
+					<Notices notices={notices} />
 				</Tab.Panel>
 			</Tab.Panels>
 		</Tab.Group>
