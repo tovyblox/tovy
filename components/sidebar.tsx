@@ -33,7 +33,7 @@ const Topbar: NextPage = () => {
 		{
 			name: "Sessions",
 			href: "/workspace/[id]/sessions",
-			accessable: workspace.settings.sessionsEnabled,
+			accessible: workspace.settings.sessionsEnabled,
 			icon: IconSpeakerphone,
 			current: false,
 		},
@@ -47,7 +47,7 @@ const Topbar: NextPage = () => {
 			name: "Docs",
 			href: "/workspace/[id]/docs",
 			icon: IconFileText,
-			accessable: workspace.settings.guidesEnabled,
+			accessible: workspace.settings.guidesEnabled,
 			current: false,
 		},
 		{
@@ -177,7 +177,7 @@ const Topbar: NextPage = () => {
 				</Listbox>
 				<div className="h-[1px] rounded-xl w-full px-3 bg-gray-300 mb-1" />
 				{pages.map((page, i) => (
-					(page.accessable?.valueOf ? page.accessable : true) && (
+					(page.accessible?.valueOf ? page.accessible : true) && (
 						<button key={i} className={`h-auto flex flex-row rounded-xl  py-1 px-2 transition cursor-pointer focus-visible:outline-none  ${router.pathname === page.href ? `bg-primary text-white hover:bg-primary/50 focus-visible:bg-primary/50 dark:text-black dark:bg-white dark:focus-visible:bg-gray-300 dark:hover:bg-gray-300` : "text-black dark:text-white hover:bg-gray-200 focus-visible:bg-gray-200 dark:hover:bg-gray-800 dark:focus-visible:bg-gray-800"}`} tabIndex={0} role="button" onClick={() => gotopage(page.href)}>
 							<page.icon size={36} className="my-auto p-1" />
 							<p className="my-auto text-xl pl-2 font-medium">

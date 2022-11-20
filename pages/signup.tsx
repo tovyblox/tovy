@@ -8,11 +8,13 @@ import Router from "next/router";
 import Slider from "@/components/slider";
 import Input from "@/components/input";
 import axios from "axios";
+
 type FormData = {
 	password: string;
 	verifypassword: string;
 };
-const Login: NextPage = ({ }) => {
+
+const SignUp: NextPage = ({ }) => {
 	const [selectedColor, setSelectedColor] = useState("bg-[#2196f3]");
 	const [login, setLogin] = useRecoilState(loginState);
 	const [code, setCode] = useState("");
@@ -77,13 +79,13 @@ const Login: NextPage = ({ }) => {
 			<Slider activeSlide={selectedSlide}>
 				<div>
 					<p className="font-bold text-2xl ">Create an account</p>
-					<p className="text-md -mt-1 text-gray-500 dark:text-gray-200">
-						Create a new account for this groups Tovy
+					<p className="text-md text-gray-500 dark:text-gray-200">
+						Create a new account for this group's Tovy
 					</p>
 					<FormProvider {...methods}>
 						<form className="mb-8 mt-2" onSubmit={handleSubmit(nextSlide)}>
 							<Input
-								placeholder="TheCakeChicken"
+								placeholder="Username"
 								label="Username"
 								id="username"
 								{...register("username", { required: { value: true, message: "This field is required" } })}
@@ -96,11 +98,11 @@ const Login: NextPage = ({ }) => {
 						</Button>
 					</div>
 				</div>
-				<div >
+				<div>
 					<p className="font-bold text-2xl" id="2">
 						Make your Tovy account
 					</p>
-					<p className="text-md -mt-1 text-gray-500 dark:text-gray-200">
+					<p className="text-md text-gray-500 dark:text-gray-200">
 						You need to create a Tovy account to continue
 					</p>
 					<FormProvider {...signupform}>
@@ -124,23 +126,23 @@ const Login: NextPage = ({ }) => {
 						</Button>
 					</div>
 				</div>
-				<div >
+				<div>
 					<p className="font-bold text-2xl" id="2">
-						Verify your roblox account
+						Verify your Roblox account
 					</p>
-					<p className="text-md -mt-1 text-gray-500 dark:text-gray-200">
-						You need to verify your roblox account to continue
+					<p className="text-md text-gray-500 dark:text-gray-200">
+						You need to verify your Roblox account to continue
 					</p>
 
 					<p className="text-lg text-gray-500 dark:text-gray-200 text-center mt-2 leading-10">
-						Paste the below code into your roblox profile 
+						Paste the below code into your Roblox profile
 						<br />
 						<code className="bg-gray-600 p-2 rounded-lg">{code}</code>
 					</p>
 
 					{!!verificationError && <p className=" text-center mt-4"><span className="bg-red-600 p-2 mt-2 rounded-lg"> Verification not found</span></p>}
-					
-					
+
+
 
 					<div className="mt-7 flex">
 						<button
@@ -151,16 +153,15 @@ const Login: NextPage = ({ }) => {
 						</button>
 						<button
 							onClick={signupform.handleSubmit(createAccount)}
-							className="ml-4 bg-[#2196F3] py-3 text-sm rounded-xl px-6  text-white font-bold hover:bg-blue-300 transition "
+							className="ml-4 bg-[#2196F3] py-3 text-sm rounded-xl px-6 text-white font-bold hover:bg-blue-300 transition"
 						>
 							Verify
 						</button>
 					</div>
 				</div>
-				
 			</Slider>
 		</div>
 	);
 };
 
-export default Login;
+export default SignUp;

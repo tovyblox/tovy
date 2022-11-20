@@ -18,7 +18,7 @@ const Button: FC<Props> = ({ children, onPress, loading, classoverride, workspac
 		<button
 			onClick={onPress || onClick}
 			disabled={disabled}
-			className={twMerge(`ml-auto bg-[#2196F3] ${compact ? 'py-2 px-4' : 'py-3 px-6'} transition text-sm rounded-xl text-white ${!workspace ? "hover:bg-blue-300  focus-visible:bg-blue-300 disabled:bg-blue-300/50" : "bg-primary hover:bg-primary/50 focus-visible:bg-primary/50 disabled:bg-primary/50"} dark:hover:bg-gray-300 dark:focus-visible:bg-gray-300 dark:bg-white dark:disabled:bg-white/50 dark:text-black font-bold focus-visible:outline-none `, classoverride)}
+			className={twMerge(`ml-auto bg-[#2196F3] ${compact ? 'py-2 px-4' : 'py-3 px-5'} transition rounded-xl text-sm text-white ${!workspace ? "hover:bg-blue-300  focus-visible:bg-blue-300 disabled:bg-blue-300/50" : "bg-primary hover:bg-primary/50 focus-visible:bg-primary/50 disabled:bg-primary/50"} dark:hover:bg-gray-300 dark:focus-visible:bg-gray-300 dark:bg-white dark:disabled:bg-white/50 dark:text-black focus-visible:outline-none `, classoverride)}
 		>
 			{loading ? (
 				<svg
