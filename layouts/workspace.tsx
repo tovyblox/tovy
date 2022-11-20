@@ -14,7 +14,7 @@ import { useEffect } from "react";
 const workspace: LayoutProps = ({ children }) => {
 	const [workspace, setWorkspace] = useRecoilState(workspacestate);
 	const router = useRouter()
-	
+
 	const useTheme = (groupTheme: string) => {
 		const themes: any = {
 			"bg-[#2196f3]": "#2196f3",
@@ -34,12 +34,12 @@ const workspace: LayoutProps = ({ children }) => {
 		const theme = `${hex.red} ${hex.green} ${hex.blue}`
 		return theme
 	}
-	
-		
+
+
 	useEffect(() => {
 		async function getworkspace() {
 			let res;
-			try { 
+			try {
 				res = await axios.get('/api/workspace/' + router.query.id);
 			} catch (e: any) {
 				if (e?.response?.status === 400) {
@@ -78,7 +78,7 @@ const workspace: LayoutProps = ({ children }) => {
 				<link rel="icon" href={`${workspace.groupThumbnail}/isCircular`}/>
 			</Head>
 			<div className="flex">
-				<div className="w-48 h-screen sticky top-0" id="sidebar"> <Sidebar /></div>
+				<div className="w-60 h-screen sticky top-0" id="sidebar"><Sidebar /></div>
 				<main className="bg-gray-100 dark:bg-gray-700 w-full overflow-y-scroll"> {children} </main>
 			</div>
 		</div>
