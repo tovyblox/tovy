@@ -104,7 +104,7 @@ const Activity: pageWithLayout = () => {
 					<p className="font-bold text-2xl leading-6 mt-1">View notices</p>
 					<p className="text-gray-500 text-xl mt-2">View all the pending inactivity notices</p>
 				</div>
-				<div className="bg-white p-4 rounded-md border cursor-pointer hover:bg-gray-200 transition" onClick={() => router.push(`/workspace/${id}/profile`)}>
+				<div className="bg-white p-4 rounded-md border cursor-pointer hover:bg-gray-200 transition" onClick={() => router.push(`/workspace/${id}/profile/${login.userId}`)}>
 					<p className="font-bold text-2xl leading-6 mt-1">View my profile</p>
 					<p className="text-gray-500 text-xl mt-2">View your profile on this workspace</p>
 				</div>
