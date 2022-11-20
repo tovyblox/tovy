@@ -101,19 +101,19 @@ const Activity: pageWithLayout = () => {
 			<p className="text-3xl font-bold !mt-8 !mb-4">Manage</p>
 			<div className="grid gap-5 lg:grid-cols-4 grid-rows-1">
 				<div className="bg-white p-4 rounded-md border cursor-pointer hover:bg-gray-200 transition" onClick={() => router.push(`/workspace/${id}/notices/pending`)}>
-					<p className="font-bold text-2xl leading-4 mt-1">View notices</p>
+					<p className="font-bold text-2xl leading-6 mt-1">View notices</p>
 					<p className="text-gray-500 text-xl mt-2">View all the pending inactivity notices</p>
 				</div>
 				<div className="bg-white p-4 rounded-md border cursor-pointer hover:bg-gray-200 transition" onClick={() => router.push(`/workspace/${id}/profile`)}>
-					<p className="font-bold text-2xl leading-4 mt-1">View my profile</p>
+					<p className="font-bold text-2xl leading-6 mt-1">View my profile</p>
 					<p className="text-gray-500 text-xl mt-2">View your profile on this workspace</p>
 				</div>
 				<div className="bg-white p-4 rounded-md border cursor-pointer hover:bg-gray-200 transition" onClick={() => router.push(`/workspace/${id}/notices`)}>
-					<p className="font-bold text-2xl leading-4 mt-1">View my notices</p>
+					<p className="font-bold text-2xl leading-6 mt-1">View my notices</p>
 					<p className="text-gray-500 text-xl mt-2">View your pending and past notices</p>
 				</div>
 				<div className="bg-white p-4 rounded-md border cursor-pointer hover:bg-gray-200 transition" onClick={resetActivity}>
-					<p className="font-bold text-2xl leading-4 mt-1">Reset activity</p>
+					<p className="font-bold text-2xl leading-6 mt-1">Reset activity</p>
 					<p className="text-gray-500 text-xl mt-2">Reset all activity</p>
 				</div>
 			</div>
