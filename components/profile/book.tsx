@@ -4,6 +4,7 @@ import { workspacestate } from "@/state";
 
 import { FC } from '@/types/settingsComponent'
 import { Listbox } from "@headlessui/react";
+import Button from "../button";
 
 const types = ["Warning", "Promotion", "Suspension", "Fired"]
 
@@ -45,6 +46,23 @@ const Book: FC = () => {
 					))}
 				</Listbox.Options>
 			</Listbox>
+
+			{!!message.length && <Button classoverride="mt-2 w-24" workspace>Send</Button>}
+
+			<div className="flex flex-col gap-2 mt-3">
+				<div className="bg-white p-4 rounded-md">
+					<div className="flex">
+						<div className="flex items-center mb-2">
+							<img src="https://tr.rbxcdn.com/6bd2862461a5c2d84da136cf2c33db3f/60/60/AvatarHeadshot/Png" className="rounded-full h-10 w-10 my-auto bg-primary" alt="Avatar Headshot" />
+							<div className="ml-3">
+								<h2 className="font-bold text-sm">WHOOOP (@ItsWHOOOP)</h2>
+								<p className="font-bold text-red-500 text-sm">Warning #1</p>
+							</div>
+						</div>
+					</div>
+					<p className="font-medium">You were being stupid</p>
+				</div>
+			</div>
 		</div>
 	);
 };
