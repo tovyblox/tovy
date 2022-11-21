@@ -5,6 +5,7 @@ import { useState } from "react";
 import { useRecoilState } from "recoil";
 import Button from "@/components/button";
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
+import prisma from "@/utils/database"
 import { wallPost } from "@prisma/client";
 import moment from "moment";
 import toast, { Toaster } from "react-hot-toast";
