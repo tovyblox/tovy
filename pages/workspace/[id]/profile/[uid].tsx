@@ -7,6 +7,7 @@ import { withSessionSsr } from "@/lib/withSession";
 import { loginState } from "@/state";
 import { Tab } from "@headlessui/react";
 import { ActivitySession } from "@prisma/client";
+import moment from "moment";
 import { InferGetServerSidePropsType } from "next";
 import { GetServerSideProps } from "next/types";
 import { useRecoilState } from "recoil";
@@ -36,30 +37,96 @@ export const getServerSideProps = withSessionSsr(
 		});
 
 		var sumOfMs: number[] = [];
-		const daysSummed: number[] = [];
 		var timeSpent: number;
 
 		sessions.forEach((session: ActivitySession) => {
 			sumOfMs.push(session.endTime?.getTime() as number - session.startTime.getTime());
-
-			console.log(session.endTime)
 		});
 
 		timeSpent = sumOfMs.reduce((p, c) => p + c);
-		timeSpent = Math.floor(timeSpent / 60000);
-	
+		timeSpent = Math.round(timeSpent / 60000);
+		
+		moment.locale("es")
+
+		const startOfWeek = moment().startOf("week").toDate();
+		const endOfWeek = moment().endOf("week").toDate();
+
+		const weeklySessions = await prisma.activitySession.findMany({
+			where: {
+				active: false,
+				userId: req.session.userid,
+				startTime: {
+					lte: endOfWeek,
+					gte: startOfWeek
+				}
+			},
+			orderBy: {
+				startTime: "asc"
+			}
+		});
+
+		type Day = {
+			day: number;
+			ms: number[];
+		}
+
+		const days: Day[] = [
+			{
+				day: 1,
+				ms: []
+			},
+			{
+				day: 2,
+				ms: []
+			},
+			{
+				day: 3,
+				ms: []
+			},
+			{
+				day: 4,
+				ms: []
+			},
+			{
+				day: 5,
+				ms: []
+			},
+			{
+				day: 6,
+				ms: []
+			},
+			{
+				day: 0,
+				ms: []
+			}
+		];
+
+		weeklySessions.forEach((session: ActivitySession) => {
+			const day = session.startTime.getDay();
+			const calc = Math.round((session.endTime?.getTime() as number - session.startTime.getTime()) / 60000);
+			days.find(x => x.day == day)?.ms.push(calc);
+		});
+
+		const data: number[] = [];
+
+		days.forEach((day) => {
+			if(day.ms.length < 1) return data.push(0);
+			data.push(day.ms.reduce((p, c) => p + c));
+		});
+
 		return {
 			props: {
 				notices: (JSON.parse(JSON.stringify(notices)) as typeof notices),
 				timeSpent,
-				timesPlayed: sessions.length
+				timesPlayed: sessions.length,
+				data
 			}
 		};
 	}
 )
 
 type pageProps = InferGetServerSidePropsType<typeof getServerSideProps>
-const Profile: pageWithLayout<pageProps> = ({ notices, timeSpent, timesPlayed }) => {
+const Profile: pageWithLayout<pageProps> = ({ notices, timeSpent, timesPlayed, data }) => {
 	const [login, setLogin] = useRecoilState(loginState)
 
 	return <div className="px-28 py-20">
@@ -94,7 +161,7 @@ const Profile: pageWithLayout<pageProps> = ({ notices, timeSpent, timesPlayed })
 			
 			<Tab.Panels>
 				<Tab.Panel>
-					<Activity timeSpent={timeSpent} timesPlayed={timesPlayed} data="test" />
+					<Activity timeSpent={timeSpent} timesPlayed={timesPlayed} data={data} />
 				</Tab.Panel>
 				<Tab.Panel>
 					<Book />

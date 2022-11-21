@@ -24,7 +24,7 @@ const Activity: FC<Props> = ({ timeSpent, timesPlayed, data }) => {
 			datasets: [
 				{
 					label: "Activity in minutes",
-					data: [50, 24, 85, 125, 26, 52, 68],
+					data,
 					borderColor: "rgb(var(--group-theme) / <alpha-value>)",
 					backgroundColor: "rgb(var(--group-theme) / <alpha-value>)",
 					tension: 0.25,
