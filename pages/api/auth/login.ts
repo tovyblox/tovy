@@ -20,7 +20,7 @@ type response = {
 	success: boolean
 	error?: string
 	user?: User
-	workspaces?: { 
+	workspaces?: {
 		groupId: number
 		groupthumbnail: string
 		groupname: string
@@ -38,13 +38,14 @@ export async function handler(
 		where: {
 			userid: id
 		},
-		include: {
-			roles: true
+		select: {
+			passwordhash: true,
+			roles: true,
 		}
 	})
 	if (!user) return res.status(401).json({ success: false, error: 'Invalid username or password' })
 	const valid = await bcrypt.compare(req.body.password, user.passwordhash)
-	if (!valid) return res.status(401).json({ success: false, error: 'Invalid username or password' })	
+	if (!valid) return res.status(401).json({ success: false, error: 'Invalid username or password' })
 	req.session.userid = id
 	await req.session?.save()
 

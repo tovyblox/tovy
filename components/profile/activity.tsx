@@ -5,11 +5,13 @@ import { FC } from '@/types/settingsComponent'
 import { Chart, ChartData, ScatterDataPoint } from "chart.js"
 import { Line } from "react-chartjs-2";
 
-type props = {
-	test: string;
+type Props = {
+	timeSpent: number;
+	timesPlayed: number;
+	data: any;
 }
 
-const Activity: FC<props> = ({ test }) => {
+const Activity: FC<Props> = ({ timeSpent, timesPlayed, data }) => {
 	const [workspace, setWorkspace] = useRecoilState(workspacestate);	
 	const [chartData, setChartData] = useState<ChartData<"line", (number | ScatterDataPoint | null)[], unknown>>({
 		datasets: []
@@ -50,11 +52,11 @@ const Activity: FC<props> = ({ test }) => {
 				<div className="grid gap-2 grid-cols-1">
 					<div className="bg-white p-4 rounded-md">
 						<p className="font-bold text-2xl leading-4 mt-1">Time spent in-game</p>
-						<p className="mt-3 text-8xl text-gray-400 font-thin">430m</p>
+						<p className="mt-3 text-8xl text-gray-400 font-thin">{timeSpent}m</p>
 					</div>
 					<div className="bg-white p-4 rounded-md">
 						<p className="font-bold text-2xl leading-4 mt-1">Times played</p>
-						<p className="mt-3 text-8xl text-gray-400 font-thin">9 times</p>
+						<p className="mt-3 text-8xl text-gray-400 font-thin">{timesPlayed} {timesPlayed == 1 ? 'time' : 'times'}</p>
 					</div>
 				</div>
 			</div>

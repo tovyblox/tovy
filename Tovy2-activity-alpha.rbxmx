@@ -7,7 +7,7 @@
 			<BinaryString name="AttributesSerialize"></BinaryString>
 			<bool name="Disabled">false</bool>
 			<Content name="LinkedSource"><null></null></Content>
-			<string name="Name">TovyActivity_fix</string>
+			<string name="Name">TovyActivity</string>
 			<token name="RunContext">0</token>
 			<string name="ScriptGuid">{ED1C22E5-278D-4EFC-B81E-F6090239172A}</string>
 			<ProtectedString name="Source"><![CDATA[local httpService = game:GetService('HttpService')
@@ -18,11 +18,11 @@ local Http = require(script.HttpQueue)
 local config = {
 	url = "<url>",
 	auth = "<apikey>",
-	
+
 	bansEnabled = true, --// Set to false if you do not want Tovy to handle bans (This will use less HTTP requests)
-	
+
 	cooldownPeriod = 30, --// The interval (seconds) between retrying failed HTTP requests
-	
+
 	rankChecking = false, --// Enables rank checking on player join/leave to ensure only relevant data is sent to Tovy
 	groupId = 2700627, --// The group ID to perform activity tracking for
 	minTrackedRank = 0	 --// The minimum rank ID to perform activity tracking for (This value is retrieved from your Tovy instance on game launch)
@@ -44,7 +44,7 @@ local function isUserTracked(player)
 	elseif player:GetRankInGroup(config.groupId) >= config.minTrackedRank then
 		return true
 	end
-	
+
 	return false
 end
 
@@ -64,7 +64,7 @@ local function createSession(player)
 				['authorization'] = config.auth
 			}
 		);
-		
+
 		-- Send off the request
 		request:Send()
 	end
@@ -105,12 +105,12 @@ end
 			['authorization'] = config.auth
 		})
 	end)
-	
+
 	if success then
 		-- Decode and set appropriate configuration items
 		data = httpService:JSONDecode(data)
 		config.minTrackedRank = data.mintrackedrank
-		
+
 		break
 	else
 		-- On failure, wait 2 seconds and try again
@@ -490,7 +490,7 @@ local requestCheck = t.strict(
 
 --[[**
     Creates an HttpRequest.
-    
+
     @param [t:String] Url The url endpoint the request is being sent to.
     @param [t:String] Method A string containing the method/verb being used in the request.
     @param [t:String|nil] Body The body of the request. Only applicable if you're going to send data (POST, PUT, etc.)
