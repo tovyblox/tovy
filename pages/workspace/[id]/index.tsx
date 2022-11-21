@@ -3,6 +3,7 @@ import { loginState, workspacestate } from "@/state";
 import Button from "@/components/button";
 import Workspace from "@/layouts/workspace";
 import Sessions from "@/components/home/sessions";
+import docs from "@/pages/api/workspace/[id]/home/docs";
 import { useRecoilState } from "recoil";
 
 const Home: pageWithLayout = () => {
@@ -12,7 +13,8 @@ const Home: pageWithLayout = () => {
 	const widgets: {
 		[key: string]: React.FC;
 	} = {
-		'sessions': Sessions
+		'sessions': Sessions,
+		
 	}
 
 

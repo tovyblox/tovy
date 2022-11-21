@@ -4515,6 +4515,11 @@
   dependencies:
     "safe-buffer" "^5.1.0"
 
+"react-chartjs-2@^5.0.1":
+  "integrity" "sha512-u38C9OxynlNCBp+79grgXRs7DSJ9w8FuQ5/HO5FbYBbri8HSZW+9SWgjVshLkbXBfXnMGWakbHEtvN0nL2UG7Q=="
+  "resolved" "https://registry.npmjs.org/react-chartjs-2/-/react-chartjs-2-5.0.1.tgz"
+  "version" "5.0.1"
+
 "react-data-grid@^7.0.0-beta.19":
   "integrity" "sha512-Sfz+cAOioqEEokdlQSaczkICHVPmt7wLiOmH3aUH2B3BFjZwM0K54gnQ92LbnjOddua54rHLFIO54N0vUeXRaQ=="
   "resolved" "https://registry.npmjs.org/react-data-grid/-/react-data-grid-7.0.0-beta.19.tgz"
@@ -4523,12 +4528,6 @@
     "clsx" "^1.1.1"
 
 "react-dom@^16 || ^17 || ^18", "react-dom@^16.8 || ^17.0 || ^18.0", "react-dom@^16.x || 17.x || 18.x", "react-dom@^17.0.0 || ^18.0.0", "react-dom@^17.0.2 || ^18.0.0-0", "react-dom@^18.0", "react-dom@>=16", "react-dom@>=16.8.0", "react-dom@>=16.8.0-0", "react-dom@18.2.0":
-"react-chartjs-2@^5.0.1":
-  "integrity" "sha512-u38C9OxynlNCBp+79grgXRs7DSJ9w8FuQ5/HO5FbYBbri8HSZW+9SWgjVshLkbXBfXnMGWakbHEtvN0nL2UG7Q=="
-  "resolved" "https://registry.npmjs.org/react-chartjs-2/-/react-chartjs-2-5.0.1.tgz"
-  "version" "5.0.1"
-
-"react-dom@^16 || ^17 || ^18", "react-dom@^16.8 || ^17.0 || ^18.0", "react-dom@^16.x || 17.x || 18.x", "react-dom@^17.0.0 || ^18.0.0", "react-dom@^17.0.2 || ^18.0.0-0", "react-dom@>=16", "react-dom@>=16.8.0", "react-dom@18.2.0":
   "integrity" "sha512-6IMTriUmvsjHUjNtEDudZfuDQUoWXVxKHhlEGSk81n4YFS+r/Kl99wXiwlVXtPBtJenozv2P+hxDsw9eA7Xo6g=="
   "resolved" "https://registry.npmjs.org/react-dom/-/react-dom-18.2.0.tgz"
   "version" "18.2.0"
