@@ -25,8 +25,8 @@ const Activity: FC<Props> = ({ timeSpent, timesPlayed, data }) => {
 				{
 					label: "Activity in minutes",
 					data,
-					borderColor: "rgb(var(--group-theme) / <alpha-value>)",
-					backgroundColor: "rgb(var(--group-theme) / <alpha-value>)",
+					borderColor: "rgb(var(--group-theme))",
+					backgroundColor: "rgb(var(--group-theme))",
 					tension: 0.25,
 				}
 			]
