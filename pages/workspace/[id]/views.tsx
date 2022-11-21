@@ -166,7 +166,7 @@ const Views: pageWithLayout<pageProps> = ({ usersInGroup, pages }) => {
 			<Popover.Panel className="absolute left-0 z-20 mt-2 w-80 origin-top-left rounded-xl bg-white dark:bg-gray-800 shadow-lg ring-1 ring-gray-300 focus-visible:outline-none p-3">
 				<Button onClick={newfilter}> Add filter </Button>
 				{colFilters.map((filter) => (
-					<div className="p-3 outline outline-gray-300 rounded-md mt-4 outline-1"> <Filter updateFilter={(col, op, value) => updateFilter(filter.id, col, op, value)} deleteFilter={() => removeFilter(filter.id)} data={filter} /> </div>
+					<div className="p-3 outline outline-gray-300 rounded-md mt-4 outline-1" key={filter.id}> <Filter updateFilter={(col, op, value) => updateFilter(filter.id, col, op, value)} deleteFilter={() => removeFilter(filter.id)} data={filter} /> </div>
 				))}
 				
 			</Popover.Panel>
@@ -176,7 +176,7 @@ const Views: pageWithLayout<pageProps> = ({ usersInGroup, pages }) => {
 				{table.getHeaderGroups().map((headerGroup) => (
 					<tr className="font-medium" key={headerGroup.id}>
 						{headerGroup.headers.map((column) => (
-							<th className="font-normal">{column.isPlaceholder
+							<th className="font-normal" key={column.id}>{column.isPlaceholder
 								? null
 								: flexRender(
 									column.column.columnDef.header,
@@ -242,7 +242,7 @@ const Filter: React.FC<{
 				</label>
 				<select {...register('col')} className={"text-gray-600 dark:text-white rounded-lg p-2 border-2 border-gray-300  dark:border-gray-500 w-full bg-gray-50 focus-visible:outline-none dark:bg-gray-700 focus-visible:ring-tovybg focus-visible:border-tovybg"}>
 					{Object.keys(filters).map((filter) => (
-						<option value={filter}>{filter}</option>
+						<option value={filter} key={filter}>{filter}</option>
 					))}
 				</select>
 				<label className="text-gray-500 text-sm dark:text-gray-200">
@@ -250,7 +250,7 @@ const Filter: React.FC<{
 				</label>
 				<select  {...register('op')} className={"text-gray-600 dark:text-white rounded-lg p-2 border-2 border-gray-300  dark:border-gray-500 w-full bg-gray-50 focus-visible:outline-none dark:bg-gray-700 focus-visible:ring-tovybg focus-visible:border-tovybg"}>
 					{filters[methods.getValues().col].map((filter) => (
-						<option value={filter}>{filterNames[filter]}</option>
+						<option value={filter} key={filter}>{filterNames[filter]}</option>
 					))}
 
 				</select>
