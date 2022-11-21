@@ -15,6 +15,7 @@ export async function handler(
 	res: NextApiResponse<Data>
 ) {
 	if (req.method !== 'POST') return res.status(405).json({ success: false, error: 'Method not allowed' })
+	if (!req.headers.authorization) return res.status(400).json({ success: false, error: "Authorization key missing" })
 	const config = await prisma.config.findFirst({
 		where: {
 			value: {
