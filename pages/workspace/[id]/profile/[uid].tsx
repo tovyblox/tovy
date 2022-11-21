@@ -6,6 +6,7 @@ import { pageWithLayout } from "@/layoutTypes";
 import { withSessionSsr } from "@/lib/withSession";
 import { loginState } from "@/state";
 import { Tab } from "@headlessui/react";
+import { ActivitySession } from "@prisma/client";
 import { InferGetServerSidePropsType } from "next";
 import { GetServerSideProps } from "next/types";
 import { useRecoilState } from "recoil";
@@ -23,17 +24,42 @@ export const getServerSideProps = withSessionSsr(
 				}
 			]
 		});
+
+		const sessions = await prisma.activitySession.findMany({
+			where: {
+				userId: parseInt(params?.uid as string),
+				active: false
+			},
+			orderBy: {
+				endTime: "desc"
+			}
+		});
+
+		var sumOfMs: number[] = [];
+		const daysSummed: number[] = [];
+		var timeSpent: number;
+
+		sessions.forEach((session: ActivitySession) => {
+			sumOfMs.push(session.endTime?.getTime() as number - session.startTime.getTime());
+
+			console.log(session.endTime)
+		});
+
+		timeSpent = sumOfMs.reduce((p, c) => p + c);
+		timeSpent = Math.floor(timeSpent / 60000);
 	
 		return {
 			props: {
-				notices: (JSON.parse(JSON.stringify(notices)) as typeof notices)
+				notices: (JSON.parse(JSON.stringify(notices)) as typeof notices),
+				timeSpent,
+				timesPlayed: sessions.length
 			}
 		};
 	}
 )
 
 type pageProps = InferGetServerSidePropsType<typeof getServerSideProps>
-const Profile: pageWithLayout<pageProps> = ({ notices }) => {
+const Profile: pageWithLayout<pageProps> = ({ notices, timeSpent, timesPlayed }) => {
 	const [login, setLogin] = useRecoilState(loginState)
 
 	return <div className="px-28 py-20">
@@ -68,7 +94,7 @@ const Profile: pageWithLayout<pageProps> = ({ notices }) => {
 			
 			<Tab.Panels>
 				<Tab.Panel>
-					<Activity timeSpent={280} timesPlayed={12} data="test" />
+					<Activity timeSpent={timeSpent} timesPlayed={timesPlayed} data="test" />
 				</Tab.Panel>
 				<Tab.Panel>
 					<Book />
