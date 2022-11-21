@@ -46,13 +46,23 @@ const Activity: FC<Props> = ({ timeSpent, timesPlayed, data }) => {
 	return (
 		<div className="mt-2">
 			<div className="grid gap-4 grid-cols-2">
-				<div className="bg-white p-2 rounded-md">
-					<Line options={chartOptions} data={chartData} />
+				<div>
+					<div className="bg-white p-4 rounded-md mb-4">
+						<p className="font-semibold text-2xl">Current week</p>
+					</div>
+					<div className="bg-white p-2 rounded-md">
+						<Line options={chartOptions} data={chartData} />
+					</div>
 				</div>
 				<div className="grid gap-2 grid-cols-1">
-					<div className="bg-white p-4 rounded-md">
-						<p className="font-bold text-2xl leading-4 mt-1">Time spent in-game</p>
-						<p className="mt-3 text-8xl text-gray-400 font-thin">{timeSpent}m</p>
+					<div>
+						<div className="bg-white p-4 rounded-md mb-4">
+							<p className="font-semibold text-2xl">Lifetime</p>
+						</div>
+						<div className="bg-white p-4 rounded-md">
+							<p className="font-bold text-2xl leading-4 mt-1">Time spent in-game</p>
+							<p className="mt-3 text-8xl text-gray-400 font-thin">{timeSpent}m</p>
+						</div>
 					</div>
 					<div className="bg-white p-4 rounded-md">
 						<p className="font-bold text-2xl leading-4 mt-1">Times played</p>
