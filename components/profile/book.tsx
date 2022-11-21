@@ -56,7 +56,7 @@ const Book: FC = () => {
 							<img src="https://tr.rbxcdn.com/6bd2862461a5c2d84da136cf2c33db3f/60/60/AvatarHeadshot/Png" className="rounded-full h-10 w-10 my-auto bg-primary" alt="Avatar Headshot" />
 							<div className="ml-3">
 								<h2 className="font-bold text-sm">WHOOOP (@ItsWHOOOP)</h2>
-								<p className="font-bold text-red-500 text-sm">Warning #1</p>
+								<p className="font-semibold text-red-500 text-sm">Warning #1</p>
 							</div>
 						</div>
 					</div>
