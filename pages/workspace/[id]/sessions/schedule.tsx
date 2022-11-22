@@ -109,7 +109,7 @@ const Home: pageWithLayout<{
 		console.log(s)
 		//if the session already started or ended
 		if (selectedDate.getTime() < new Date().getTime()) return { disabled: true, text: "Session Ended" };
-		if (s?.ownerId === login.userId) {
+		if (Number(s?.ownerId) === login.userId) {
 			return {
 				disabled: true,
 				text: "You already claimed this session"

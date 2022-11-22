@@ -22,7 +22,7 @@ const Guide: FC<props> = (props) => {
 			enabled: !workspace.settings.sessionsEnabled
 		 });
 		if (res.status === 200) {
-			const obj = JSON.parse(JSON.stringify(workspace));
+			const obj = JSON.parse(JSON.stringify(workspace), (key, value) => (typeof value === 'bigint' ? value.toString() : value));
 			obj.settings.sessionsEnabled = !workspace.settings.sessionsEnabled;
 			setWorkspace(obj);
 			triggerToast.success("Updated sessions");

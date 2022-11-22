@@ -40,8 +40,8 @@ model instanceConfig {
 }
 
 model user {
-  userid            Int                @id @unique
-  passwordhash      String
+  userid            BigInt                @id @unique
+  passwordhash      String?
   tfa               String?
   isOwner           Boolean?
   picture           String?
@@ -74,7 +74,7 @@ model wallPost {
   author           user?     @relation(fields: [authorId], references: [userid])
   workspace        workspace @relation(fields: [workspaceGroupId], references: [groupId])
   workspaceGroupId Int
-  authorId         Int
+  authorId         BigInt
 }
 
 model SessionType {
@@ -102,7 +102,7 @@ model schedule {
 model Session {
   id            String      @id @unique @default(uuid()) @db.Uuid()
   owner         user        @relation(fields: [ownerId], references: [userid])
-  ownerId       Int
+  ownerId       BigInt
   date          DateTime
   startedAt     DateTime?
   ended         DateTime?
@@ -125,7 +125,7 @@ model ActivitySession {
 
 model inactivityNotice {
   id               String     @id @unique @default(uuid()) @db.Uuid()
-  userId           Int
+  userId           BigInt
   startTime        DateTime
   endTime          DateTime?
   reason           String
@@ -143,7 +143,7 @@ model document {
   createdAt        DateTime  @default(now())
   updatedAt        DateTime  @updatedAt
   owner            user      @relation(fields: [ownerId], references: [userid])
-  ownerId          Int
+  ownerId          BigInt
   workspace        workspace @relation(fields: [workspaceGroupId], references: [groupId])
   workspaceGroupId Int
   roles            role[]

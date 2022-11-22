@@ -53,6 +53,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params, res }) =>
 		const displayName = await getDisplayName(user.userid);
 		return {
 			...user,
+			userid: Number(user.userid),
 			username,
 			thumbnail,
 			displayName

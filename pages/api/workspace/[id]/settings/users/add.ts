@@ -22,20 +22,6 @@ export async function handler(
 	const userid = await noblox.getIdFromUsername(req.body.username).catch(() => null);
 	if (!userid) return res.status(400).json({ success: false, error: 'Invalid username' });
 
-	
-	let user = await prisma.user.findUnique({
-		where: {
-			userid: userid
-		},
-		include: {
-			roles: {
-				where: {
-					workspaceGroupId: parseInt(req.query.id as string)
-				}
-			}
-		}
-	});
-	if (user?.roles.length) return res.status(404).json({ success: false, error: 'User not found' });
 	const role = await prisma.role.findFirst({
 		where: {
 			isOwnerRole: false,
@@ -43,31 +29,36 @@ export async function handler(
 	});
 	if (!role) return res.status(404).json({ success: false, error: 'Role not found' });
 
-	await prisma.user.update({
+	const user = await prisma.user.upsert({
 		where: {
 			userid: userid
 		},
-		data: {
+		update: {
 			roles: {
 				connect: {
 					id: role.id
 				}
 			}
-		}
+		},
+		create: {
+			userid: userid,
+
+			roles: {
+				connect: {
+					id: role.id
+				}
+			}
+		},
 	});
 	const newuser = {
-		...user,
 		roles: [
 			role
 		],
+		userid: user.userid,
 		username: req.body.username,
 		displayName: await getDisplayName(userid),
 		thumbnail: await getThumbnail(userid)
 	}
-
-
-	
-
 
 	res.status(200).json({ success: true, user: newuser })
 }

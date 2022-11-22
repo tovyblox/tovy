@@ -35,7 +35,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
 	return {
 		props: {
-			document: JSON.parse(JSON.stringify(guide)),
+			document: JSON.parse(JSON.stringify(guide, (key, value) => (typeof value === 'bigint' ? value.toString() : value))),
 		},
 	}
 }

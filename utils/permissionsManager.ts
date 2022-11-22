@@ -1,6 +1,7 @@
 import prisma from "./database";
 import type { NextApiRequest, NextApiResponse, NextApiHandler } from 'next'
 import { withSessionRoute } from '@/lib/withSession'
+import * as noblox from 'noblox.js'
 
 type MiddlewareData = {
 	handler: NextApiHandler
@@ -21,7 +22,7 @@ export function withPermissionCheck(
 
 		const user = await prisma.user.findFirst({
 			where: {
-				userid: uid
+				userid: BigInt(uid)
 			},
 			include: {
 				roles: true
@@ -35,4 +36,67 @@ export function withPermissionCheck(
 		if (userrole.permissions.includes(permission)) return handler(req, res);
 		return res.status(401).json({ success: false, error: 'Unauthorized' });
 	})
+}
+
+export async function checkGroupRoles(groupID: number) {
+	const roles = await prisma.role.findMany({
+		where: {
+			workspaceGroupId: groupID
+		}
+	});
+	for (const role of roles) {
+		if (!role.groupRoles?.length) continue;
+		const members = await noblox.getPlayers(groupID, role.groupRoles).catch(() => null);
+		if (!members) continue;
+
+		const users = await prisma.user.findMany({
+			where: {
+				roles: {
+					some: {
+						id: role.id
+					}
+				}
+			}
+		});
+		for (const user of users) {
+			if (!members.find(member => member.userId === Number(user.userid))) {
+				await prisma.user.update({
+					where: {
+						userid: user.userid
+					},
+					data: {
+						roles: {
+							disconnect: {
+								id: role.id
+							}
+						}
+					}
+				});
+			}
+		};
+
+		for (const member of members) {
+			console.log(member.userId)
+			await prisma.user.upsert({
+				where: {
+					userid: member.userId
+				},
+				create: {
+					userid: member.userId,
+					roles: {
+						connect: {
+							id: role.id
+						}
+					}
+				},
+				update: {
+					roles: {
+						connect: {
+							id: role.id
+						}
+					}
+				}
+			});
+		};
+	}
 }

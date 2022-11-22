@@ -22,7 +22,7 @@ const Guide: FC<props> = (props) => {
 			enabled: !workspace.settings.guidesEnabled
 		 });
 		if (res.status === 200) {
-			const obj = JSON.parse(JSON.stringify(workspace));
+			const obj = JSON.parse(JSON.stringify(workspace), (key, value) => (typeof value === 'bigint' ? value.toString() : value));;
 			obj.settings.guidesEnabled = !workspace.settings.guidesEnabled;
 			setWorkspace(obj);
 			triggerToast.success("Updated documents");

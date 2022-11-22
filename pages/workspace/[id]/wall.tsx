@@ -39,7 +39,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params, res }) =>
 
 	return {
 		props: {
-			posts: (JSON.parse(JSON.stringify(posts)) as typeof posts)
+			posts: (JSON.parse(JSON.stringify(posts, (key, value) => (typeof value === 'bigint' ? value.toString() : value))) as typeof posts)
 		}
 	}
 }

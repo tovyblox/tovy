@@ -116,7 +116,7 @@ export const getServerSideProps = withSessionSsr(
 
 		return {
 			props: {
-				notices: (JSON.parse(JSON.stringify(notices)) as typeof notices),
+				notices: (JSON.parse(JSON.stringify(notices, (key, value) => (typeof value === 'bigint' ? value.toString() : value))) as typeof notices),
 				timeSpent,
 				timesPlayed: sessions.length,
 				data

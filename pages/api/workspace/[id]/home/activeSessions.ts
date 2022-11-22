@@ -35,5 +35,5 @@ export async function handler(
 		}
 	});
 	
-	res.status(200).json({ success: true, sessions })
+	res.status(200).json({ success: true, sessions: JSON.parse(JSON.stringify(sessions, (key, value) => (typeof value === 'bigint' ? value.toString() : value))) })
 }

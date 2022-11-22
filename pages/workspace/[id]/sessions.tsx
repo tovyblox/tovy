@@ -23,7 +23,7 @@ export const getServerSideProps: GetServerSideProps = async () => {
 	console.log(sessions)
 	return {
 		props: {
-			sessions: (JSON.parse(JSON.stringify(sessions)) as typeof sessions)
+			sessions: (JSON.parse(JSON.stringify(sessions, (key, value) => (typeof value === 'bigint' ? value.toString() : value))) as typeof sessions)
 		},
 	}
 }
