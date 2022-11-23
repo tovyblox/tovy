@@ -42,7 +42,7 @@ export async function handler(
 		}
 	});
 	if (findSession) {
-		findSession.ownerId = req.session.userid;
+		findSession.ownerId = BigInt(req.session.userid);
 		const schedulewithsession = await prisma.schedule.update({
 			where: {
 			   id: schedule.id
