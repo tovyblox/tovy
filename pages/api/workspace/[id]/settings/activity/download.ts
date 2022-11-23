@@ -35,7 +35,7 @@ export async function handler(
 	res.setHeader('Content-Disposition', 'attachment; filename=Tovy2-activity-alpha.rbxmx');
 	const protocol = req.headers['x-forwarded-proto'] || req.headers.referer?.split('://')[0] || 'http';
 	console.log(protocol);
-	let xx = xml_string.replace('<key>', activityconfig.key).replace('<url>', `${protocol}//${req.headers.host}/api/ranking`);
+	let xx = xml_string.replace('<key>', activityconfig.key).replace('<url>', `${protocol}://${req.headers.host}/api/ranking`);
 
 
 	//send file and set content type

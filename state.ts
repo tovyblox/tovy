@@ -26,6 +26,7 @@ const workspacestate = atom({
 		groupId: 1,
 		groupThumbnail: '',
 		groupName: '',
+		yourPermission: [] as string[],
 		groupTheme: '',
 		roles: [] as role[],
 		settings: {

@@ -16,6 +16,7 @@ type Data = {
 		groupThumbnail: string
 		groupName: string,
 		roles: role[]
+		yourPermission: string[]
 		groupTheme: string,
 		settings: {
 			guidesEnabled: boolean
@@ -72,12 +73,25 @@ export async function handler(
 	if (!user) return res.status(401).json({ success: false, error: 'Not logged in' })
 	if (!user.roles.length) return res.status(401).json({ success: false, error: 'Not logged in' })
 
+	const permissions = {
+		"Admin (Manage workspace)": "admin",
+		"Manage sessions": "manage_sessions",
+		"Manage activity": "manage_activity",
+		"Post on wall": "post_on_wall",
+		"View wall": "view_wall",
+		"View members": "view_members",
+		"Manage members": "manage_members",
+		"Manage docs": "manage_docs",
+		"View entire groups activity": "view_entire_groups_activity",
+	};
+
 	
 	
 	res.status(200).json({ success: true, permissions: user.roles[0].permissions, workspace: {
 		groupId: workspace.groupId,
 		groupThumbnail: await noblox.getLogo(workspace.groupId),
 		groupName: groupinfo.name,
+		yourPermission: user.roles[0].isOwnerRole ? Object.values(permissions) : user.roles[0].permissions,
 		groupTheme: themeconfig,
 		roles: roles,
 		settings: {

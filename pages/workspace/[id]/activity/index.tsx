@@ -1,6 +1,6 @@
 import workspace from "@/layouts/workspace";
 import { pageWithLayout } from "@/layoutTypes";
-import { loginState } from "@/state";
+import { loginState, workspacestate } from "@/state";
 import { getUsername, getThumbnail, getDisplayName } from '@/utils/userinfoEngine'
 import axios from "axios";
 import { useRouter } from "next/router";
@@ -13,6 +13,8 @@ const Activity: pageWithLayout = () => {
 	const { id } = router.query;
 
 	const [login, setLogin] = useRecoilState(loginState);
+	const [workspace, setWorkspace] = useRecoilState(workspacestate);
+	
 	const [activeUsers, setActiveUsers] = useState([]);
 	const [inactiveUsers, setInactiveUsers] = useState([]);
 	const [topStaff, setTopStaff] = useState([]);
@@ -112,10 +114,10 @@ const Activity: pageWithLayout = () => {
 					<p className="font-bold text-2xl leading-6 mt-1">View my notices</p>
 					<p className="text-gray-500 text-xl mt-2">View your pending and past notices</p>
 				</div>
-				<div className="bg-white p-4 rounded-md border cursor-pointer hover:bg-gray-200 transition" onClick={resetActivity}>
+				{workspace.yourPermission.includes('admin') && <div className="bg-white p-4 rounded-md border cursor-pointer hover:bg-gray-200 transition" onClick={resetActivity}>
 					<p className="font-bold text-2xl leading-6 mt-1">Reset activity</p>
 					<p className="text-gray-500 text-xl mt-2">Reset all activity</p>
-				</div>
+				</div>}
 			</div>
 			<Toaster position="bottom-center" />
 		</div>
