@@ -62,7 +62,11 @@ export async function handler(
 	await prisma.user.create({
 		data: {
 			userid: userid,
-			passwordhash: await bcrypt.hash(req.body.password, 10),
+			info: {
+				create: {
+					passwordhash: await bcrypt.hash(req.body.password, 10),
+				}
+			},
 			isOwner: true,
 			roles: {
 				connect: {
