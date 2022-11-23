@@ -3,7 +3,7 @@ import { loginState, workspacestate } from "@/state";
 import Button from "@/components/button";
 import Workspace from "@/layouts/workspace";
 import Sessions from "@/components/home/sessions";
-import docs from "@/pages/api/workspace/[id]/home/docs";
+import Docs from "@/components/home/docs";
 import { useRecoilState } from "recoil";
 
 const Home: pageWithLayout = () => {
@@ -14,6 +14,8 @@ const Home: pageWithLayout = () => {
 		[key: string]: React.FC;
 	} = {
 		'sessions': Sessions,
+		'documents': Docs,
+		
 		
 	}
 
@@ -25,7 +27,7 @@ const Home: pageWithLayout = () => {
 				const Widget = widgets[widget];
 				if (!Widget) return null;
 				return workspace.settings.widgets.includes(widget) ? (
-					<div key={widget}> <Widget /> </div>
+					<div key={widget} className="mb-5"> <Widget /> </div>
 				) : null;
 			})}
 		</div>

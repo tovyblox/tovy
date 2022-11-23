@@ -21,9 +21,44 @@ export async function handler(
 ) {
 	if (req.method !== 'GET') return res.status(405).json({ success: false, error: 'Method not allowed' });
 	const id = parseInt(req.query.id as string);
+	const user = await prisma.user.findFirst({
+		where: {
+			userid: req.session.userid
+		},
+		include: {
+			roles: {
+				where: {
+					workspaceGroupId: id
+				}
+			}
+		}
+	});
+	if (!user?.roles?.length) return res.status(403).json({ success: false, error: 'You do not have permission to view this workspace.' });
+	if (user.roles[0].permissions.includes('manage_docs') || user.roles[0].isOwnerRole) {
+		const docs = await prisma.document.findMany({
+			where: {
+				workspaceGroupId: id
+			},
+			include: {
+				owner: {
+					select: { 
+						username: true,
+						picture: true
+					}
+				}
+			}
+		});
+		res.status(200).json({ success: true, docs: JSON.parse(JSON.stringify(docs, (key, value) => (typeof value === 'bigint' ? value.toString() : value))) })
+		return
+	}
 	const docs = await prisma.document.findMany({
 		where: {
 			workspaceGroupId: id,
+			roles: {
+				some: {
+					id: user.roles[0].id
+				}
+			}
 		},
 		include: {
 			owner: {
@@ -35,5 +70,5 @@ export async function handler(
 		}
 	})
 	
-	res.status(200).json({ success: true, docs })
+	res.status(200).json({ success: true, docs: JSON.parse(JSON.stringify(docs, (key, value) => (typeof value === 'bigint' ? value.toString() : value))) })
 }
