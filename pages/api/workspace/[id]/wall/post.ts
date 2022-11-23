@@ -8,6 +8,7 @@ import * as noblox from 'noblox.js'
 type Data = {
 	success: boolean
 	error?: string
+	post?: any
 }
 
 export default withSessionRoute(handler);
@@ -21,15 +22,18 @@ export async function handler(
 	if (!req.body.content) return res.status(400).json({ success: false, error: "Missing content" });
 
 	try {
-		await prisma.wallPost.create({
+		const post = await prisma.wallPost.create({
 			data: {
 				content: req.body.content,
 				authorId: req.session.userid,
 				workspaceGroupId: parseInt(req.query.id as string)
+			},
+			include: {
+				author: true
 			}
 		});
 
-		return res.status(200).json({ success: true });
+		return res.status(200).json({ success: true, post: JSON.parse(JSON.stringify(post, (key, value) => (typeof value === 'bigint' ? value.toString() : value))) });
 	} catch (error) {
 		return res.status(500).json({ success: false, error: "Something went wrong" });
 	}

@@ -45,13 +45,15 @@ export const getServerSideProps: GetServerSideProps = async ({ params, res }) =>
 }
 
 type pageProps = InferGetServerSidePropsType<typeof getServerSideProps>
-const Settings: pageWithLayout<pageProps> = ({ posts }) => {
+const Settings: pageWithLayout<pageProps> = (props) => {
 	const router = useRouter();
 	const { id } = router.query;
 
 	const [login, setLogin] = useRecoilState(loginState);
 	const [workspace, setWorkspace] = useRecoilState(workspacestate);
 	const [wallMessage, setWallMessage] = useState("");
+	const [posts, setPosts] = useState(props.posts);
+	
 
 	function sendPost(){
 		axios.post(
@@ -59,19 +61,13 @@ const Settings: pageWithLayout<pageProps> = ({ posts }) => {
 			{
 				content: wallMessage
 			}
-		).then(() => {
+		).then((req) => {
 			toast.success("Wall message posted!");
-			setTimeout(() => {
-				toast.loading("Refreshing wall...");
-				router.reload();
-			}, 1000);
+			setWallMessage("");
+			setPosts([req.data.post, ...posts])
 		}).catch(error => {
 			console.error(error);
 			toast.error("Could not post wall message.");
-			setTimeout(() => {
-				toast.loading("Refreshing wall...");
-				router.reload();
-			}, 1000);
 		});
 	}
 

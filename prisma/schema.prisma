@@ -41,8 +41,7 @@ model instanceConfig {
 
 model user {
   userid            BigInt                @id @unique
-  passwordhash      String?
-  tfa               String?
+  info              userInfo?
   isOwner           Boolean?
   picture           String?
   username          String?
@@ -51,6 +50,13 @@ model user {
   sessions          Session[]
   documents         document[]
   inactivityNotices inactivityNotice[]
+}
+
+model userInfo {
+	userid BigInt @id
+	user user @relation(fields: [userid], references: [userid])
+	passwordhash String?
+	tfa String?
 }
 
 model role {

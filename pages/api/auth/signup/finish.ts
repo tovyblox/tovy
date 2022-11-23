@@ -30,10 +30,24 @@ export async function handler(
 	req.session.userid = userid;
 	await req.session.save();
 
-	await prisma.user.create({
-		data: {
-			userid: userid,
-			passwordhash: await bcrypt.hash(req.body.password, 10),
+	await prisma.user.upsert({
+		where: {
+			userid: BigInt(userid)
+		}, 
+		update: {
+			info: {
+				update: {
+					passwordhash: await bcrypt.hash(password, 10)
+				}
+			}
+		},
+		create: {
+			userid: BigInt(userid),
+			info: {
+				create: {
+					passwordhash: await bcrypt.hash(password, 10)
+				}
+			}
 		}
 	});
 

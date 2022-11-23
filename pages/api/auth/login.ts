@@ -39,12 +39,12 @@ export async function handler(
 			userid: id
 		},
 		select: {
-			passwordhash: true,
+			info: true,
 			roles: true,
 		}
 	})
-	if (!user) return res.status(401).json({ success: false, error: 'Invalid username or password' })
-	const valid = await bcrypt.compare(req.body.password, user.passwordhash)
+	if (!user?.info?.passwordhash) return res.status(401).json({ success: false, error: 'Invalid username or password' })
+	const valid = await bcrypt.compare(req.body.password, user.info?.passwordhash)
 	if (!valid) return res.status(401).json({ success: false, error: 'Invalid username or password' })
 	req.session.userid = id
 	await req.session?.save()

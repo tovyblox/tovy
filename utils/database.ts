@@ -10,22 +10,7 @@ if (process.env.NODE_ENV === 'development') globalThis.prisma = prisma
 
 // Middleware to hide passwordhash and tfa configurations from API responses
 
-async function convertAllBigIntsToNumbersMiddleware(params: any, next: any) {
-	let result = await next(params)
 
-	for (const key in result) {
-		if (typeof result[key] === 'bigint') {
-			console.log(result[key])
-			const number = Number(result[key])
-			delete result[key]
-			result[key] = number
-			console.log(result[key])
-		}
-	};
-
-	return result
-}
-prisma.$use(convertAllBigIntsToNumbersMiddleware)
 async function excludePasswordMiddleware(params: any, next: any) {
 	const result = await next(params)
 
