@@ -4,14 +4,12 @@ import Button from "@/components/button";
 import Input from "@/components/input";
 import Workspace from "@/layouts/workspace";
 import { useRecoilState } from "recoil";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useEditor, EditorContent } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 import { IconCheck, IconChevronDown, IconH1, IconH2, IconH3, IconH4, IconBold, IconItalic, IconListDetails} from "@tabler/icons";
 import { useRouter } from "next/router";
 import axios from "axios";
-import TaskItem from '@tiptap/extension-task-item'
-import TaskList from '@tiptap/extension-task-list'
 import prisma from "@/utils/database";
 
 import { useForm, FormProvider } from "react-hook-form";

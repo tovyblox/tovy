@@ -5,10 +5,10 @@ import { GetServerSideProps, NextPage } from "next";
 import { IconChevronDown } from "@tabler/icons";
 import Btn from "@/components/button";
 import { workspacestate } from "@/state";
-import { useForm } from "react-hook-form";
 import { Role } from "noblox.js";
 import { role } from "@/utils/database";
 import { useRecoilState } from "recoil";
+import { useRouter } from "next/router";
 import toast, { Toaster } from 'react-hot-toast';
 
 import axios from "axios";
@@ -25,6 +25,7 @@ type form = {
 
 const Button: FC<Props> = ({ roles, setRoles, grouproles }) => {
 	const [workspace] = useRecoilState(workspacestate);
+	const router = useRouter();
 	const permissions = {
 		"Admin (Manage workspace)": "admin",
 		"Manage sessions": "manage_sessions",
@@ -106,7 +107,21 @@ const Button: FC<Props> = ({ roles, setRoles, grouproles }) => {
 			success: 'Roles updated! (you may need to refresh the page to see the updated user list)',
 			error: 'Error updating roles'
 		});
+	};
+
+	const deleteRole = async (id: string) => {
+		const res = axios.post(
+			`/api/workspace/${workspace.groupId}/settings/roles/${id}/delete`
+		).then(() => {
+			router.reload();
+		});
+		toast.promise(res, {
+			loading: 'Deleting role...',
+			success: 'Role deleted!',
+			error: 'Error deleting role'
+		});
 	}
+
 
 	const aroledoesincludegrouprole = (id: string, role: Role) => {
 		const rs = roles.filter((role: any) => role.id !== id);
@@ -258,6 +273,7 @@ const Button: FC<Props> = ({ roles, setRoles, grouproles }) => {
 																</div>
 															)
 														)}
+														<Btn classoverride="hover:bg-red-300 focus-visible:bg-red-300 bg-red-500 mt-3" compact onClick={() => deleteRole(role.id)} > Delete </Btn>
 													</div>
 												</Disclosure.Panel>
 											</Transition>

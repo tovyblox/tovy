@@ -7,12 +7,10 @@ import Button from "@/components/button";
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 import { withPermissionCheckSsr } from "@/utils/permissionsManager";
 import prisma from "@/utils/database"
-import { wallPost } from "@prisma/client";
 import moment from "moment";
 import toast, { Toaster } from "react-hot-toast";
 import { useRouter } from "next/router";
 import axios from "axios";
-import { getUsername } from "@/utils/userinfoEngine";
 
 export const getServerSideProps: GetServerSideProps = withPermissionCheckSsr(async ({ params, res }) => {
 	if(!params?.id) {

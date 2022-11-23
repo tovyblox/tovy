@@ -9,7 +9,6 @@ import { Tab } from "@headlessui/react";
 import { ActivitySession } from "@prisma/client";
 import moment from "moment";
 import { InferGetServerSidePropsType } from "next";
-import { GetServerSideProps } from "next/types";
 import { useRecoilState } from "recoil";
 
 export const getServerSideProps = withSessionSsr(

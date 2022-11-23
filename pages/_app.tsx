@@ -5,7 +5,7 @@ import { RecoilRoot } from "recoil";
 import { pageWithLayout } from "@/layoutTypes";
 import RecoilNexus from "recoil-nexus";
 import { setRecoil } from "recoil-nexus";
-import { useEffect, useState, ReactNode, ReactElement } from "react";
+import { useEffect, useState } from "react";
 import Router from "next/router";
 import axios from "axios";
 import {

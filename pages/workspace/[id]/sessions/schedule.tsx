@@ -2,15 +2,12 @@ import type { pageWithLayout } from "@/layoutTypes";
 import { loginState } from "@/state";
 import Button from "@/components/button";
 import Workspace from "@/layouts/workspace";
-import { IconChevronRight } from "@tabler/icons";
 import { useRecoilState } from "recoil";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useRouter } from "next/router";
 import prisma, { schedule, SessionType, Session, user } from "@/utils/database";
-import { GetServerSideProps, InferGetServerSidePropsType } from "next";
-import Image from "next/image";
-import { type } from "node:os";
+import { GetServerSideProps } from "next";
 import { withPermissionCheckSsr } from "@/utils/permissionsManager";
 
 export const getServerSideProps: GetServerSideProps = withPermissionCheckSsr(async ({ query }) => {
@@ -37,13 +34,11 @@ export const getServerSideProps: GetServerSideProps = withPermissionCheckSsr(asy
 	const threeDaysBeforeNow = new Date();
 	threeDaysBeforeNow.setDate(threeDaysBeforeNow.getDate() - 3);
 
-	console.log(JSON.parse(JSON.stringify(sessions))[0])
-
 
 
 	return {
 		props: {
-			sessions: JSON.parse(JSON.stringify(sessions)),
+			sessions: JSON.parse(JSON.stringify(sessions, (key, value) => (typeof value === 'bigint' ? value.toString() : value))) as typeof sessions,
 		}
 	}
 });

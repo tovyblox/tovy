@@ -1,6 +1,5 @@
 import type { pageWithLayout } from "@/layoutTypes";
 import { loginState, workspacestate } from "@/state";
-import Button from "@/components/button";
 import Workspace from "@/layouts/workspace";
 import Sessions from "@/components/home/sessions";
 import Docs from "@/components/home/docs";

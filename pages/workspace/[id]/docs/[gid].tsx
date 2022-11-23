@@ -2,7 +2,7 @@ import type { pageWithLayout } from "@/layoutTypes";
 import { loginState, workspacestate } from "@/state";
 import Workspace from "@/layouts/workspace";
 import { useState, useMemo } from "react";
-import prisma, { document } from "@/utils/database";
+import prisma from "@/utils/database";
 import { useRecoilState } from "recoil";
 import Button from "@/components/button";
 import StarterKit from '@tiptap/starter-kit'

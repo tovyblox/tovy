@@ -5,7 +5,7 @@ import Workspace from "@/layouts/workspace";
 import { IconChevronRight } from "@tabler/icons";
 import prisma, { Session } from "@/utils/database";
 import { useRecoilState } from "recoil";
-import { InferGetServerSidePropsType, GetServerSideProps } from "next";
+import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import axios from "axios";

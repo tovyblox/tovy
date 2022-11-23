@@ -1,10 +1,9 @@
 import workspace from "@/layouts/workspace";
 import { pageWithLayout } from "@/layoutTypes";
 import { loginState } from "@/state";
-import { getUsername, getThumbnail, getDisplayName } from '@/utils/userinfoEngine'
 import axios from "axios";
 import { useRouter } from "next/router";
-import { useEffect, useState, Fragment } from "react";
+import { useState, Fragment } from "react";
 import { useRecoilState } from "recoil";
 import toast, { Toaster } from 'react-hot-toast';
 import Button from "@/components/button";

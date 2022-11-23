@@ -1,7 +1,6 @@
 import workspace from "@/layouts/workspace";
 import { pageWithLayout } from "@/layoutTypes";
 import { loginState, workspacestate } from "@/state";
-import { getUsername, getThumbnail, getDisplayName } from '@/utils/userinfoEngine'
 import axios from "axios";
 import { useRouter } from "next/router";
 import { useEffect, useState, Fragment } from "react";

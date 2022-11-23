@@ -5,11 +5,11 @@ import Permissions from "@/components/settings/permissions";
 import { Tab, Disclosure, Transition } from "@headlessui/react";
 import Workspace from "@/layouts/workspace";
 import { useRecoilState } from "recoil";
-import { InferGetServerSidePropsType, GetServerSideProps } from "next";
+import { GetServerSideProps } from "next";
 import * as All from "@/components/settings/general"
 import toast, { Toaster } from 'react-hot-toast';
 import * as noblox from "noblox.js";
-import prisma, { role, user } from '@/utils/database'
+import prisma from '@/utils/database'
 import { getUsername, getThumbnail, getDisplayName } from "@/utils/userinfoEngine";
 export const getServerSideProps: GetServerSideProps = async ({ params, res }) => {
 	if (!params?.id) {

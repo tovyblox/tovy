@@ -1,12 +1,8 @@
 import type { pageWithLayout } from "@/layoutTypes";
 import { loginState } from "@/state";
-import Button from "@/components/button";
 import Workspace from "@/layouts/workspace";
-import { IconChevronRight } from "@tabler/icons";
 import { useRecoilState } from "recoil";
-import { InferGetServerSidePropsType, GetServerSideProps, GetServerSidePropsContext } from "next";
 import { useRouter } from "next/router";
-import axios from "axios";
 import prisma, { document } from "@/utils/database";
 
 
