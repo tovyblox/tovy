@@ -1,6 +1,6 @@
 import prisma from "./database";
-import type { NextApiRequest, NextApiResponse, NextApiHandler } from 'next'
-import { withSessionRoute } from '@/lib/withSession'
+import type { NextApiRequest, NextApiResponse, NextApiHandler, GetServerSidePropsContext } from 'next'
+import { withSessionRoute, withSessionSsr } from '@/lib/withSession'
 import * as noblox from 'noblox.js'
 
 type MiddlewareData = {
@@ -37,6 +37,58 @@ export function withPermissionCheck(
 		return res.status(401).json({ success: false, error: 'Unauthorized' });
 	})
 }
+
+export function withPermissionCheckSsr(
+	handler: (context: GetServerSidePropsContext) => Promise<any>,
+	permission?: string
+) {
+	return withSessionSsr(async (context) => {
+		const {req, res, query} = context;
+		const uid = req.session.userid;
+		if (!uid) return {
+			redirect: {
+				destination: '/',
+			}
+		}
+		if (!query.id) return {
+			redirect: {
+				destination: '/',
+			}
+		};
+		const workspaceId = parseInt(query.id as string);
+		
+
+		const user = await prisma.user.findFirst({
+			where: {
+				userid: BigInt(uid)
+			},
+			include: {
+				roles: true
+			}
+		});
+		if (!user) return {
+			redirect: {
+				destination: '/',
+			}
+		}
+		const userrole = user.roles.find(role => role.workspaceGroupId === workspaceId);
+		if (!userrole) return {
+			redirect: {	
+				destination: '/',
+			}
+		};
+		if (userrole.isOwnerRole) return handler(context);
+		if (!permission) return handler(context);
+		if (userrole.permissions.includes(permission)) return handler(context);
+		return {
+			redirect: {
+				destination: '/',
+			}
+		}
+	})
+}
+
+
 
 export async function checkGroupRoles(groupID: number) {
 	const roles = await prisma.role.findMany({

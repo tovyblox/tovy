@@ -11,7 +11,9 @@ import prisma, { schedule, SessionType, Session, user } from "@/utils/database";
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 import Image from "next/image";
 import { type } from "node:os";
-export const getServerSideProps: GetServerSideProps = async ({ query }) => {
+import { withPermissionCheckSsr } from "@/utils/permissionsManager";
+
+export const getServerSideProps: GetServerSideProps = withPermissionCheckSsr(async ({ query }) => {
 	const sessions = await prisma.schedule.findMany({
 		where: {
 			sessionType: {
@@ -44,7 +46,7 @@ export const getServerSideProps: GetServerSideProps = async ({ query }) => {
 			sessions: JSON.parse(JSON.stringify(sessions)),
 		}
 	}
-};
+});
 type esession = (schedule & {
 	sessionType: SessionType;
 	sessions: (Session & {

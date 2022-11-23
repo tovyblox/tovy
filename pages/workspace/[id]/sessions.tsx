@@ -10,8 +10,11 @@ import { useRouter } from "next/router";
 import { useState } from "react";
 import axios from "axios";
 
+import { withPermissionCheckSsr } from "@/utils/permissionsManager";
 
-export const getServerSideProps: GetServerSideProps = async () => {
+
+
+export const getServerSideProps: GetServerSideProps = withPermissionCheckSsr(async () => {
 	const sessions = await prisma.session.findMany({
 		where: {
 			startedAt: {
@@ -26,7 +29,7 @@ export const getServerSideProps: GetServerSideProps = async () => {
 			sessions: (JSON.parse(JSON.stringify(sessions, (key, value) => (typeof value === 'bigint' ? value.toString() : value))) as typeof sessions)
 		},
 	}
-}
+})
 
 type pageProps = {
 	sessions: Session[]
