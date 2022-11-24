@@ -7,12 +7,13 @@ import Button from "@/components/button";
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 import { withPermissionCheckSsr } from "@/utils/permissionsManager";
 import prisma from "@/utils/database"
+import type { wallPost } from "@prisma/client";
 import moment from "moment";
 import toast, { Toaster } from "react-hot-toast";
 import { useRouter } from "next/router";
 import axios from "axios";
 
-export const getServerSideProps: GetServerSideProps = withPermissionCheckSsr(async ({ params, res }) => {
+export const getServerSideProps = withPermissionCheckSsr(async ({ params, res }) => {
 	if(!params?.id) {
 		res.statusCode = 404;
 		return {
@@ -43,7 +44,9 @@ export const getServerSideProps: GetServerSideProps = withPermissionCheckSsr(asy
 	}
 });
 
-type pageProps = InferGetServerSidePropsType<typeof getServerSideProps>
+type pageProps = {
+	posts: wallPost[]
+}
 const Settings: pageWithLayout<pageProps> = (props) => {
 	const router = useRouter();
 	const { id } = router.query;

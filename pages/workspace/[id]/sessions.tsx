@@ -14,7 +14,7 @@ import { withPermissionCheckSsr } from "@/utils/permissionsManager";
 
 
 
-export const getServerSideProps: GetServerSideProps = withPermissionCheckSsr(async () => {
+export const getServerSideProps = withPermissionCheckSsr(async () => {
 	const sessions = await prisma.session.findMany({
 		where: {
 			startedAt: {

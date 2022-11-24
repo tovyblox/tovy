@@ -7,6 +7,7 @@ import { withSessionSsr } from "@/lib/withSession";
 import { loginState } from "@/state";
 import { Tab } from "@headlessui/react";
 import { ActivitySession } from "@prisma/client";
+import prisma from "@/utils/database";
 import moment from "moment";
 import { InferGetServerSidePropsType } from "next";
 import { useRecoilState } from "recoil";
