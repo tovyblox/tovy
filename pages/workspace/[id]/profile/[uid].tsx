@@ -13,11 +13,11 @@ import { InferGetServerSidePropsType } from "next";
 import { useRecoilState } from "recoil";
 
 export const getServerSideProps = withSessionSsr(
-	async ({ params, req }) => {
+	async ({ query, req }) => {
 		const notices = await prisma.inactivityNotice.findMany({
 			where: {
 				userId: req.session.userid,
-				workspaceGroupId: parseInt(params?.id as string),
+				workspaceGroupId: parseInt(query?.id as string),
 			},
 			orderBy: [
 				{
@@ -28,7 +28,7 @@ export const getServerSideProps = withSessionSsr(
 
 		const sessions = await prisma.activitySession.findMany({
 			where: {
-				userId: parseInt(params?.uid as string),
+				userId: parseInt(query?.uid as string),
 				active: false
 			},
 			orderBy: {

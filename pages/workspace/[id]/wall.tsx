@@ -13,8 +13,8 @@ import toast, { Toaster } from "react-hot-toast";
 import { useRouter } from "next/router";
 import axios from "axios";
 
-export const getServerSideProps = withPermissionCheckSsr(async ({ params, res }) => {
-	if(!params?.id) {
+export const getServerSideProps = withPermissionCheckSsr(async ({ query, res }) => {
+	if(!query?.id) {
 		res.statusCode = 404;
 		return {
 			props: {}
@@ -23,7 +23,7 @@ export const getServerSideProps = withPermissionCheckSsr(async ({ params, res })
 
 	const posts = await prisma.wallPost.findMany({
 		where: {
-			workspaceGroupId: parseInt(params.id as string)
+			workspaceGroupId: parseInt(query.id as string)
 		},
 		orderBy: {
 			createdAt: "desc"
