@@ -127,8 +127,8 @@ export async function checkGroupRoles(groupID: number) {
 
 			for (const user of users) {
 				if (user.ranks?.find(r => r.workspaceGroupId === groupID)?.rankId === BigInt(rank.rank)) continue;
-				if (user.roles.find(r => r.workspaceGroupId === groupID)?.groupRoles?.includes(rank.rank)) continue;
 				if (members.find(member => member.userId === Number(user.userid))) {
+					console.log(`${user.username} is in ${rank.name} (${rank.rank})`)
 					await prisma.rank.upsert({
 						where: {
 							userId_workspaceGroupId: {
@@ -146,8 +146,6 @@ export async function checkGroupRoles(groupID: number) {
 						}
 					});
 				}
-
-				
 			}
 			if (role) {
 				for (const user of users) {
@@ -165,22 +163,7 @@ export async function checkGroupRoles(groupID: number) {
 							},
 						}
 					});
-					await prisma.rank.upsert({
-						where: {
-							userId_workspaceGroupId: {
-								userId: user.userid,
-								workspaceGroupId: groupID
-							}
-						},
-						update: {
-							rankId: BigInt(rank.rank)
-						},
-						create: {
-							userId: user.userid,
-							workspaceGroupId: groupID,
-							rankId: BigInt(rank.rank)
-						}
-					})
+					
 				}
 
 				for (const member of members) {
