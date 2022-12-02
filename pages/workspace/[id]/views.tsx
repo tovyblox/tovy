@@ -78,7 +78,7 @@ export const getServerSideProps = withPermissionCheckSsr(async ({ params }: GetS
 			wallPosts: user.wallPosts,
 			inactivityNotices: user.inactivityNotices,
 			sessions: user.sessions,
-			rankID: ranks.find(x => BigInt(x.rank) == user.ranks[0].rankId)?.name,
+			rankID: user.ranks.length > 0 ? ranks.find(x => BigInt(x.rank) == user.ranks[0].rankId)?.name : 0,
 			minutes: ms.length ? Math.round(ms.reduce((p, c) => p + c) / 6000) : 0
 		})
 	}
