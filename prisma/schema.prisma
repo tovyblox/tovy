@@ -1,0 +1,187 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model workspace {
+  groupId           Int                @id @unique
+  config            config[]
+  roles             role[]
+  wallposts         wallPost[]
+  sessionTypes      SessionType[]
+  documents         document[]
+  activitySessions  ActivitySession[]
+  inactivityNotices inactivityNotice[]
+  userBook          userBook[]
+  ranks             rank[]
+}
+
+model config {
+  id               Int        @id @default(autoincrement())
+  key              String
+  value            Json
+  createdAt        DateTime   @default(now())
+  updatedAt        DateTime   @updatedAt
+  workspace        workspace? @relation(fields: [workspaceGroupId], references: [groupId])
+  workspaceGroupId Int
+}
+
+model instanceConfig {
+  id        Int      @id @default(autoincrement())
+  key       String   @unique
+  value     Json
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model user {
+  userid            BigInt             @id @unique
+  info              userInfo?
+  isOwner           Boolean?
+  picture           String?
+  username          String?
+  roles             role[]
+  wallPosts         wallPost[]
+  sessions          Session[]
+  documents         document[]
+  activitySessions  ActivitySession[]
+  inactivityNotices inactivityNotice[]
+  book              userBook[]         @relation("bookUser")
+  writtenBooks      userBook[]         @relation("bookAdmin")
+  ranks              rank[]
+}
+
+model userInfo {
+  userid       BigInt  @id
+  user         user    @relation(fields: [userid], references: [userid])
+  passwordhash String?
+  tfa          String?
+}
+
+model role {
+  id               String        @id @unique @default(uuid()) @db.Uuid()
+  permissions      String[]
+  isOwnerRole      Boolean?      @default(false)
+  workspace        workspace?    @relation(fields: [workspaceGroupId], references: [groupId])
+  members          user[]
+  workspaceGroupId Int
+  name             String
+  SessionType      SessionType[]
+  documents        document[]
+  groupRoles       Int[]
+}
+
+model wallPost {
+  id               Int       @id @default(autoincrement())
+  content          String
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  author           user?     @relation(fields: [authorId], references: [userid])
+  workspace        workspace @relation(fields: [workspaceGroupId], references: [groupId])
+  workspaceGroupId Int
+  authorId         BigInt
+}
+
+model SessionType {
+  id               String     @id @unique @default(uuid()) @db.Uuid()
+  name             String
+  gameId           Int?
+  schedule         schedule[]
+  allowUnscheduled Boolean
+  sessions         Session[]
+  hostingRoles     role[]
+  workspace        workspace? @relation(fields: [workspaceGroupId], references: [groupId])
+  workspaceGroupId Int
+}
+
+model schedule {
+  id            String      @id @unique @default(uuid()) @db.Uuid()
+  Days          Int[]
+  Hour          Int
+  Minute        Int
+  sessionType   SessionType @relation(fields: [sessionTypeId], references: [id])
+  sessionTypeId String      @db.Uuid()
+  sessions      Session[]
+}
+
+model Session {
+  id            String      @id @unique @default(uuid()) @db.Uuid()
+  owner         user        @relation(fields: [ownerId], references: [userid])
+  ownerId       BigInt
+  date          DateTime
+  startedAt     DateTime?
+  ended         DateTime?
+  sessionType   SessionType @relation(fields: [sessionTypeId], references: [id])
+  sessionTypeId String      @db.Uuid()
+  schedule      schedule?   @relation(fields: [scheduleId], references: [id])
+  scheduleId    String?     @db.Uuid()
+}
+
+model ActivitySession {
+  id               String     @id @unique @default(uuid()) @db.Uuid()
+  userId           BigInt
+  user             user       @relation(fields: [userId], references: [userid])
+  active           Boolean
+  startTime        DateTime
+  endTime          DateTime?
+  idleTime         Int?
+  workspace        workspace? @relation(fields: [workspaceGroupId], references: [groupId])
+  workspaceGroupId Int
+}
+
+model inactivityNotice {
+  id               String     @id @unique @default(uuid()) @db.Uuid()
+  userId           BigInt
+  startTime        DateTime
+  endTime          DateTime?
+  reason           String
+  approved         Boolean?   @default(false)
+  reviewed         Boolean?   @default(false)
+  user             user?      @relation(fields: [userId], references: [userid])
+  workspace        workspace? @relation(fields: [workspaceGroupId], references: [groupId])
+  workspaceGroupId Int
+}
+
+model document {
+  id               String    @id @unique @default(uuid()) @db.Uuid()
+  name             String
+  content          Json
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  owner            user      @relation(fields: [ownerId], references: [userid])
+  ownerId          BigInt
+  workspace        workspace @relation(fields: [workspaceGroupId], references: [groupId])
+  workspaceGroupId Int
+  roles            role[]
+}
+
+model userBook {
+  id               String    @id @unique @default(uuid()) @db.Uuid()
+  userId           BigInt
+  type             String
+  reason           String
+  adminId          BigInt
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  admin            user      @relation("bookAdmin", fields: [adminId], references: [userid])
+  user             user      @relation("bookUser", fields: [userId], references: [userid])
+  workspace        workspace @relation(fields: [workspaceGroupId], references: [groupId])
+  workspaceGroupId Int
+}
+
+model rank {
+  userId           BigInt
+  rankId           BigInt
+  user             user      @relation(fields: [userId], references: [userid])
+  workspace        workspace @relation(fields: [workspaceGroupId], references: [groupId])
+  workspaceGroupId Int
+
+  @@id([userId, workspaceGroupId])
+}
