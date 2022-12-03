@@ -45,7 +45,7 @@ const Activity: FC<props> = (props) => {
 		console.log(id)
 		const req = await axios.post(`/api/workspace/${workspace.groupId}/settings/activity/setRole`, { role: id });
 		if (req.status === 200) {
-			setSelectedRole((roles.find((role: any) => role.id === id) as any).rank);
+			setSelectedRole((roles.find((role: any) => role.rank === id) as any).rank);
 			triggerToast.success("Updated role");
 		}
 	}

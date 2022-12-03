@@ -19,7 +19,7 @@ type TopStaff = {
 	ms: number;
 }
 
-export default withPermissionCheck(handler, 'view_entire_groups_activity');
+export default withPermissionCheck(handler);
 
 export async function handler(
 	req: NextApiRequest,

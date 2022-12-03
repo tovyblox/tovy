@@ -27,8 +27,11 @@ export async function handler(
 
 	const activityconfig = await getConfig('activity', parseInt(req.query.id as string));
 	const role = await noblox.getRole(parseInt(req.query.id as string), req.body.role);
-	activityconfig.role = role.rank;
-	await setConfig('activity', activityconfig, parseInt(req.query.id as string));
+	const newconfig = {
+		...activityconfig,
+		role: role.id
+	};
+	await setConfig('activity', newconfig, parseInt(req.query.id as string));
 
 
 	res.status(200).send({
