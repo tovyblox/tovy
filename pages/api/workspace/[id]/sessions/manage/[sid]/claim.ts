@@ -69,9 +69,9 @@ export async function handler(
 	dateTime.setUTCMinutes(schedule.Minute);
 	dateTime.setUTCSeconds(0);
 	dateTime.setUTCMilliseconds(0);
-	dateTime.setUTCDate(day.getDate());
-	dateTime.setUTCMonth(day.getMonth());
-	dateTime.setUTCFullYear(day.getFullYear());
+	dateTime.setUTCDate(day.getUTCDate());
+	dateTime.setUTCMonth(day.getUTCDate());
+	dateTime.setUTCFullYear(day.getUTCDate());
 
 	console.log(dateTime)
 
