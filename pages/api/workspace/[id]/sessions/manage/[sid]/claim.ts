@@ -20,8 +20,7 @@ export async function handler(
 	if (!id || !sid) return res.status(400).json({ success: false, error: 'Missing required fields' });
 	const { date, timezoneOffset } = req.body;
 	if (!date) return res.status(400).json({ success: false, error: 'Missing required fields' });
-	const day = new Date(date);
-	day.setUTCMinutes(day.getMinutes() + timezoneOffset);
+	const day = new Date(date + timezoneOffset * 60 * 1000);
 
 	const days = [
 		'Sun',
@@ -70,9 +69,9 @@ export async function handler(
 	dateTime.setUTCMinutes(schedule.Minute);
 	dateTime.setUTCSeconds(0);
 	dateTime.setUTCMilliseconds(0);
-	dateTime.setUTCDate(day.getUTCDate());
-	dateTime.setUTCMonth(day.getUTCMonth());
-	dateTime.setUTCFullYear(day.getUTCFullYear());
+	dateTime.setUTCDate(day.getDate());
+	dateTime.setUTCMonth(day.getMonth());
+	dateTime.setUTCFullYear(day.getFullYear());
 
 	console.log(dateTime)
 
