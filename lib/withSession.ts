@@ -14,7 +14,7 @@ const sessionOptions = {
   cookieName: "tovy_session",
   // secure: true should be used in production (HTTPS) but can't be used in development (HTTP)
   cookieOptions: {
-    secure: false,
+    secure: process.env.NODE_ENV === 'production',
   }
 };
 
