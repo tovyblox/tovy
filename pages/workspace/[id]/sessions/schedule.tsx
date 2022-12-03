@@ -103,7 +103,7 @@ const Home: pageWithLayout<{
 	const claimSession = async (schedule: any) => {
 		setDoingAction(true);
 		const res = await axios.post(`/api/workspace/${router.query.id}/sessions/manage/${schedule.id}/claim`, {
-			date: selectedDate,
+			date: selectedDate.getTime(),
 			timezoneOffset: new Date().getTimezoneOffset()
 		});
 
