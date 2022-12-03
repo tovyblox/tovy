@@ -79,7 +79,7 @@ export const getServerSideProps = withPermissionCheckSsr(async ({ params }: GetS
 			inactivityNotices: user.inactivityNotices,
 			sessions: user.sessions,
 			rankID: user.ranks[0]?.userId ? Number(user.ranks[0]?.userId) : 0,
-			minutes: ms.length ? Math.round(ms.reduce((p, c) => p + c) / 6000) : 0
+			minutes: ms.length ? Math.round(ms.reduce((p, c) => p + c) / 60000) : 0
 		})
 	}
 
