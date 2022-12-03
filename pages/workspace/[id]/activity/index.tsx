@@ -84,7 +84,7 @@ const Activity: pageWithLayout = () => {
 									alt="User thumbnail"
 									className="rounded-full w-10 h-10 bg-primary"
 								/>
-						</Tooltip>
+							</Tooltip>
 						))}
 					</div>
 				</div>
