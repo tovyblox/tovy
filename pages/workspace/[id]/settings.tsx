@@ -84,18 +84,17 @@ const Settings: pageWithLayout<Props> = ({ users, roles, grouproles }) => {
 	const [login, setLogin] = useRecoilState(loginState);
 
 	return <div className="pagePadding">
-		<p className="text-4xl font-bold">Settings</p>
-		<a className=""> Tab </a>
+		<p className="text-4xl font-bold mb-2">Settings</p>
 		<Tab.Group>
 			<Tab.List className="flex py-1 space-x-4">
 				<Tab className={({ selected }) =>
-					`w-1/3 text-lg rounded-lg border-[#AAAAAA] border leading-5 font-medium text-left p-3 px-2 transition ${selected ? "bg-gray-200 hover:bg-gray-300" : "  hover:bg-gray-300"
+					`w-1/2 text-lg rounded-lg border-[#AAAAAA] border leading-5 font-medium text-left p-3 px-2 transition ${selected ? "bg-gray-200 hover:bg-gray-300" : "  hover:bg-gray-300"
 					}`
 				}>
 					General
 				</Tab>
 				<Tab className={({ selected }) =>
-					`w-1/3 text-lg rounded-lg border-[#AAAAAA] border leading-5 font-medium text-left p-3 px-2 transition ${selected ? "bg-gray-200 hover:bg-gray-300" : "  hover:bg-gray-300"
+					`w-1/2 text-lg rounded-lg border-[#AAAAAA] border leading-5 font-medium text-left p-3 px-2 transition ${selected ? "bg-gray-200 hover:bg-gray-300" : "  hover:bg-gray-300"
 					}`
 				}>
 					Permission

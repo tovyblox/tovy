@@ -7,11 +7,12 @@ type Props = {
 	children?: ReactNode;
 	orientation: string | "right" | "top" | "bottom" | "left";
 	tooltipText?: string;
+	isWorkspace?: boolean | true;
 
 
 };
 
-const Tooltip: FC<Props> = ({ children, orientation, tooltipText }: Props) => {
+const Tooltip: FC<Props> = ({ children, orientation, tooltipText, isWorkspace }: Props) => {
 	const tipRef = React.createRef<HTMLDivElement>();
 	const orientations = {
 		right: 'right',
@@ -78,9 +79,9 @@ const Tooltip: FC<Props> = ({ children, orientation, tooltipText }: Props) => {
 
 	const classContainer = `w-max absolute z-50 ${setContainerPosition(
 		orientation
-	)} bg-primary text-white text-sm px-3 py-2 rounded-xl flex items-center transition-all duration-150 pointer-events-none`
+	)} ${isWorkspace ? 'bg-primary' : 'bg-tovybg'} text-white text-sm px-3 py-2 rounded-xl flex items-center transition-all duration-150 pointer-events-none`
 
-	const pointerClasses = `bg-primary h-3 w-3 absolute z-10 ${setPointerPosition(
+	const pointerClasses = `${isWorkspace ? 'bg-primary' : 'bg-tovybg'} h-3 w-3 absolute z-10 ${setPointerPosition(
 		orientation
 	)} rotate-45 pointer-events-none`
 

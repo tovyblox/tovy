@@ -16,7 +16,7 @@ import {
 	getCoreRowModel,
 	getFilteredRowModel,
 	getSortedRowModel,
-  	SortingState,
+	SortingState,
 	getPaginationRowModel,
 	useReactTable,
 } from '@tanstack/react-table'
@@ -78,14 +78,15 @@ export const getServerSideProps = withPermissionCheckSsr(async ({ params }: GetS
 			wallPosts: user.wallPosts,
 			inactivityNotices: user.inactivityNotices,
 			sessions: user.sessions,
-			rankID: user.ranks.length > 0 ? ranks.find(x => BigInt(x.rank) == user.ranks[0].rankId)?.name : 0,
+			rankID: Number(user.ranks[0].rankId) || 0,
 			minutes: ms.length ? Math.round(ms.reduce((p, c) => p + c) / 6000) : 0
 		})
 	}
 
 	return {
 		props: {
-			usersInGroup: (JSON.parse(JSON.stringify(computedUsers, (_key, value) => (typeof value === 'bigint' ? value.toString() : value))) as User[])
+			usersInGroup: (JSON.parse(JSON.stringify(computedUsers, (_key, value) => (typeof value === 'bigint' ? value.toString() : value))) as User[]),
+			ranks: ranks
 		}
 	};
 }, "view_members");
@@ -103,7 +104,7 @@ const filters: {
 		'greaterThan',
 		'lessThan',
 	],
-	rankID: [
+	rank: [
 		'equal',
 		'greaterThan',
 		'lessThan',
@@ -121,9 +122,15 @@ const filterNames: {
 }
 
 type pageProps = {
-	usersInGroup: User[]
+	usersInGroup: User[];
+	ranks: {
+		id: number;
+		rank: number;
+		name: string;
+	}[]
+
 }
-const Views: pageWithLayout<pageProps> = ({ usersInGroup }) => {
+const Views: pageWithLayout<pageProps> = ({ usersInGroup, ranks }) => {
 	const router = useRouter();
 	const { id } = router.query;
 	const [login, setLogin] = useRecoilState(loginState);
@@ -198,6 +205,11 @@ const Views: pageWithLayout<pageProps> = ({ usersInGroup }) => {
 		}),
 		columnHelper.accessor("rankID", {
 			header: 'Rank',
+			cell: (row) => {
+				return (
+					<p>{ranks.find(x => x.rank == row.getValue())?.name || "N/A"}</p>
+				);
+			}
 		}),
 		columnHelper.accessor("inactivityNotices", {
 			header: 'Inactivity Notices',
@@ -228,7 +240,7 @@ const Views: pageWithLayout<pageProps> = ({ usersInGroup }) => {
 		onSortingChange: setSorting,
 		getCoreRowModel: getCoreRowModel(),
 		getSortedRowModel: getSortedRowModel(),
-    	getPaginationRowModel: getPaginationRowModel(),
+		getPaginationRowModel: getPaginationRowModel(),
 	});
 
 	const [colFilters, setColFilters] = useState<{
@@ -289,10 +301,12 @@ const Views: pageWithLayout<pageProps> = ({ usersInGroup }) => {
 							valid = false;
 						}
 					}
-				} else if (filter.column === 'rankID') {
+				} else if (filter.column === 'rank') {
 					if (!filter.value) return;
 					if (filter.filter === 'equal') {
+						console.log(user.rankID, filter.value)
 						if (user.rankID !== parseInt(filter.value)) {
+							console.log(`${user.rankID} !== ${filter.value}`)
 							valid = false;
 						}
 					} else if (filter.filter === 'greaterThan') {
@@ -317,7 +331,7 @@ const Views: pageWithLayout<pageProps> = ({ usersInGroup }) => {
 		for (const select of selected) {
 			const data = select.original;
 
-			if (type == "add"){
+			if (type == "add") {
 				promises.push(axios.post(
 					`/api/workspace/${id}/activity/add`,
 					{ userId: data.info.userId, minutes }
@@ -381,11 +395,11 @@ const Views: pageWithLayout<pageProps> = ({ usersInGroup }) => {
 								<div className="mt-2">
 									<input
 										className="text-gray-600 dark:text-white rounded-lg p-2 border-2 border-gray-300 dark:border-gray-500 w-full bg-gray-50 focus-visible:outline-none dark:bg-gray-700 focus-visible:ring-blue-500 focus-visible:border-blue-500"
-										type={type == "add" || type == "deduct" ? "number": "text"}
-										placeholder={type == "add" || type == "deduct" ? "Minutes": "Message"}
+										type={type == "add" || type == "deduct" ? "number" : "text"}
+										placeholder={type == "add" || type == "deduct" ? "Minutes" : "Message"}
 										value={type == "add" || type == "deduct" ? minutes : message}
 										onChange={(e) => {
-											if(type == "add" || type == "deduct"){
+											if (type == "add" || type == "deduct") {
 												setMinutes(parseInt(e.target.value))
 											} else {
 												setMessage(e.target.value)
@@ -423,40 +437,42 @@ const Views: pageWithLayout<pageProps> = ({ usersInGroup }) => {
 				<Popover.Panel className="absolute left-0 z-20 mt-2 w-80 origin-top-left rounded-xl bg-white dark:bg-gray-800 shadow-lg ring-1 ring-gray-300 focus-visible:outline-none p-3">
 					<Button onClick={newfilter}> Add filter </Button>
 					{colFilters.map((filter) => (
-						<div className="p-3 outline outline-gray-300 rounded-md mt-4 outline-1" key={filter.id}> <Filter updateFilter={(col, op, value) => updateFilter(filter.id, col, op, value)} deleteFilter={() => removeFilter(filter.id)} data={filter} /> </div>
+						<div className="p-3 outline outline-gray-300 rounded-md mt-4 outline-1" key={filter.id}> <Filter ranks={ranks} updateFilter={(col, op, value) => updateFilter(filter.id, col, op, value)} deleteFilter={() => removeFilter(filter.id)} data={filter} /> </div>
 					))}
-					
+
 				</Popover.Panel>
 			</Popover>
-			<table className="table-auto bg-white w-full rounded-xl border-1 border border-separate border-gray-300 p-3">
-				<thead className="border-separate text-left text-slate-400 text-sm">
-					{table.getHeaderGroups().map((headerGroup) => (
-						<tr className="font-medium" key={headerGroup.id}>
-							{headerGroup.headers.map((column) => (
-								<th className="font-normal hover:text-slate-200 cursor-pointer" onClick={column.column.getToggleSortingHandler()} key={column.id}>{column.isPlaceholder
-									? null
-									: flexRender(
-										column.column.columnDef.header,
-										column.getContext()
-									)}
+			<div className="max-w-screen overflow-x-auto bg-white w-full rounded-xl border-1 p-3 border border-separate border-gray-300">
+				<table className="min-w-full">
+					<thead className="text-left text-slate-400 text-sm">
+						{table.getHeaderGroups().map((headerGroup) => (
+							<tr className="font-medium" key={headerGroup.id}>
+								{headerGroup.headers.map((column) => (
+									<th className="font-normal px-6 py-2 hover:text-slate-200 cursor-pointer text-left" onClick={column.column.getToggleSortingHandler()} key={column.id}>{column.isPlaceholder
+										? null
+										: flexRender(
+											column.column.columnDef.header,
+											column.getContext()
+										)}
 									</th>
-							))}
+								))}
 
-						</tr>
-					))}
-				</thead>
-				<tbody className="border-seperate gap-y-2 space-y-3">
-					{table.getRowModel().rows.map(row => (
-						<tr key={row.id}>
-							{row.getVisibleCells().map(cell => (
-								<td key={cell.id}>
-									{flexRender(cell.column.columnDef.cell, cell.getContext())}
-								</td>
-							))}
-						</tr>
-					))}
-				</tbody>
-			</table>
+							</tr>
+						))}
+					</thead>
+					<tbody className="">
+						{table.getRowModel().rows.map(row => (
+							<tr key={row.id}>
+								{row.getVisibleCells().map(cell => (
+									<td key={cell.id} className="px-6 py-2">
+										{flexRender(cell.column.columnDef.cell, cell.getContext())}
+									</td>
+								))}
+							</tr>
+						))}
+					</tbody>
+				</table>
+			</div>
 			<div className="flex flex-row justify-center mt-3">
 				<Button classoverride="px-4 py-2 !mx-2 !ml-0 bg-primary disabled:bg-primary/50" onClick={() => table.previousPage()} disabled={!table.getCanPreviousPage()}>{"<"}</Button>
 				<div className="px-4 py-2 bg-primary text-white w-fit rounded-xl">
@@ -472,17 +488,23 @@ const Filter: React.FC<{
 	data: any
 	updateFilter: (column: string, op: string, value: string) => void
 	deleteFilter: () => void
+	ranks: {
+		id: number,
+		name: string,
+		rank: number,
+	}[]
 }> = (
 	{
 		updateFilter,
 		deleteFilter,
 		data,
+		ranks
 	}
 ) => {
 		const methods = useForm<{
 			col: string
 			op: string
-			value: string
+			value: string,
 		}>({
 			defaultValues: {
 				col: data.column,
@@ -490,7 +512,7 @@ const Filter: React.FC<{
 				value: data.value
 			}
 		});
-		const { register, handleSubmit } = methods;
+		const { register, handleSubmit, getValues } = methods;
 		useEffect(() => {
 			const subscription = methods.watch((value) => {
 				updateFilter(methods.getValues().col, methods.getValues().op, methods.getValues().value);
@@ -498,7 +520,7 @@ const Filter: React.FC<{
 			return () => subscription.unsubscribe();
 		}, [methods.watch]);
 
-		
+
 
 		return (
 			<FormProvider {...methods}>
@@ -520,7 +542,20 @@ const Filter: React.FC<{
 					))}
 
 				</select>
-				<Input {...register('value')} label="Value" />
+				{getValues('col').valueOf() !== 'rank' && <Input {...register('value')} label="Value" />}
+
+				{getValues('col') === 'rank' && (
+
+					<>
+						<label className="text-gray-500 text-sm dark:text-gray-200">
+							Value
+						</label>
+						<select  {...register('value')} className={"text-gray-600 dark:text-white rounded-lg p-2 border-2 border-gray-300  dark:border-gray-500 w-full bg-gray-50 focus-visible:outline-none dark:bg-gray-700 focus-visible:ring-tovybg focus-visible:border-tovybg"}>
+							{ranks.map((rank) => (
+								<option value={rank.rank} key={rank.id}>{rank.name}</option>
+							))}
+						</select>
+					</>)}
 
 			</FormProvider>
 		)

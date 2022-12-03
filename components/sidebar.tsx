@@ -38,9 +38,10 @@ const Topbar: NextPage = () => {
 			current: false,
 		},
 		{
-			name: "Views",
+			name: "Staff",
 			href: "/workspace/[id]/views",
 			icon: IconUsers,
+			accessible: workspace.yourPermission.includes('view_members'),
 			current: false,
 		},
 		{
@@ -53,6 +54,7 @@ const Topbar: NextPage = () => {
 		{
 			name: "Settings",
 			href: "/workspace/[id]/settings",
+			accessible: workspace.yourPermission.includes('admin'),
 			icon: IconSettings,
 			current: false,
 		},

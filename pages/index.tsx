@@ -4,6 +4,7 @@ import Topbar from "@/components/topbar";
 import { useRouter } from "next/router";
 import { loginState } from "@/state";
 import Button from "@/components/button";
+import Tooltip from "@/components/tooltip";
 import { useRecoilState } from "recoil";
 
 const Home: NextPage = () => {
@@ -23,14 +24,18 @@ const Home: NextPage = () => {
 				<div className="lg:px-48 md:px-32 sm:px-20 xs:px-9 px-8 ">
 					<div className=" pt-10 flex">
 						<p className="my-auto text-2xl font-bold"> Select a Workspace </p>
-						<Button disabled={!login.canMakeWorkspace}>
-							New Workspace
-						</Button>
+						<div className="ml-auto">
+							<Tooltip tooltipText="The ability to create new workspaces is coming soon, stay tuned" orientation="bottom">
+								<Button disabled={true}>
+									New Workspace
+								</Button>
+							</Tooltip>
+						</div>
 					</div>
-					<div className="grid grid-cols-1 pt-5 gap-x-9 lg:grid-cols-3 2xl:grid-cols-4 md:grid-cols-2 sm:grid-cols-1">
+					{login.workspaces.length && <div className="grid grid-cols-1 pt-5 gap-x-9 lg:grid-cols-3 2xl:grid-cols-4 md:grid-cols-2 sm:grid-cols-1">
 						{login.workspaces?.map((workspace, i) => (
 							<div className=" rounded-xl h-48" key={i}>
-								<div className={`bg-gray-500 rounded-t-xl h-24 bg-no-repeat bg-center bg-cover`} style={{backgroundImage: `url(${workspace.groupThumbnail})`}}/>
+								<div className={`bg-gray-500 rounded-t-xl h-24 bg-no-repeat bg-center bg-cover`} style={{ backgroundImage: `url(${workspace.groupThumbnail})` }} />
 								<div className="h-14 bg-white dark:bg-gray-600 rounded-b-xl relative bottom-0 flex flex-row px-3">
 									<p className="my-auto text-xl font-bold"> Tovy </p>
 									<Button classoverride="py-2 px-2 my-2" onPress={() => gotoWorkspace(workspace.groupId)}>
@@ -54,6 +59,15 @@ const Home: NextPage = () => {
 							</div>
 						))}
 					</div>
+					}
+
+					{login.workspaces.length < 1 && (
+						<div className="w-full lg:4/6 xl:5/6 rounded-md h-96 bg-white outline-gray-300 outline outline-[1.4px] flex flex-col p-5">
+							<img className="mx-auto my-auto h-72" alt="fallback image" src={'/conifer-charging-the-battery-with-a-windmill.png'} />
+							<p className="text-center text-xl font-semibold">This user does not have any past notices.</p>
+						</div>
+					)}
+
 				</div>
 			</div>
 		</div>

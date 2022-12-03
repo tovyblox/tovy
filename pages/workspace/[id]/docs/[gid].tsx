@@ -4,10 +4,12 @@ import Workspace from "@/layouts/workspace";
 import { useState, useMemo } from "react";
 import prisma from "@/utils/database";
 import { useRecoilState } from "recoil";
+import axios from "axios";
 import Button from "@/components/button";
 import StarterKit from '@tiptap/starter-kit'
 import { withPermissionCheckSsr } from "@/utils/permissionsManager";
 import { GetServerSideProps } from "next";
+import { useRouter } from "next/router";
 import { generateHTML } from '@tiptap/html'
 
 
@@ -60,6 +62,7 @@ export const getServerSideProps: GetServerSideProps = withPermissionCheckSsr(asy
 const Settings: pageWithLayout<Props> = ({ document }) => {
 	const [login, setLogin] = useRecoilState(loginState);
 	const [workspace, setWorkspace] = useRecoilState(workspacestate);
+	const router = useRouter();
 	const [wallMessage, setWallMessage] = useState("");
 	const friendlyDate = `${new Date(document.createdAt).toLocaleDateString()} at ${new Date(document.createdAt).toLocaleTimeString()}`;
 
@@ -68,6 +71,12 @@ const Settings: pageWithLayout<Props> = ({ document }) => {
 			StarterKit
 		])
 	}, [document.content]);
+
+	const deleteDoc = async () => {
+		await axios.post(`/api/workspace/${workspace.groupId}/guides/${document.id}/delete`, {}, {});
+		router.push(`/workspace/${workspace.groupId}/docs`);
+		
+	}
 
 	const goback = () => {
 		window.history.back();
@@ -84,6 +93,7 @@ const Settings: pageWithLayout<Props> = ({ document }) => {
 		</div>
 		<div className="flex mt-6">
 			<Button classoverride="ml-0" workspace onClick={goback}> Back </Button>
+			{workspace.yourPermission.includes('manage_docs') && <Button classoverride="bg-red-600 hover:bg-red-300 focus-visible:bg-red-300  " workspace onClick={deleteDoc}> Delete </Button>}
 		</div>
 	</div>;
 };
