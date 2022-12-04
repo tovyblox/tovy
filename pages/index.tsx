@@ -13,6 +13,7 @@ const Home: NextPage = () => {
 	const gotoWorkspace = (id: number) => {
 		router.push(`/workspace/${id}`);
 	};
+
 	return (
 		<div>
 			<Head>
@@ -32,7 +33,7 @@ const Home: NextPage = () => {
 							</Tooltip>
 						</div>
 					</div>
-					{!!login.workspaces.length && <div className="grid grid-cols-1 pt-5 gap-x-9 lg:grid-cols-3 2xl:grid-cols-4 md:grid-cols-2 sm:grid-cols-1">
+					{login.workspaces && !!login.workspaces.length && <div className="grid grid-cols-1 pt-5 gap-x-9 lg:grid-cols-3 2xl:grid-cols-4 md:grid-cols-2 sm:grid-cols-1">
 						{login.workspaces?.map((workspace, i) => (
 							<div className=" rounded-xl h-48" key={i}>
 								<div className={`bg-gray-500 rounded-t-xl h-24 bg-no-repeat bg-center bg-cover`} style={{ backgroundImage: `url(${workspace.groupThumbnail})` }} />
@@ -61,10 +62,10 @@ const Home: NextPage = () => {
 					</div>
 					}
 
-					{!login.workspaces.length && (
+					{login.workspaces && !login.workspaces.length && (
 						<div className="w-full lg:4/6 xl:5/6 rounded-md h-96 bg-white outline-gray-300 outline outline-[1.4px] flex flex-col p-5">
 							<img className="mx-auto my-auto h-72" alt="fallback image" src={'/conifer-charging-the-battery-with-a-windmill.png'} />
-							<p className="text-center text-xl font-semibold">This user does not have any past notices.</p>
+							<p className="text-center text-xl font-semibold">No workspaces available.</p>
 						</div>
 					)}
 

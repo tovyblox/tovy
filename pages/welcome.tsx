@@ -1,5 +1,5 @@
 import type { NextPage } from "next";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { loginState } from "@/state";
 import { useRecoilState } from "recoil";
 import { useForm, FormProvider } from "react-hook-form";
@@ -19,6 +19,10 @@ const Login: NextPage = ({ }) => {
 	const signupform = useForm<FormData>();
 	const { register, handleSubmit, watch, formState: { errors } } = methods;
 	const [selectedSlide, setSelectedSlide] = useState(0);
+
+	useEffect(() => {
+		if(login.workspaces) Router.push("/");
+	}, []);
 
 	async function createAccount() {
 		let request
