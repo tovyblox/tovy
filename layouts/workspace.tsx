@@ -35,6 +35,7 @@ const workspace: LayoutProps = ({ children }) => {
 			"bg-pink-500": colors.pink[500],
 			"bg-black": colors.black,
 			"bg-gray-500": colors.gray[500],
+			"bg-indigo-700": colors.indigo[700],
 		}
 		const hex = hexRgb(themes[groupTheme])
 		const theme = `${hex.red} ${hex.green} ${hex.blue}`
