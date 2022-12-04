@@ -63,6 +63,7 @@ const Login: NextPage = ({ }) => {
 		"bg-pink-500",
 		"bg-black",
 		"bg-gray-500",
+		"bg-indigo-700",
 	];
 	return (
 		<div className="flex bg-infobg h-screen bg-no-repeat bg-cover bg-center">
