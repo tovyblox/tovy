@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "prisma migrate deploy && next start",
+    "start": "ts-node --esm migrateDatabase.mts && next start",
     "lint": "next lint",
     "prisma:generate": "prisma generate"
   },
@@ -31,6 +31,7 @@
     "axios": "^0.27.2",
     "bcrypt": "^5.0.1",
     "chart.js": "^4.0.1",
+    "dotenv": "^16.0.3",
     "hex-rgb": "^5.0.0",
     "iron-session": "^6.2.1",
     "moment": "^2.29.4",
@@ -49,6 +50,7 @@
     "recoil-nexus": "^0.4.0",
     "sass": "^1.56.1",
     "tailwind-merge": "^1.6.1",
+    "ts-node": "^10.9.1",
     "uuid": "^3.4.0"
   },
   "devDependencies": {
