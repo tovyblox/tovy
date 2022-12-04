@@ -1,6 +1,6 @@
-
 on:
-  push
+  release:
+    types: [published]
 
 jobs:
   push_to_registry:
