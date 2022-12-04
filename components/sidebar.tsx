@@ -110,17 +110,21 @@ const Topbar: NextPage = () => {
 									</a>
 								)}
 							</Menu.Item>
-							<Menu.Item>
-								{({ active }) => (
-									<a
-									className={`${active ? "bg-tovybg text-white" : "text-gray-700 dark:text-white"
-										}  px-3 py-2 text-sm rounded-md m-1 mb-0 font-medium flex flex-row cursor-pointer`}
-									>
-										<IconSettings size={22} className="inline-block" />
-										<p className="ml-2"> Account settings </p>
-									</a>
-								)}
-							</Menu.Item>
+							{
+								/*
+									<Menu.Item>
+										{({ active }) => (
+											<a
+											className={`${active ? "bg-tovybg text-white" : "text-gray-700 dark:text-white"
+												}  px-3 py-2 text-sm rounded-md m-1 mb-0 font-medium flex flex-row cursor-pointer`}
+											>
+												<IconSettings size={22} className="inline-block" />
+												<p className="ml-2"> Account settings </p>
+											</a>
+										)}
+									</Menu.Item>
+								*/
+							}
 							<Menu.Item>
 								{({ active }) => (
 									<a
