@@ -40,6 +40,7 @@ const Color: FC<props> = (props) => {
 		"bg-pink-500",
 		"bg-black",
 		"bg-gray-500",
+		"bg-indigo-700",
 	];
 		
 
