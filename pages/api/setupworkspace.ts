@@ -31,6 +31,11 @@ export async function handler(
 	if (!userid) {
 		res.status(404).json({ success: false, error: 'Username not found' })
 		return
+	};
+	const workspaceCount = await prisma.workspace.count({})
+	if (workspaceCount > 0) {
+		res.status(403).json({ success: false, error: 'Workspace already exists' })
+		return
 	}
 	await prisma.workspace.create({
 		data: {
