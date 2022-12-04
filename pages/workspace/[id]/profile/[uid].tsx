@@ -7,6 +7,7 @@ import { withPermissionCheckSsr } from "@/utils/permissionsManager";
 import { withSessionSsr } from "@/lib/withSession";
 import { loginState } from "@/state";
 import { Tab } from "@headlessui/react";
+import { getDisplayName, getUsername, getThumbnail } from "@/utils/userinfoEngine";
 import { ActivitySession } from "@prisma/client";
 import prisma from "@/utils/database";
 import moment from "moment";
@@ -129,7 +130,7 @@ export const getServerSideProps = withPermissionCheckSsr(
 			data.push(day.ms.reduce((p, c) => p + c));
 		});
 
-		const userBook = await prisma.userBook.findMany({
+		const ubook = await prisma.userBook.findMany({
 			where: {
 				userId: BigInt(query?.uid as string)
 			},
@@ -147,8 +148,13 @@ export const getServerSideProps = withPermissionCheckSsr(
 				timeSpent,
 				timesPlayed: sessions.length,
 				data,
+				info: {
+					username: await getUsername(parseInt(query?.uid as string)),
+					displayName: await getDisplayName(parseInt(query?.uid as string)),
+					avatar: await getThumbnail(parseInt(query?.uid as string))
+				},
 				isUser: req.session.userid === parseInt(query?.uid as string),
-				userBook: (JSON.parse(JSON.stringify(userBook, (_key, value) => (typeof value === 'bigint' ? value.toString() : value))) as typeof userBook)
+				userBook: (JSON.parse(JSON.stringify(ubook, (_key, value) => (typeof value === 'bigint' ? value.toString() : value))) as typeof ubook)
 			}
 		};
 	}
@@ -159,18 +165,23 @@ type pageProps = {
 	timeSpent: number;
 	timesPlayed: number;
 	data: number[];
+	info: {
+		username: string;
+		displayName: string;
+		avatar: string;
+	}
 	userBook: any;
 	isUser: boolean;
 }
-const Profile: pageWithLayout<pageProps> = ({ notices, timeSpent, timesPlayed, data, userBook, isUser }) => {
+const Profile: pageWithLayout<pageProps> = ({ notices, timeSpent, timesPlayed, data, userBook, isUser, info }) => {
 	const [login, setLogin] = useRecoilState(loginState)
 
 	return <div className="pagePadding">
 		<div className="flex items-center mb-6">
-			<img src={login.thumbnail} className="rounded-full bg-primary h-16 w-16 my-auto" alt="Avatar Headshot" />
+			<img src={info.avatar} className="rounded-full bg-primary h-16 w-16 my-auto" alt="Avatar Headshot" />
 			<div className="ml-3">
-				<h2 className="text-4xl font-bold">{login.displayname}</h2>
-				<p className="text-gray-500">@{login.username}</p>
+				<h2 className="text-4xl font-bold">{info.displayName}</h2>
+				<p className="text-gray-500">@{info.username}</p>
 			</div>
 		</div>
 		{!isUser && <Tab.Group>

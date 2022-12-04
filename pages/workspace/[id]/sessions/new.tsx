@@ -196,7 +196,7 @@ const Home: pageWithLayout<InferGetServerSidePropsType<GetServerSideProps>> = ({
 				</div>
 				<div className="bg-white p-4 border border-1 border-gray-300  rounded-md">
 					<p className="text-2xl font-bold mb-2">Scheulding </p>
-					<Switchcomponenet label="Allow unscheduled" classoverride="mb-2" checked={allowUnscheduled} onChange={() => setAllowUnscheduled(!allowUnscheduled)} />
+					<Switchcomponenet label="Allow unscheduled (coming soon)" classoverride="mb-2" checked={allowUnscheduled} onChange={() => setAllowUnscheduled(!allowUnscheduled)} />
 					<Switchcomponenet label="Scheduled" checked={enabled} onChange={() => setEnabled(!enabled)} />
 					{enabled && <div className="mt-5">
 						<p className="text-2xl font-bold mb-2">Repeting settings</p>

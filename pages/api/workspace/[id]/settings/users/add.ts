@@ -45,6 +45,7 @@ export async function handler(
 			userid: userid
 		},
 		update: {
+			username: await getUsername(userid),
 			roles: {
 				connect: {
 					id: role.id
@@ -53,6 +54,7 @@ export async function handler(
 		},
 		create: {
 			userid: userid,
+			username: await getUsername(userid),
 
 			roles: {
 				connect: {

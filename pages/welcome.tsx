@@ -39,7 +39,7 @@ const Login: NextPage = ({ }) => {
 		finally {
 			if (!request) return;
 			setTimeout(() => {
-				Router.push("/login")
+				Router.push("/")
 				Router.reload()
 			}, 1000)
 			console.log(request)

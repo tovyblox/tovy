@@ -33,7 +33,7 @@ const Color: React.FC = () => {
 			{docs.length < 1 && (
 				<div className="w-full lg:4/6 xl:5/6 rounded-md h-96 bg-white outline-gray-300 outline outline-[1.4px] flex flex-col p-5">
 					<img className="mx-auto my-auto h-72" alt="fallback image" src={'/conifer-charging-the-battery-with-a-windmill.png'} />
-					<p className="text-center text-xl font-semibold">This user does not have any past notices.</p>
+					<p className="text-center text-xl font-semibold">There is no docs to read :(.</p>
 				</div>
 			)}
 			<div className="grid grid-cols-1 lg:grid-cols-3 gap-5 mt-5">

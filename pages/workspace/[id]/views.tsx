@@ -170,7 +170,7 @@ const Views: pageWithLayout<pageProps> = ({ usersInGroup, ranks }) => {
 			header: 'User',
 			cell: (row) => {
 				return (
-					<div className="flex flex-row">
+					<div className="flex flex-row cursor-pointer" onClick={() => router.push(`/workspace/${router.query.id}/profile/${row.getValue().userId}`)}>
 						<img src={`https://www.roblox.com/headshot-thumbnail/image?userId=${row.getValue().userId}&width=512&height=512&format=jpg`} className="w-10 h-10 rounded-full bg-primary " alt="profile image" />
 						<p className="leading-5 my-auto px-2 font-semibold">
 							{row.getValue().username} <br />

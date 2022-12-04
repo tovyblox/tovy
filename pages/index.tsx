@@ -37,7 +37,7 @@ const Home: NextPage = () => {
 							<div className=" rounded-xl h-48" key={i}>
 								<div className={`bg-gray-500 rounded-t-xl h-24 bg-no-repeat bg-center bg-cover`} style={{ backgroundImage: `url(${workspace.groupThumbnail})` }} />
 								<div className="h-14 bg-white dark:bg-gray-600 rounded-b-xl relative bottom-0 flex flex-row px-3">
-									<p className="my-auto text-xl font-bold"> Tovy </p>
+									<p className="my-auto text-xl font-bold"> {workspace.groupName} </p>
 									<Button classoverride="py-2 px-2 my-2" onPress={() => gotoWorkspace(workspace.groupId)}>
 										<svg
 											xmlns="http://www.w3.org/2000/svg"
