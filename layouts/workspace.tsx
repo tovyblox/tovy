@@ -124,7 +124,7 @@ const workspace: LayoutProps = ({ children }) => {
 			</Head>
 
 			<div className={`flex `}>
-				<Transition show={open && isMobile} as="div" className={"z-20"}>
+				<Transition show={open && isMobile} as="div" className={"z-50"}>
 					<Transition.Child
 						enter="ease-out duration-300"
 						enterFrom="opacity-0"

@@ -31,7 +31,7 @@ export const getServerSideProps = withPermissionCheckSsr(
 		if (!parseInt(query?.id as string) && !userTakingAction?.roles[0].isOwnerRole && !userTakingAction?.roles[0].permissions.includes('manage_activity')) return { notFound: true };
 		const notices = await prisma.inactivityNotice.findMany({
 			where: {
-				userId: req.session.userid,
+				userId: BigInt(query?.uid as string),
 				workspaceGroupId: parseInt(query?.id as string),
 			},
 			orderBy: [

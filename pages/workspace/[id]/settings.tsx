@@ -109,7 +109,7 @@ const Settings: pageWithLayout<Props> = ({ users, roles, grouproles }) => {
 								<Transition
 									enter="transition duration-100 ease-out"
 									enterFrom="transform opacity-0 -translate-y-1"
-									enterTo="transform opacity-100 translate-y-0"
+									enterTo={`transform opacity-100 translate-y-0 relative ${Component.isAboveOthers ? "z-40" : "z-10"}`}
 									leave="transition duration-75 ease-out"
 									leaveFrom="transform translate-y-0"
 									leaveTo="transform opacity-0 -translate-y-1"

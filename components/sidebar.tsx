@@ -66,7 +66,7 @@ const Topbar: NextPage = () => {
 	const router = useRouter();
 
 	return (
-		<div className="sticky top-0 w-60 h-full bg-white drop-shadow dark:bg-gray-900">
+		<div className="sticky top-0 w-60 h-full bg-white drop-shadow dark:bg-gray-900 z-50">
 			<div className="flex flex-col py-3 px-3 gap-2 focus-visible:bg-blue-200">
 				<Menu as="div" className="relative inline-block w-full text-left">
 					<div className="w-full">
