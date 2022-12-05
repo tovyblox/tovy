@@ -92,7 +92,7 @@ model wallPost {
 model SessionType {
   id               String     @id @unique @default(uuid()) @db.Uuid()
   name             String
-  gameId           Int?
+  gameId           BigInt?
   schedule         schedule[]
   allowUnscheduled Boolean
   sessions         Session[]
