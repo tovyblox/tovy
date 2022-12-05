@@ -18,7 +18,7 @@ export async function handler(
 	const { name, schedule, permissions } = req.body;
 	if (!name || !schedule || !permissions) return res.status(400).json({ success: false, error: 'Missing required fields' });
 	const { days, time, allowUnscheduled } = schedule;
-	if (schedule.enebaled && (!days || !time || !allowUnscheduled)) return res.status(400).json({ success: false, error: 'Missing required fields' });
+	if (schedule.enabled && (!days || !time || !allowUnscheduled)) return res.status(400).json({ success: false, error: 'Missing required fields' });
 	if (schedule.enabled) {
 		console.log(time.split(':')[0])
 		const session = await prisma.sessionType.create({
