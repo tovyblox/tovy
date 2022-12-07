@@ -81,51 +81,15 @@ export async function handler(
 			sessionTypeId: schedule.sessionTypeId
 		}
 	});
-	if (findSession) {
-		const schedulewithsession = await prisma.schedule.update({
-			where: {
-			   id: schedule.id
-			},
-			data: {
-			   sessions: {
-				   update: {
-						where: {
-							id: findSession.id
-						},
-						data: {
-							ownerId: BigInt(req.session.userid)
-						}
-				   }
-			   }
-			}, 
-		   include: {
-			   sessionType: {
-				   include: {
-					   hostingRoles: true
-				   }
-				
-			   },
-			   sessions: {
-				   include: {
-					   owner: true
-				   }
-			   }
-		   }	
-	   });
-
-		return res.status(200).json({ success: true, session: JSON.parse(JSON.stringify(schedulewithsession, (key, value) => (typeof value === 'bigint' ? value.toString() : value ))) });
-	}
-
+	if (!findSession) return res.status(400).json({ success: false, error: 'Invalid session' });
 	const schedulewithsession = await prisma.schedule.update({
 		where: {
 			id: schedule.id
 		},
 		data: {
 			sessions: {
-				create: {
-					date: dateTime,
-					sessionTypeId: schedule.sessionTypeId,
-					ownerId: req.session.userid,
+				delete: {
+					id: findSession.id
 				}
 			}
 		},
@@ -134,6 +98,7 @@ export async function handler(
 				include: {
 					hostingRoles: true
 				}
+
 			},
 			sessions: {
 				include: {
@@ -141,8 +106,9 @@ export async function handler(
 				}
 			}
 		}
-
 	});
+
+
 
 
 

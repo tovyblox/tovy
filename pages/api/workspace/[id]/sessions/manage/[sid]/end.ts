@@ -1,6 +1,7 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from 'next'
 import prisma from '@/utils/database';
+import { deleteWebhook, } from '@/utils/sessionWebhook';
 import { withSessionRoute } from '@/lib/withSession'
 type Data = {
 	success: boolean
@@ -53,5 +54,8 @@ export async function handler(
 			ended: new Date()
 		}
 	});
+	if (session.sessionType.webhookEnabled) {
+		await deleteWebhook(session)
+	}
 	res.status(200).json({ success: true });
 }

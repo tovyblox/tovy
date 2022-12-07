@@ -82,26 +82,32 @@ const Home: pageWithLayout<{
 		`to-pink-500 from-pink-700`,	
 	]
 
-	function getLastThreeDays() {
-		const today = new Date();
-		const lastThreeDays = [];
-		const nextThreeDays = [];
-		for (let i = 0; i < 4; i++) {
-			const day = new Date(today);
-			day.setDate(day.getDate() - i);
-			lastThreeDays.push(day);
-		}
-		for (let i = 0; i < 3; i++) {
-			const day = new Date(today);
-			day.setDate(day.getDate() + i + 1);
-			nextThreeDays.push(day);
-		}
-		return [...lastThreeDays, ...nextThreeDays].sort((a, b) => a.getTime() - b.getTime());
-	};
+	const getLastThreeDays = useMemo(() => {
+			const today = new Date();
+			console.log(today)
+			const lastThreeDays = [];
+			const nextThreeDays = [];
+			for (let i = 0; i < 4; i++) {
+				const day = new Date(today);
+				day.setDate(day.getDate() - i);
+				day.setMinutes(0)
+				day.setHours(0)
+				lastThreeDays.push(day);
+			}
+			for (let i = 0; i < 3; i++) {
+				const day = new Date(today);
+				day.setDate(day.getDate() + i + 1);
+				day.setMinutes(0)
+				day.setHours(0)
+				nextThreeDays.push(day);
+			}
+			return [...lastThreeDays, ...nextThreeDays].sort((a, b) => a.getTime() - b.getTime());
+	}, []);
 
 
 	const claimSession = async (schedule: any) => {
 		setDoingAction(true);
+		console.log(selectedDate)
 		const res = await axios.post(`/api/workspace/${router.query.id}/sessions/manage/${schedule.id}/claim`, {
 			date: selectedDate.getTime(),
 			timezoneOffset: new Date().getTimezoneOffset()
@@ -116,10 +122,25 @@ const Home: pageWithLayout<{
 		}
 	};
 
+	const unclaimSession = async (schedule: any) => {
+		setDoingAction(true);
+		console.log(selectedDate)
+		const res = await axios.post(`/api/workspace/${router.query.id}/sessions/manage/${schedule.id}/unclaim`, {
+			date: selectedDate.getTime(),
+			timezoneOffset: new Date().getTimezoneOffset()
+		});
+
+		if (res.status === 200) {
+			const curentSessions = sessionsData;
+			//filter out the session that was claimed
+			const newSessions = curentSessions.filter((session: any) => session.id !== schedule.id);
+			setSessionsData([...newSessions, res.data.session]);
+			setDoingAction(false);
+		}
+	};
+
 	useEffect(() => {
-		console.log(sessions)
 		const activeSessions = sessionsData.filter((session: any) => {
-			console.log(sessions)
 			return session.Days.includes(selectedDate.getDay());
 		});
 		setActiveSessions(activeSessions);
@@ -133,7 +154,6 @@ const Home: pageWithLayout<{
 			text: "You don't have the required role to host this session"
 		};
 		const date = new Date();
-		console.log(selectedDate.getUTCDate())
 		date.setUTCDate(selectedDate.getUTCDate());
 		date.setUTCFullYear(selectedDate.getUTCFullYear());
 		date.setUTCMonth(selectedDate.getUTCMonth());
@@ -141,22 +161,11 @@ const Home: pageWithLayout<{
 		date.setUTCMinutes(session.Minute)
 		date.setUTCSeconds(0);
 		date.setUTCMilliseconds(0);
-		console.log(session.sessionType.name)
-		console.log(`Current date: ${new Date()}`)
-		console.log(date, new Date())
-		console.log(`${date.getTime()} u ${new Date().getTime()}`)
-		console.log(new Date() < date)
 		//if the session already started or ended
 		if (date < new Date()) return {
 			disabled: true,
 			text: "This session has already started"
 		};
-		if (Number(s?.ownerId) === login.userId) {
-			return {
-				disabled: true,
-				text: "You already claimed this session"
-			};
-		}
 
 		if (!s?.date) return { disabled: false, text: "Claims the session so people know you\'re the host" };
 		console.log(s.date)
@@ -175,7 +184,7 @@ const Home: pageWithLayout<{
 		<p className="text-3xl font-medium mt-5">Schedule</p>
 		<div className=" pt-5 flex flex-col lg:flex-row gap-x-3 gap-y-2">
 			<div className="flex flex-col w-full md:w-3/6 xl:w-2/6 2xl:w-1/6 gap-y-3 ">
-				{getLastThreeDays().map((day, i) => (
+				{getLastThreeDays.map((day, i) => (
 					<button key={i} className={`flex flex-col bg-white rounded-md  outline-[1.4px] outline text-left px-3 py-2 hover:bg-gray-100 focus-visible:bg-gray-100 ${selectedDate.getDate() === day.getDate() ? 'outline-primary' : ' outline-gray-300'}`} onClick={() => setSelectedDate(day)}>
 						<p className="text-2xl font-semibold">{day.toLocaleDateString()}</p>
 						<p className="text-xl font-base text-slate-400/75 -mt-1">{day.toLocaleDateString("en-US", { weekday: "long" })}</p>
@@ -185,8 +194,12 @@ const Home: pageWithLayout<{
 			{!!activeSessions.length && <div className="flex flex-col w-full lg:w-4/6 xl:w-5/6 gap-y-3">
 				{activeSessions.map((session) => {
 					const date = new Date();
-					date.setUTCMinutes(session.Minute)
+					date.setUTCMinutes(session.Minute);
 					date.setUTCHours(session.Hour);
+					date.setUTCDate(selectedDate.getUTCDate());
+					date.setUTCMonth(selectedDate.getUTCMonth());
+					date.setUTCFullYear(selectedDate.getUTCFullYear());
+
 					for (const s of session.sessions) {
 						const d8 = new Date(s.date);
 						const d2 = selectedDate.getUTCDate();
@@ -203,11 +216,11 @@ const Home: pageWithLayout<{
 												<img src={(session.sessions.find(e => new Date(e.date).getUTCDate() === selectedDate.getUTCDate())?.owner.picture as string)} className="bg-primary rounded-full w-8 h-8 my-auto" />
 												<p className="font-medium pl-2 leading-5 my-auto"> Hosted by {session.sessions.find(e => new Date(e.date).getUTCDate() === selectedDate.getUTCDate())?.owner.username} <br /> <span className=""> {`${moment(date).format(`hh:mm A`)}`} </span> </p>
 											</div>
-											: <p className="font-medium leading-5 my-auto">Unclaimed </p>}
+											: <p className="font-medium leading-5 my-auto">Unclaimed <br /> <span className=""> {`${moment(date).format(`hh:mm A`)}`} </span>  </p>}
 									</div>
 									<div className="ml-auto my-auto z-50">
 										<Tooltip tooltipText={checkDisabled(session).text} orientation="left">
-											<Button classoverride="my-auto ml-auto" onPress={() => claimSession(session,)} loading={doingAction} disabled={checkDisabled(session).disabled} > Claim  </Button>
+										{Number(session.sessions.find(e => new Date(e.date).getUTCDate() === selectedDate.getUTCDate())?.ownerId) === Number(login.userId) ? <Button classoverride="my-auto ml-auto" onPress={() => unclaimSession(session,)} loading={doingAction} disabled={checkDisabled(session).disabled} > Unclaim  </Button> : <Button classoverride="my-auto ml-auto" onPress={() => claimSession(session,)} loading={doingAction} disabled={checkDisabled(session).disabled} > Claim  </Button>}
 										</Tooltip>
 									</div>
 								</div>

@@ -130,7 +130,7 @@ const Topbar: NextPage = () => {
 									<a
 										className={`${active ? "bg-tovybg text-white" : "text-gray-700 dark:text-white"
 											}  px-3 py-2 text-sm rounded-md m-1 mb-0 font-medium flex flex-row cursor-pointer`}
-										onClick={logout}
+										onClick={() => logout()}
 									>
 										<IconLogout size={22} className="inline-block" />
 										<p className="ml-2"> Logout </p>

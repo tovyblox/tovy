@@ -92,7 +92,12 @@ model wallPost {
 model SessionType {
   id               String     @id @unique @default(uuid()) @db.Uuid()
   name             String
-  gameId           Int?
+  gameId           BigInt?
+  webhookEnabled   Boolean?
+  webhookPing      String?
+  webhookUrl	   String?
+  webhookTitle	   String?
+  webhookBody	   String?
   schedule         schedule[]
   allowUnscheduled Boolean
   sessions         Session[]
@@ -118,6 +123,7 @@ model Session {
   date          DateTime
   startedAt     DateTime?
   ended         DateTime?
+  messageId     String?
   sessionType   SessionType @relation(fields: [sessionTypeId], references: [id])
   sessionTypeId String      @db.Uuid()
   schedule      schedule?   @relation(fields: [scheduleId], references: [id])
