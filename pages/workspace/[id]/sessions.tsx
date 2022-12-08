@@ -84,8 +84,9 @@ const Home: pageWithLayout<pageProps> = (props) => {
 			</div>
 		)}
 		<p className="text-3xl font-medium mt-10">Manage</p>
-		<div className="grid grid-cols-1 gap-5 mt-5">
+		<div className="grid grid-cols-1 md:grid-cols-2 gap-5 mt-5">
 			<button onClick={() => router.push(`/workspace/${router.query.id}/sessions/schedule`)} className="cardBtn"> <p className="text-2xl font-semibold leading-5 mt-2 text-left"> View schedule <br /> <span className="text-gray-400 font-normal text-base" > View this workspaces session schedule </span> </p> </button>
+			<button onClick={() => router.push(`/workspace/${router.query.id}/sessions/schedules`)} className="cardBtn"> <p className="text-2xl font-semibold leading-5 mt-2 text-left"> View & Edit schedules <br /> <span className="text-gray-400 font-normal text-base" > Edit the session schedules </span> </p> </button>
 		</div>
 	</div>;
 };

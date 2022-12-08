@@ -52,7 +52,7 @@ const Activity: FC<props> = (props) => {
 
 
 	return (
-		<div className="">
+		<div className="relative z-40">
 			<p className="mb-2"> Sessions are a powerful way to keep track of your groups sessions & shifts</p>
 			<Listbox value={selectedRole} onChange={(value: number) => updateRole(value)} as="div" className="relative inline-block w-full text-left mb-2">
 				<Listbox.Button className="h-auto w-full flex flex-row rounded-xl py-1 hover:bg-gray-200 dark:hover:bg-gray-800 dark:focus-visible:bg-gray-800 px-2 transition cursor-pointer outline-1 outline-gray-300 outline mb-1 focus-visible:bg-gray-200">
@@ -62,7 +62,7 @@ const Activity: FC<props> = (props) => {
 					</p>
 					<IconChevronDown size={18} color="#AAAAAA" className="my-auto ml-auto" />
 				</Listbox.Button>
-				<Listbox.Options className="absolute left-0 z-20 mt-2 w-48 origin-top-left rounded-xl bg-white dark:bg-gray-800 shadow-lg ring-1 ring-gray-300 focus-visible:outline-none overflow-clip">
+				<Listbox.Options className="absolute left-0 z-40 mt-2 w-48 origin-top-left rounded-xl bg-white dark:bg-gray-800 shadow-lg ring-1 ring-gray-300 focus-visible:outline-none overflow-clip">
 					<div className="">
 						{roles.map((role: any, index) => (
 							<Listbox.Option
@@ -107,5 +107,6 @@ const Activity: FC<props> = (props) => {
 };
 
 Activity.title = "Activity";
+Activity.isAboveOthers = true;
 
 export default Activity;

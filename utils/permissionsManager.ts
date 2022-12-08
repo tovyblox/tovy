@@ -150,6 +150,7 @@ export async function checkGroupRoles(groupID: number) {
 			if (role) {
 				for (const user of users) {
 					if (!user.roles.find(r => r.id === role?.id)) continue;
+					if (rs.find(r => r.groupRoles?.includes(rank.id))) continue;
 					if (members.find(member => member.userId === Number(user.userid))) continue;
 					await prisma.user.update({
 						where: {

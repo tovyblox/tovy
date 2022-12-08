@@ -65,8 +65,21 @@ const Topbar: NextPage = () => {
 	}
 	const router = useRouter();
 
+	async function logout() {
+		await axios.post("/api/auth/logout");
+		setLogin({
+			userId: 1,
+			username: '',
+			displayname: '',
+			canMakeWorkspace: false,
+			thumbnail: '',
+			workspaces: [],
+		});
+		router.push('/login');
+	}
+
 	return (
-		<div className="sticky top-0 w-60 h-full bg-white drop-shadow dark:bg-gray-900">
+		<div className="sticky top-0 w-60 h-full bg-white drop-shadow dark:bg-gray-900 z-50">
 			<div className="flex flex-col py-3 px-3 gap-2 focus-visible:bg-blue-200">
 				<Menu as="div" className="relative inline-block w-full text-left">
 					<div className="w-full">
@@ -97,22 +110,27 @@ const Topbar: NextPage = () => {
 									</a>
 								)}
 							</Menu.Item>
-							<Menu.Item>
-								{({ active }) => (
-									<a
-									className={`${active ? "bg-tovybg text-white" : "text-gray-700 dark:text-white"
-										}  px-3 py-2 text-sm rounded-md m-1 mb-0 font-medium flex flex-row cursor-pointer`}
-									>
-										<IconSettings size={22} className="inline-block" />
-										<p className="ml-2"> Account settings </p>
-									</a>
-								)}
-							</Menu.Item>
+							{
+								/*
+									<Menu.Item>
+										{({ active }) => (
+											<a
+											className={`${active ? "bg-tovybg text-white" : "text-gray-700 dark:text-white"
+												}  px-3 py-2 text-sm rounded-md m-1 mb-0 font-medium flex flex-row cursor-pointer`}
+											>
+												<IconSettings size={22} className="inline-block" />
+												<p className="ml-2"> Account settings </p>
+											</a>
+										)}
+									</Menu.Item>
+								*/
+							}
 							<Menu.Item>
 								{({ active }) => (
 									<a
 										className={`${active ? "bg-tovybg text-white" : "text-gray-700 dark:text-white"
 											}  px-3 py-2 text-sm rounded-md m-1 mb-0 font-medium flex flex-row cursor-pointer`}
+										onClick={() => logout()}
 									>
 										<IconLogout size={22} className="inline-block" />
 										<p className="ml-2"> Logout </p>

@@ -1,5 +1,6 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from 'next'
+import { sendWebhook } from '@/utils/sessionWebhook';
 import prisma from '@/utils/database';
 import { withSessionRoute } from '@/lib/withSession'
 type Data = {
@@ -53,6 +54,9 @@ export async function handler(
 			where: {
 				scheduleId: schedule.id,
 				date: date
+			},
+			include: {
+				sessionType: true
 			}
 		});
 		console.log(session)
@@ -65,6 +69,9 @@ export async function handler(
 				startedAt: new Date()
 			}
 		});
+		if (session.sessionType.webhookEnabled) {
+			await sendWebhook(session)
+		}
 	}
 	
 

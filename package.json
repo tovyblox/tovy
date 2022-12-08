@@ -31,6 +31,7 @@
     "axios": "^0.27.2",
     "bcrypt": "^5.0.1",
     "chart.js": "^4.0.1",
+    "discord.js": "^14.7.1",
     "dotenv": "^16.0.3",
     "hex-rgb": "^5.0.0",
     "iron-session": "^6.2.1",

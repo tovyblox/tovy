@@ -1,6 +1,7 @@
 import type { pageWithLayout } from "@/layoutTypes";
 import { loginState, workspacestate } from "@/state";
 import Button from "@/components/button";
+import toast, { Toaster } from 'react-hot-toast'
 import Input from "@/components/input";
 import Workspace from "@/layouts/workspace";
 import { useRecoilState } from "recoil";
@@ -19,11 +20,30 @@ import { useForm, FormProvider } from "react-hook-form";
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 
 export const getServerSideProps: GetServerSideProps = withPermissionCheckSsr(async (context) => {
-	const { id } = context.query;
+	const { id, sid } = context.query;
 	const games = (await noblox.getGroupGames(Number(id))).map(game => ({
 		name: game.name,
 		id: game.id,
 	}));
+	if (!sid) {
+		return {
+			notFound: true
+		}
+	}
+
+	const session = await prisma.sessionType.findUnique({
+		where: {
+			id: (sid as string)
+		},
+		include: {
+			hostingRoles: true
+		}
+	});
+	if (!session) {
+		return {
+			notFound: true
+		}
+	}
 
 	const roles = await prisma.role.findMany({
 		where: {
@@ -35,64 +55,32 @@ export const getServerSideProps: GetServerSideProps = withPermissionCheckSsr(asy
 
 	return {
 		props: {
-			games, roles
+			games, roles, session: JSON.parse(JSON.stringify(session, (key, value) => (typeof value === 'bigint' ? value.toString() : value))) as typeof session
 		},
 	};
 
 }, 'manage_sessions')
 
-const Home: pageWithLayout<InferGetServerSidePropsType<GetServerSideProps>> = ({ games, roles }) => {
+const Home: pageWithLayout<InferGetServerSidePropsType<GetServerSideProps>> = ({ games, roles, session }) => {
 	const [login, setLogin] = useRecoilState(loginState);
-	const [selectedDate, setSelectedDate] = useState(new Date());
 	const [enabled, setEnabled] = useState(false);
 	const [days, setDays] = useState<string[]>([])
-	const form = useForm();
-	const [workspace, setWorkspace] = useRecoilState(workspacestate);
-	const [allowUnscheduled, setAllowUnscheduled] = useState(false);
-	const [webhooksEnabled, setWebhooksEnabled] = useState(false);
-	const [selectedGame, setSelectedGame] = useState('')
-	const [selectedRoles, setSelectedRoles] = useState<string[]>([])
+	const form = useForm({
+		defaultValues: {
+			name: session.name,
+			webhooksEnabled: session.webhookEnabled,
+			webhookUrl: session.webhookUrl,
+			webhookTitle: session.webhookTitle,
+			webhookBody: session.webhookBody,
+			webhookPing: session.webhookPing,
+		}
+	});
+	const [workspace] = useRecoilState(workspacestate);
+	const [allowUnscheduled, setAllowUnscheduled] = useState(session.allowUnscheduled);
+	const [webhooksEnabled, setWebhooksEnabled] = useState(session.webhookEnabled);
+	const [selectedGame, setSelectedGame] = useState(parseInt(session.gameId))
+	const [selectedRoles, setSelectedRoles] = useState<string[]>(session.hostingRoles.map((role: any) => role.roleId.toString()))
 	const router = useRouter();
-
-	const createSession = async () => {
-		const date = new Date(`${new Date().toDateString()} ${form.getValues().time}`)
-		const days2: number[] = days.map(day => {
-			const udate = new Date();
-			const ds = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
-			udate.setDate(date.getDate() + (ds.indexOf(day) - date.getDay() + 7) % 7);
-			udate.setHours(date.getHours());
-			udate.setMinutes(date.getMinutes());
-			udate.setSeconds(0);
-			udate.setMilliseconds(0);
-			console.log(udate.getUTCDay())
-
-			return udate.getUTCDay();
-		})
-		console.log(days2)
-		const session = await axios.post(`/api/workspace/${workspace.groupId}/sessions/manage/new`, {
-			name: form.getValues().name,
-			gameId: selectedGame,
-			schedule: {
-				enabled,
-				days: days2,
-				time: `${date.getUTCHours()}:${date.getUTCMinutes()}`,
-				allowUnscheduled,
-			},
-			webhook: {
-				enabled: webhooksEnabled,
-				url: form.getValues().webhookUrl,
-				title: form.getValues().webhookTitle,
-				body: form.getValues().webhookBody,
-				ping: form.getValues().webhookPing,
-			},
-			permissions: selectedRoles
-		}).catch(err => {
-			form.setError("name", { type: "custom", message: err.response.data.error })
-		});
-		if (!session) return;
-		form.clearErrors()
-		router.push(`/workspace/${workspace.groupId}/sessions/schedule`)
-	}
 
 	const toggleRole = async (role: string) => {
 		const roles = selectedRoles;
@@ -105,17 +93,30 @@ const Home: pageWithLayout<InferGetServerSidePropsType<GetServerSideProps>> = ({
 		setSelectedRoles(roles);
 	}
 
-	const toggleDay = async (day: string) => {
-		const newdays = [...days];
-		if (newdays.includes(day)) {
-			newdays.splice(days.indexOf(day), 1);
-		}
-		else {
-			newdays.push(day);
-		}
-		setDays(newdays);
-		console.log(days)
+	const updateSession = async () => {
+		const data = form.getValues();
+		const res = axios.post(`/api/workspace/${workspace.groupId}/sessions/manage/${session.id}/edit`, {
+			webhook: {
+				enabled: webhooksEnabled,
+				url: data.webhookUrl,
+				title: data.webhookTitle,
+				body: data.webhookBody,
+				ping: data.webhookPing
+			},
+			name: data.name,
+			gameId: selectedGame,
+			permissions: selectedRoles
+		});
+		toast.promise(res, {
+			loading: 'Updating session',
+			success: 'Session updated',
+			error: 'Failed to update session'
+		}).then(() => {
+			router.push(`/workspace/${workspace.groupId}/sessions/schedules`);
+		})
+
 	}
+
 
 	useEffect(() => { }, [days]);
 
@@ -125,7 +126,7 @@ const Home: pageWithLayout<InferGetServerSidePropsType<GetServerSideProps>> = ({
 
 
 	return <div className="pagePadding">
-		<p className="text-4xl font-bold">New session type</p>
+		<p className="text-4xl font-bold">Edit session type</p>
 		<FormProvider {...form}>
 			<div className=" pt-5 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-3 gap-y-2" >
 				<div className="bg-white p-4 border border-1 border-gray-300  rounded-md">
@@ -174,7 +175,7 @@ const Home: pageWithLayout<InferGetServerSidePropsType<GetServerSideProps>> = ({
 									`${active ? 'text-white bg-indigo-600' : 'text-gray-900'} relative cursor-pointer select-none py-2 pl-3 pr-9`
 								}
 								value={'None'}
-								onClick={() => setSelectedGame('')}
+								onClick={() => setSelectedGame(0)}
 							>
 								{({ selected, active }) => (
 									<>
@@ -202,33 +203,6 @@ const Home: pageWithLayout<InferGetServerSidePropsType<GetServerSideProps>> = ({
 
 						</Listbox.Options>
 					</Listbox>
-				</div>
-				<div className="bg-white p-4 border border-1 border-gray-300  rounded-md">
-					<p className="text-2xl font-bold mb-2">Scheulding </p>
-					<Switchcomponenet label="Allow unscheduled (coming soon)" classoverride="mb-2" checked={allowUnscheduled} onChange={() => setAllowUnscheduled(!allowUnscheduled)} />
-					<Switchcomponenet label="Scheduled" checked={enabled} onChange={() => setEnabled(!enabled)} />
-					{enabled && <div className="mt-5">
-						<p className="text-2xl font-bold mb-2">Repeting settings</p>
-						{/* a week calendar */}
-						<div className="grid grid-cols-3 gap-x-3 gap-y-2 mt-5">
-							{['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((day) => (
-								<button key={day} onClick={() => toggleDay(day)} className={`bg-gray-100 p-3 rounded-md focus-visible:bg-gray-300 ${days.includes(day) ? 'outline-primary outline-[1.5px] outline' : 'focus:outline-none'}`}>
-									<p className="text-2xl font-bold text-center">{day}</p>
-								</button>
-							))}
-
-
-						</div>
-						<p className="text-2xl font-bold mb-2 mt-5">Time</p>
-						<Input {...form.register('time', {
-							required: {
-								value: enabled,
-								message: 'Time is required',
-							}
-						})} label="Time" type="time" />
-					</div>}
-
-
 				</div>
 				<div className="bg-white p-4 border border-1 border-gray-300  rounded-md">
 					<p className="text-2xl font-bold mb-2">Permissions </p>
@@ -296,8 +270,9 @@ const Home: pageWithLayout<InferGetServerSidePropsType<GetServerSideProps>> = ({
 		</FormProvider>
 		<div className="flex mt-2">
 			<Button classoverride="ml-0"> Back </Button>
-			<Button onPress={form.handleSubmit(createSession)}> Create </Button>
+			<Button onPress={form.handleSubmit(updateSession)}> Update </Button>
 		</div>
+		<Toaster />
 
 	</div>;
 };

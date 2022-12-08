@@ -15,7 +15,7 @@ export async function handler(
 	res: NextApiResponse<Data>
 ) {
 	if (req.method !== 'POST') return res.status(405).json({ success: false, error: 'Method not allowed' });
-	const { name, schedule, permissions } = req.body;
+	const { name, schedule, permissions, webhook } = req.body;
 	if (!name || !schedule || !permissions) return res.status(400).json({ success: false, error: 'Missing required fields' });
 	const { days, time, allowUnscheduled } = schedule;
 	if (schedule.enebaled && (!days || !time || !allowUnscheduled)) return res.status(400).json({ success: false, error: 'Missing required fields' });
@@ -25,8 +25,13 @@ export async function handler(
 			data: {
 				workspaceGroupId: parseInt(req.query.id as string),
 				name,
-				gameId: (parseInt(req.body.gameId as string) || null),
+				gameId: (BigInt(req.body.gameId as string) || null),
 				allowUnscheduled: schedule.allowUnscheduled,
+				webhookEnabled: webhook?.enabled || false,
+				webhookUrl: webhook?.url,
+				webhookPing: webhook?.ping,
+				webhookBody: webhook?.body,
+				webhookTitle: webhook?.title,
 				hostingRoles: {
 					connect: [
 						...permissions.map((role: string) => ({ id: role }))
@@ -41,7 +46,7 @@ export async function handler(
 			}
 		});
 		
-		return res.status(200).json({ success: true, session })
+		return res.status(200).json({ success: true, session: JSON.parse(JSON.stringify(session, (key, value) => (typeof value === 'bigint' ? value.toString() : value))) })
 
 	}
 	
@@ -51,6 +56,11 @@ export async function handler(
 			name,
 			gameId: (parseInt(req.body.gameId as string) || null),
 			allowUnscheduled: schedule.allowUnscheduled,
+			webhookEnabled: webhook?.enabled || false,
+			webhookUrl: webhook?.url,
+			webhookPing: webhook?.ping,
+			webhookBody: webhook?.body,
+			webhookTitle: webhook?.title,
 			hostingRoles: {
 				connect: [
 					...permissions.map((role: string) => ({ id: role }))
@@ -60,5 +70,5 @@ export async function handler(
 		}
 	});
 	
-	res.status(200).json({ success: true, session })
+	res.status(200).json({ success: true, session: JSON.parse(JSON.stringify(session, (key, value) => (typeof value === 'bigint' ? value.toString() : value))) })
 }

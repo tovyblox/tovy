@@ -44,7 +44,7 @@ const Color: FC<props> = (props) => {
 		
 
 	return (
-		<div>
+		<div className="z-10 relative">
 			<p> Color </p>
 			<div className="rounded-xl grid grid-cols-5 md:grid-cols-7 lg:grid-cols-11 xl:grid-cols-12 gap-y-3 mb-2 mt-2 bg-white ">
               {colors.map((color, i) => (
