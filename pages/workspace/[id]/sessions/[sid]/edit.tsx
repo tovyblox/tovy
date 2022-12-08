@@ -65,6 +65,17 @@ const Home: pageWithLayout<InferGetServerSidePropsType<GetServerSideProps>> = ({
 	const [login, setLogin] = useRecoilState(loginState);
 	const [enabled, setEnabled] = useState(false);
 	const [days, setDays] = useState<string[]>([])
+	const [statues, setStatues] = useState<{
+		name: string;
+		timeAfter: number;
+		color: string;
+	}[]>([
+		{
+			name: 'Open',
+			timeAfter: 0,
+			color: 'green'
+		}
+	])
 	const form = useForm({
 		defaultValues: {
 			name: session.name,
@@ -119,6 +130,28 @@ const Home: pageWithLayout<InferGetServerSidePropsType<GetServerSideProps>> = ({
 
 
 	useEffect(() => { }, [days]);
+
+	const newStatus = () => {
+		setStatues([...statues, {
+			name: 'New status',
+			timeAfter: 0,
+			color: 'green'
+		}])
+	}
+
+	const deleteStatus = (index: number) => {
+		const newStatues = statues;
+		newStatues.splice(index, 1);
+		setStatues([...newStatues]);
+	}
+
+	const updateStatus = (index: number, value: any) => {
+		const newStatues = statues;
+		newStatues[index] = value;
+		setStatues([...newStatues]);
+	}
+
+
 
 
 
@@ -243,14 +276,14 @@ const Home: pageWithLayout<InferGetServerSidePropsType<GetServerSideProps>> = ({
 									value: false,
 									message: 'Webhook Ping is required',
 								}
-							})} label="Title" type="text" placeholder={`Session ping`}/>
+							})} label="Title" type="text" placeholder={`Session ping`} />
 
 							<Input {...form.register('webhookTitle', {
 								required: {
 									value: false,
 									message: 'Webhook is required',
 								}
-							})} label="Title" type="text" placeholder={`Session name`}/>
+							})} label="Title" type="text" placeholder={`Session name`} />
 
 							<Input {...form.register('webhookBody', {
 								required: {
@@ -260,6 +293,19 @@ const Home: pageWithLayout<InferGetServerSidePropsType<GetServerSideProps>> = ({
 							})} label="Text" type="text" textarea placeholder="This grouyp is hosting a session and shit" />
 						</>
 					)}
+
+
+
+
+				</div>
+
+				<div className="bg-white p-4 border border-1 border-gray-300  rounded-md">
+					<p className="text-2xl font-bold mb-2">Statuses  </p>
+					<Switchcomponenet label="Enabled" classoverride="mb-2" checked={webhooksEnabled} onChange={() => setWebhooksEnabled(!webhooksEnabled)} />
+					{statues.map((status: any, i) => (
+						<div className="p-3 outline outline-gray-300 rounded-md mt-4 outline-1" key={i}><Status updateStatus={() => {}} deleteStatus={() => {}} data={status}  /></div>
+						
+					))}
 
 
 
@@ -278,5 +324,46 @@ const Home: pageWithLayout<InferGetServerSidePropsType<GetServerSideProps>> = ({
 };
 
 Home.layout = Workspace;
+
+const Status: React.FC<{
+	data: any
+	updateStatus: (column: string, op: string, value: string) => void
+	deleteStatus: () => void
+}> = (
+	{
+		updateStatus,
+		deleteStatus,
+		data,
+	}
+) => {
+		const methods = useForm<{
+			col: string
+			op: string
+			value: string,
+		}>({
+			defaultValues: {
+				value: data.name
+			}
+		});
+		const { register, handleSubmit, getValues } = methods;
+		useEffect(() => {
+			const subscription = methods.watch((value) => {
+				updateStatus(methods.getValues().col, methods.getValues().op, methods.getValues().value);
+			});
+			return () => subscription.unsubscribe();
+		}, [methods.watch]);
+
+
+
+		return (
+			<FormProvider {...methods}>
+				<div> <Button onClick={deleteStatus}> Delete </Button> </div>
+				{<Input {...register('value')} label="Value" />}
+
+				
+
+			</FormProvider>
+		)
+	}
 
 export default Home;
