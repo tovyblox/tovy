@@ -4,6 +4,7 @@ import Button from "@/components/button";
 import toast, { Toaster } from 'react-hot-toast'
 import Input from "@/components/input";
 import Workspace from "@/layouts/workspace";
+import { v4 as uuidv4 } from "uuid";
 import { useRecoilState } from "recoil";
 import { useEffect, useState } from "react";
 import { Listbox } from "@headlessui/react";
@@ -69,11 +70,13 @@ const Home: pageWithLayout<InferGetServerSidePropsType<GetServerSideProps>> = ({
 		name: string;
 		timeAfter: number;
 		color: string;
+		id: string;
 	}[]>([
 		{
 			name: 'Open',
 			timeAfter: 0,
-			color: 'green'
+			color: 'green',
+			id: 'UUID'
 		}
 	])
 	const form = useForm({
@@ -135,7 +138,8 @@ const Home: pageWithLayout<InferGetServerSidePropsType<GetServerSideProps>> = ({
 		setStatues([...statues, {
 			name: 'New status',
 			timeAfter: 0,
-			color: 'green'
+			color: 'green',
+			id: uuidv4()
 		}])
 	}
 
@@ -301,9 +305,9 @@ const Home: pageWithLayout<InferGetServerSidePropsType<GetServerSideProps>> = ({
 
 				<div className="bg-white p-4 border border-1 border-gray-300  rounded-md">
 					<p className="text-2xl font-bold mb-2">Statuses  </p>
-					<Switchcomponenet label="Enabled" classoverride="mb-2" checked={webhooksEnabled} onChange={() => setWebhooksEnabled(!webhooksEnabled)} />
+					<Button onPress={() => newStatus()} classoverride=""> New Status </Button>
 					{statues.map((status: any, i) => (
-						<div className="p-3 outline outline-gray-300 rounded-md mt-4 outline-1" key={i}><Status updateStatus={() => {}} deleteStatus={() => {}} data={status}  /></div>
+						<div className="p-3 outline outline-gray-300 rounded-md mt-4 outline-1" key={i}><Status updateStatus={() => {}} deleteStatus={() => deleteStatus(status.id)} data={status}  /></div>
 						
 					))}
 
@@ -327,7 +331,7 @@ Home.layout = Workspace;
 
 const Status: React.FC<{
 	data: any
-	updateStatus: (column: string, op: string, value: string) => void
+	updateStatus: (value: string, minutes: number) => void
 	deleteStatus: () => void
 }> = (
 	{
@@ -337,18 +341,17 @@ const Status: React.FC<{
 	}
 ) => {
 		const methods = useForm<{
-			col: string
-			op: string
+			minutes: number,
 			value: string,
 		}>({
 			defaultValues: {
 				value: data.name
 			}
 		});
-		const { register, handleSubmit, getValues } = methods;
+		const { register, handleSubmit, getValues, watch } = methods;
 		useEffect(() => {
 			const subscription = methods.watch((value) => {
-				updateStatus(methods.getValues().col, methods.getValues().op, methods.getValues().value);
+				updateStatus(methods.getValues().value, methods.getValues().minutes);
 			});
 			return () => subscription.unsubscribe();
 		}, [methods.watch]);
@@ -358,10 +361,8 @@ const Status: React.FC<{
 		return (
 			<FormProvider {...methods}>
 				<div> <Button onClick={deleteStatus}> Delete </Button> </div>
-				{<Input {...register('value')} label="Value" />}
-
-				
-
+				{<Input {...register('value')} label="Status" />}
+				{<Input {...register('minutes')} label="After" append="minutes" prepend={`${watch('value')} after`} type="number" />}
 			</FormProvider>
 		)
 	}

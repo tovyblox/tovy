@@ -5,6 +5,8 @@ type Props = {
 	register?: UseFormRegister<any>;
 	placeholder?: string;
 	label: string;
+	append?: string;
+	prepend?: string;
 	classoverride?: string;
 	textarea?: boolean | false
 	id?: string;
@@ -14,7 +16,7 @@ type Props = {
 const Input = React.forwardRef<
 	HTMLInputElement | HTMLTextAreaElement,
 	Props & ReturnType<UseFormRegister<any>>
->(({ placeholder, label, classoverride, id, onChange, onBlur, name, type, textarea }, ref) => {
+>(({ placeholder, label, classoverride, id, onChange, onBlur, name, type, textarea, append, prepend }, ref) => {
 	const { formState: { errors } } = useFormContext();
 	return (
 		<div className="mb-3">
@@ -23,18 +25,30 @@ const Input = React.forwardRef<
 					{label}
 				</label>
 			}
-			{!textarea ? <input
-				id={id}
-				placeholder={placeholder}
-				type={type}
-				onChange={onChange}
-				onBlur={onBlur}
-				name={name}
-				ref={(ref as any)}
-				className={
-					"text-gray-600 dark:text-white rounded-lg p-2 border-2 border-gray-300  dark:border-gray-500 w-full bg-gray-50 focus-visible:outline-none dark:bg-gray-700 " + classoverride + `${errors[name] ? " focus-visible:ring-red-500 focus-visible:border-red-500" : "focus-visible:ring-blue-500 focus-visible:border-blue-500"}`
-				}
-			/> : <textarea
+			{!textarea ? <div className="flex flex-wrap items-stretch w-full mb-0 relative">
+				{prepend && (
+					<div className="flex -ml-px">
+						<span className="flex items-center leading-normal bg-grey-lighter rounded-lg rounded-r-none border-2 border-r-0 border-grey-light px-3 whitespace-no-wrap text-grey-dark text-sm">{prepend}</span>
+					</div>
+				)}
+				<input
+					id={id}
+					placeholder={placeholder}
+					type={type}
+					onChange={onChange}
+					onBlur={onBlur}
+					name={name}
+					ref={(ref as any)}
+					className={
+						`text-gray-600 dark:text-white flex-1 rounded-lg p-2 border-2 border-gray-300  dark:border-gray-500 w-full  bg-gray-50 focus-visible:outline-none dark:bg-gray-700 ${prepend ? 'rounded-l-none' : 'rounded-l-lg'} ${append ? 'rounded-r-none' : 'rounded-r-lg'} ` + classoverride + `${errors[name] ? " focus-visible:ring-red-500 focus-visible:border-red-500" : "focus-visible:ring-blue-500 focus-visible:border-blue-500"}`
+					}
+				/>
+				{append && (
+					<div className="flex -mr-px">
+						<span className="flex items-center leading-normal bg-grey-lighter rounded-lg rounded-l-none border-2 border-l-0 border-grey-light px-3 whitespace-no-wrap text-grey-dark text-sm">{append}</span>
+					</div>
+				)}
+			</div> : <textarea
 				id={id}
 				placeholder={placeholder}
 				onChange={onChange}
