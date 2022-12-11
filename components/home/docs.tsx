@@ -42,7 +42,7 @@ const Color: React.FC = () => {
 						<div className="px-5 py-4 backdrop-blur flex cardBtn cursor-pointer">
 							<div><p className="text-xl font-bold"> {document.name} </p>
 								<div className="flex mt-1">
-									<img src={document.owner?.picture!} className="bg-primary rounded-full w-8 h-8 my-auto" />
+									<img src={document.owner?.picture!} alt="owner picture" className="bg-primary rounded-full w-8 h-8 my-auto" />
 									<p className="font-semibold pl-2 leading-5 my-auto"> Created by {document.owner?.username} </p>
 								</div>
 							</div>
