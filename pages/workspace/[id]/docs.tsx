@@ -105,7 +105,7 @@ const Home: pageWithLayout<pageProps> = ({ documents }) => {
 
 	return <div className="pagePadding">
 		<p className="text-4xl font-bold">{text}</p>
-		<button className="cardBtn mt-4" onClick={() => router.push(`/workspace/${router.query.id}/docs/new`)}><p className="font-bold text-2xl leading-5 mt-1"> New doc <br /><span className="text-gray-400 font-normal text-base "> Create a new document for your group   </span></p> </button>
+		<button className="cardBtn mt-4" onClick={() => router.push(`/workspace/${router.query.id}/docs/new`)}><p className="font-bold text-2xl leading-5 mt-1"> New document <br /><span className="text-gray-400 font-normal text-base "> Create a new document for your group   </span></p> </button>
 		<p className="text-3xl font-medium mt-5 mb-5">Docs</p>
 		<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-5 mt-5">
 			{documents.map((document) => (
