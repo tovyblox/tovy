@@ -123,11 +123,10 @@ const Home: pageWithLayout<pageProps> = ({ documents }) => {
 			))}
 		</div>
 		{!documents.length && (
-			<div className="w-full lg:4/6 xl:5/6 rounded-md h-96 bg-white outline-gray-300 outline outline-[1.4px] flex flex-col p-5">
-				<img className="mx-auto my-auto h-full" src={'/conifer-charging-the-battery-with-a-windmill.png'} />
-				<p className="text-center text-xl font-semibold">There arent any docs</p>
-
-			</div>
+			<div className="w-full lg:4/6 xl:5/6 rounded-md h-96 bg-white outline-gray-300 outline outline-[1.4px] flex flex-col p-5 mt-3">
+			<img className="mx-auto my-auto h-72" alt="fallback image" src={'/conifer-charging-the-battery-with-a-windmill.png'} />
+			<p className="text-center text-xl font-semibold">No documents have been created.</p>
+		</div>
 		)}
 
 	</div>;
