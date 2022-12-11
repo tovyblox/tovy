@@ -3,10 +3,8 @@ import { loginState, workspacestate } from "@/state";
 import { useRecoilState } from "recoil";
 import { Menu, Listbox } from "@headlessui/react";
 import { useRouter } from "next/router";
-import { IconHome, IconWall, IconClipboardList, IconSpeakerphone, IconUsers, IconSettings, IconChevronDown, IconFileText, IconLogout, IconCheck, IconUser } from "@tabler/icons";
-import Image from "next/image";
+import { IconHome, IconWall, IconClipboardList, IconSpeakerphone, IconUsers, IconSettings, IconChevronDown, IconFileText, IconLogout, IconCheck, IconUser, IconForms } from "@tabler/icons";
 import axios from "axios";
-import workspace from "@/layouts/workspace";
 
 const Topbar: NextPage = () => {
 	const [login, setLogin] = useRecoilState(loginState);
@@ -50,6 +48,12 @@ const Topbar: NextPage = () => {
 			icon: IconFileText,
 			accessible: workspace.settings.guidesEnabled,
 			current: false,
+		},
+		{
+			name: "Forms",
+			href: "/workspace/[id]/forms",
+			icon: IconForms,
+			current: false
 		},
 		{
 			name: "Settings",
