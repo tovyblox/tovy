@@ -18,7 +18,7 @@ export async function handler(
 	if (req.method !== 'POST') return res.status(405).json({ success: false, error: 'Method not allowed' })
 	const { id, sid } = req.query;
 	if (!id || !sid) return res.status(400).json({ success: false, error: 'Missing required fields' });
-	const { date, timezoneOffset } = req.body;
+	const { date, slotId, slotNum } = req.body;
 	if (!date) return res.status(400).json({ success: false, error: 'Missing required fields' });
 	const day = new Date(date);
 
@@ -82,17 +82,49 @@ export async function handler(
 		}
 	});
 	if (!findSession) return res.status(400).json({ success: false, error: 'Invalid session' });
-	const schedulewithsession = await prisma.session.update({
+
+	const schedulewithsession = await prisma.schedule.update({
 		where: {
-			id: findSession.id
+			id: schedule.id
 		},
 		data: {
-			ownerId: null
+			sessions: {
+				update: {
+					where: {
+						id: findSession.id
+					},
+					data: {
+						users: {
+							delete: {
+								userid_sessionid: {
+									userid: BigInt(req.session.userid),
+									sessionid: findSession.id
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		include: {
+			sessionType: {
+				include: {
+					hostingRoles: true
+				}
+
+			},
+			sessions: {
+				include: {
+					owner: true,
+					users: {
+						include: {
+							user: true
+						}
+					}
+				}
+			}
 		}
-	})
-
-
-
+	});
 
 
 	res.status(200).json({ success: true, session: JSON.parse(JSON.stringify(schedulewithsession, (key, value) => (typeof value === 'bigint' ? value.toString() : value))) })

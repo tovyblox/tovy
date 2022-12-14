@@ -18,7 +18,7 @@ export async function handler(
 	if (req.method !== 'POST') return res.status(405).json({ success: false, error: 'Method not allowed' })
 	const { id, sid } = req.query;
 	if (!id || !sid) return res.status(400).json({ success: false, error: 'Missing required fields' });
-	const { date, timezoneOffset } = req.body;
+	const { date, slotId, slotNum } = req.body;
 	if (!date) return res.status(400).json({ success: false, error: 'Missing required fields' });
 	const day = new Date(date);
 
@@ -81,17 +81,103 @@ export async function handler(
 			sessionTypeId: schedule.sessionTypeId
 		}
 	});
-	if (!findSession) return res.status(400).json({ success: false, error: 'Invalid session' });
-	const schedulewithsession = await prisma.session.update({
+	if (findSession) {
+		console.log('found session')
+		const schedulewithsession = await prisma.schedule.update({
+			where: {
+			   id: schedule.id
+			},
+			data: {
+			   sessions: {
+				   update: {
+						where: {
+							id: findSession.id
+						},
+						data: {
+							users: {
+								upsert: {
+									where: {
+										userid_sessionid: {
+											userid: BigInt(req.session.userid),
+											sessionid: findSession.id
+										},
+									},
+									update: {
+										roleID: slotId,
+										slot: slotNum
+									},
+									create: {
+										userid: BigInt(req.session.userid),
+										roleID: slotId,
+										slot: slotNum
+									}
+								}
+							}
+						}
+				   }
+			   }
+			}, 
+		   include: {
+			   sessionType: {
+				   include: {
+					   hostingRoles: true
+				   }
+				
+			   },
+			   sessions: {
+				   include: {
+					   owner: true,
+					   users: {
+						include: {
+							user: true
+						}
+					   }
+				   }
+			   }
+		   }	
+	   });
+
+		return res.status(200).json({ success: true, session: JSON.parse(JSON.stringify(schedulewithsession, (key, value) => (typeof value === 'bigint' ? value.toString() : value ))) });
+	}
+
+	const schedulewithsession = await prisma.schedule.update({
 		where: {
-			id: findSession.id
+			id: schedule.id
 		},
 		data: {
-			ownerId: null
+			sessions: {
+				create: {
+					date: dateTime,
+					sessionTypeId: schedule.sessionTypeId,
+					users: {
+						create: {
+							userid: BigInt(req.session.userid),
+							roleID: slotId,
+							slot: slotNum
+						}
+					}
+				}
+			}
+		},
+		include: {
+			sessionType: {
+				include: {
+					hostingRoles: true
+				}
+			},
+			sessions: {
+				include: {
+					owner: true,
+					users: {
+						include: {
+							user: true
+						}
+					}
+				}
+			}
 		}
-	})
 
-
+	});
 
 
 

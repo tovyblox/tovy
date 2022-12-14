@@ -66,19 +66,22 @@ const Home: pageWithLayout<InferGetServerSidePropsType<GetServerSideProps>> = ({
 	const [login, setLogin] = useRecoilState(loginState);
 	const [enabled, setEnabled] = useState(false);
 	const [days, setDays] = useState<string[]>([])
+	console.log(session.statues)
 	const [statues, setStatues] = useState<{
 		name: string;
 		timeAfter: number;
 		color: string;
 		id: string;
-	}[]>([
-		{
-			name: 'Open',
-			timeAfter: 0,
-			color: 'green',
-			id: 'UUID'
-		}
-	])
+	}[]>(session.statues?.length ? session.statues : [])
+	const [slots, setSlots] = useState<{
+		name: string;
+		slots: number;
+		id: string;
+	}[]>(session.slots || [{
+		name: 'Co-Host',
+		slots: 1,
+		id: uuidv4()
+	}])
 	const form = useForm({
 		defaultValues: {
 			name: session.name,
@@ -117,7 +120,9 @@ const Home: pageWithLayout<InferGetServerSidePropsType<GetServerSideProps>> = ({
 				body: data.webhookBody,
 				ping: data.webhookPing
 			},
+			statues,
 			name: data.name,
+			slots,
 			gameId: selectedGame,
 			permissions: selectedRoles
 		});
@@ -130,6 +135,8 @@ const Home: pageWithLayout<InferGetServerSidePropsType<GetServerSideProps>> = ({
 		})
 
 	}
+
+	
 
 
 	useEffect(() => { }, [days]);
@@ -149,10 +156,41 @@ const Home: pageWithLayout<InferGetServerSidePropsType<GetServerSideProps>> = ({
 		setStatues([...newStatues]);
 	}
 
-	const updateStatus = (index: number, value: any) => {
+	const updateStatus = (id: string, name: string, color: string, timeafter: number) => {
 		const newStatues = statues;
-		newStatues[index] = value;
+		const index = newStatues.findIndex((status) => status.id === id);
+		newStatues[index] = {
+			...newStatues[index],
+			name,
+			color,
+			timeAfter: timeafter
+		};
 		setStatues([...newStatues]);
+	}
+
+	const newSlot = () => {
+		setSlots([...slots, {
+			name: 'Co-Host',
+			slots: 1,
+			id: uuidv4()
+		}])
+	}
+
+	const deleteSlot = (index: number) => {
+		const newSlots = slots;
+		newSlots.splice(index, 1);
+		setSlots([...newSlots]);
+	}
+
+	const updateSlot = (id: string, name: string, slotsAvailble: number) => {
+		const newSlots = slots;
+		const index = slots.findIndex((slot) => slot.id === id);
+		newSlots[index] = {
+			...newSlots[index],
+			slots: slotsAvailble,
+			name
+		};
+		setSlots([...newSlots]);
 	}
 
 
@@ -307,13 +345,22 @@ const Home: pageWithLayout<InferGetServerSidePropsType<GetServerSideProps>> = ({
 					<p className="text-2xl font-bold mb-2">Statuses  </p>
 					<Button onPress={() => newStatus()} classoverride=""> New Status </Button>
 					{statues.map((status: any, i) => (
-						<div className="p-3 outline outline-gray-300 rounded-md mt-4 outline-1" key={i}><Status updateStatus={() => {}} deleteStatus={() => deleteStatus(status.id)} data={status}  /></div>
-						
+						<div className="p-3 outline outline-gray-300 rounded-md mt-4 outline-1" key={i}><Status updateStatus={(value, mins, color) => updateStatus(status.id, value, color, mins)} deleteStatus={() => deleteStatus(status.id)} data={status} /></div>
+
 					))}
+				</div>
 
+				<div className="bg-white p-4 border border-1 border-gray-300  rounded-md">
+					<p className="text-2xl font-bold mb-2">Slots  </p>
+					<Button onPress={() => newSlot()} classoverride=""> New Slot </Button>
+					<div className="p-3 outline outline-gray-300 rounded-md mt-4 outline-1"><Slot updateStatus={() => {}} isPrimary deleteStatus={() => {}} data={{
+						name: 'Host',
+						slots: 1
+					}} /></div>
+					{slots.map((status: any, i) => (
+						<div className="p-3 outline outline-gray-300 rounded-md mt-4 outline-1" key={i}><Slot updateStatus={(name, openSlots) => updateSlot(status.id, name, openSlots)} deleteStatus={() => deleteSlot(status.id)} data={status} /></div>
 
-
-
+					))}
 				</div>
 			</div>
 
@@ -331,7 +378,7 @@ Home.layout = Workspace;
 
 const Status: React.FC<{
 	data: any
-	updateStatus: (value: string, minutes: number) => void
+	updateStatus: (value: string, minutes: number, color: string) => void
 	deleteStatus: () => void
 }> = (
 	{
@@ -345,13 +392,14 @@ const Status: React.FC<{
 			value: string,
 		}>({
 			defaultValues: {
-				value: data.name
+				value: data.name,
+				minutes: data.timeAfter,
 			}
 		});
 		const { register, handleSubmit, getValues, watch } = methods;
 		useEffect(() => {
 			const subscription = methods.watch((value) => {
-				updateStatus(methods.getValues().value, methods.getValues().minutes);
+				updateStatus(methods.getValues().value, Number(methods.getValues().minutes), 'green');
 			});
 			return () => subscription.unsubscribe();
 		}, [methods.watch]);
@@ -362,9 +410,51 @@ const Status: React.FC<{
 			<FormProvider {...methods}>
 				<div> <Button onClick={deleteStatus}> Delete </Button> </div>
 				{<Input {...register('value')} label="Status" />}
-				{<Input {...register('minutes')} label="After" append="minutes" prepend={`${watch('value')} after`} type="number" />}
+				{<Input {...register('minutes')} label="After" append="minutes" prepend={`${watch('value')?.replace('ed', '')}'s after`} type="number" />}
 			</FormProvider>
 		)
 	}
+
+const Slot: React.FC<{
+	data: any
+	updateStatus: (value: string, slots: number) => void
+	deleteStatus: () => void,
+	isPrimary?: boolean
+}> = (
+	{
+		updateStatus,
+		deleteStatus,
+		isPrimary,
+		data,
+	}
+) => {
+		const methods = useForm<{
+			slots: number,
+			value: string,
+		}>({
+			defaultValues: {
+				value: data.name,
+				slots: data.slots,
+			}
+		});
+		const { register, handleSubmit, getValues, watch } = methods;
+		useEffect(() => {
+			const subscription = methods.watch((value) => {
+				updateStatus(methods.getValues().value, Number(methods.getValues().slots));
+			});
+			return () => subscription.unsubscribe();
+		}, [methods.watch]);
+
+
+
+		return (
+			<FormProvider {...methods}>
+				<div> <Button onClick={deleteStatus} disabled={isPrimary}> Delete </Button> </div>
+				{<Input {...register('value')} disabled={isPrimary} label="Name" />}
+				{<Input {...register('slots')} disabled={isPrimary} append="people can claim" type="number" />}
+			</FormProvider>
+		)
+	}
+
 
 export default Home;
