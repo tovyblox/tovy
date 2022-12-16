@@ -156,7 +156,7 @@ const Notices: pageWithLayout<pageProps> = (props) => {
 						</p>
 						<div className="flex flex-row space-x-2 mt-2">
 							{notice.assignedRoles.map((role: any) => (
-								<div className={`flex flex-row items-center space-x-1 ${getRandomColor()} py-1 px-3 rounded-full `}>
+								<div key={role.id} className={`flex flex-row items-center space-x-1 ${getRandomColor()} py-1 px-3 rounded-full `}>
 									<p className="text-sm">{role.name}</p>
 								</div>
 							))}

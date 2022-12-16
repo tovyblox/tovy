@@ -324,10 +324,10 @@ const Home: pageWithLayout<{
 														console.log(s)
 														const slot = JSON.parse(JSON.stringify(s))
 														return (
-															<div className="flex flex-col outline outline-gray-300 p-3 rounded-xl outline-1 gap-y-3">
+															<div className="flex flex-col outline outline-gray-300 p-3 rounded-xl outline-1 gap-y-3" key={index}>
 																<p className="text-xl font-semibold mb-2">{slot.name}</p>
 																{Array.from(Array(slot.slots)).map((e, i) => (
-																	<div className="flex flex-row outline-gray-300  outline-1 outline rounded-md p-2">
+																	<div className="flex flex-row outline-gray-300  outline-1 outline rounded-md p-2" key={i}>
 																		<p className="text-md font-normal text-gray-600 my-auto">{slot.name} #{i + 1}</p>
 
 																		{!session?.users.find(e => (e.roleID === slot.id && e.slot === i)) && (<button disabled={doingAction} className="ml-auto my-auto disabled:bg-gray-200 disabled:cursor-default  hover:bg-gray-300 text-gray-500 transition rounded-md px-2 py-1" onClick={() => claimSessionSlot(selectedSession, slot.id, i)}>Claim</button>)}
