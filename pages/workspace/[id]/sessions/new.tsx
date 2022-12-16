@@ -91,7 +91,7 @@ const Home: pageWithLayout<InferGetServerSidePropsType<GetServerSideProps>> = ({
 		});
 		if (!session) return;
 		form.clearErrors()
-		router.push(`/workspace/${workspace.groupId}/sessions/schedule`)
+		router.push(`/workspace/${workspace.groupId}/sessions/schedules`)
 	}
 
 	const toggleRole = async (role: string) => {
