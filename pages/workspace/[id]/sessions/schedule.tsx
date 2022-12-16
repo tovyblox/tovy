@@ -342,7 +342,7 @@ const Home: pageWithLayout<{
 																					</div>
 																					<Menu.Items className="absolute left-0 z-20 mt-2 w-34 origin-top-right rounded-md bg-white dark:bg-gray-800 shadow-lg ring-1 ring-gray-400 focus-visible:outline-none">
 																						<div className="py-2 px-2">
-																							<Menu.Item>
+																							{session?.users?.find(e => (e.roleID === slot.id && e.slot === i))?.user.userid === BigInt(login.userId) && <Menu.Item>
 																								{({ active }) => (
 																									<button
 																									className="ml-auto w-full disabled:bg-gray-200 disabled:cursor-default cursor-pointer my-auto hover:bg-gray-300 text-gray-500 transition rounded-md px-2 py-1 flex" 
@@ -351,7 +351,17 @@ const Home: pageWithLayout<{
 																										<p className="mx-1"> Unclaim slot </p>
 																									</button>
 																								)}
-																							</Menu.Item>
+																							</Menu.Item>}
+																							{session?.users?.find(e => (e.roleID === slot.id && e.slot === i))?.user.userid !== BigInt(login.userId) && <Menu.Item>
+																								{({ active }) => (
+																									<button
+																									className="ml-auto w-full disabled:bg-gray-200 disabled:cursor-default cursor-pointer my-auto hover:bg-gray-300 text-gray-500 transition rounded-md px-2 py-1 flex"
+																										onClick={() => claimSessionSlot(selectedSession, slot.id, i)}
+																									>
+																										<p className="mx-1"> Claim slot </p>
+																									</button>
+																								)}
+																							</Menu.Item>}
 																						</div>
 																					</Menu.Items>
 																				</Menu>

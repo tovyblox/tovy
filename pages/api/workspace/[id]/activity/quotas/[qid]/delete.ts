@@ -18,25 +18,21 @@ export async function handler(
 	req: NextApiRequest,
 	res: NextApiResponse<Data>
 ) {
-	if (req.method !== 'POST') return res.status(405).json({ success: false, error: 'Method not allowed' })
+	if (req.method !== 'DELETE') return res.status(405).json({ success: false, error: 'Method not allowed' })
 	if (!req.session.userid) return res.status(401).json({ success: false, error: 'Not logged in' });
-	const { name, type, value, roles } = req.body;
-	if (!name || !type || !value || !roles) return res.status(400).json({ success: false, error: "Missing data" });
+	if (!req.query.qid) return res.status(400).json({ success: false, error: 'Missing quota id' });
+	if (typeof req.query.qid !== 'string') return res.status(400).json({ success: false, error: 'Invalid quota id' })
+
 
 	try {
-		const quota = await prisma.quota.create({
-			data: {
-				name,
-				type,
-				value,
-				workspaceGroupId: parseInt(req.query.id as string),
-				assignedRoles: {
-					connect: roles.map((role: number) => ({ id: role }))
-				}
+		await prisma.quota.delete({
+			where: {
+				id: req.query.qid
 			}
 		});
+		
 
-		return res.status(200).json({ success: true, quota: JSON.parse(JSON.stringify(quota, (key, value) => (typeof value === 'bigint' ? value.toString() : value))) });
+		return res.status(200).json({ success: true });
 	} catch (error) {
 		console.error(error);
 		return res.status(500).json({ success: false, error: "Something went wrong" });

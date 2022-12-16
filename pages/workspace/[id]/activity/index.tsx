@@ -119,9 +119,13 @@ const Activity: pageWithLayout = () => {
 					<p className="font-bold text-2xl leading-6 mt-1">View my notices</p>
 					<p className="text-gray-500 text-xl mt-2">View your pending and past notices</p>
 				</div>
-				{workspace.yourPermission.includes('admin') && <div className="bg-white p-4 rounded-md border cursor-pointer hover:bg-gray-200 transition" onClick={resetActivity}>
+				{workspace.yourPermission.includes('manage_activity') && <div className="bg-white p-4 rounded-md border cursor-pointer hover:bg-gray-200 transition" onClick={resetActivity}>
 					<p className="font-bold text-2xl leading-6 mt-1">New timeframe</p>
 					<p className="text-gray-500 text-xl mt-2">This will create a new timeframe and reset all activity</p>
+				</div>}
+				{workspace.yourPermission.includes('admin') && <div className="bg-white p-4 rounded-md border cursor-pointer hover:bg-gray-200 transition" onClick={() => router.push(`/workspace/${id}/activity/quotas`)}>
+					<p className="font-bold text-2xl leading-6 mt-1">Manage quotas</p>
+					<p className="text-gray-500 text-xl mt-2">Manage your groups quotas</p>
 				</div>}
 			</div>
 

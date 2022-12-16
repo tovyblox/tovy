@@ -52,7 +52,7 @@ export const getServerSideProps = withPermissionCheckSsr(
 				roles
 			}
 		}
-	}
+	}, 'manage_activity'
 )
 
 type pageProps = InferGetServerSidePropsType<typeof getServerSideProps>
@@ -90,12 +90,12 @@ const Notices: pageWithLayout<pageProps> = (props) => {
 		toast.promise(
 			axiosPromise,
 			{
-				loading: "Creating your inactivity notice...",
+				loading: "Creating your quota...",
 				success: () => {
 					setIsOpen(false);
-					return "Inactivity notice submitted!";
+					return "Quota created!";
 				},
-				error: "Inactivity notice was not created due to an unknown error."
+				error: "Quota was not created due to an unknown error."
 			}
 		);
 	}
@@ -160,6 +160,23 @@ const Notices: pageWithLayout<pageProps> = (props) => {
 									<p className="text-sm">{role.name}</p>
 								</div>
 							))}
+						</div>
+						<div className="flex flex-row space-x-2 mt-2">
+							<Button classoverride="bg-red-600 hover:bg-red-300" compact onClick={() => {
+								const axiosPromise = axios.delete(`/api/workspace/${id}/activity/quotas/${notice.id}/delete`).then(req => {
+									setQuotas(quotas.filter((q: any) => q.id !== notice.id));
+								});
+								toast.promise(
+									axiosPromise,
+									{
+										loading: "Deleting your quota...",
+										success: () => {
+											return "Quota deleted!";
+										},
+										error: "Quota was not deleted due to an unknown error."
+									}
+								);
+							}}> Delete </Button>
 						</div>
 					</div>
 				))}
