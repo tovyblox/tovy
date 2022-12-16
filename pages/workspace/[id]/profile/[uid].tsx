@@ -8,7 +8,7 @@ import { withSessionSsr } from "@/lib/withSession";
 import { loginState } from "@/state";
 import { Tab } from "@headlessui/react";
 import { getDisplayName, getUsername, getThumbnail } from "@/utils/userinfoEngine";
-import { ActivitySession } from "@prisma/client";
+import { ActivitySession, Quota } from "@prisma/client";
 import prisma from "@/utils/database";
 import moment from "moment";
 import { InferGetServerSidePropsType } from "next";
@@ -24,6 +24,9 @@ export const getServerSideProps = withPermissionCheckSsr(
 				roles: {
 					where: {
 						workspaceGroupId: parseInt(query.id as string)
+					},
+					include: {
+						assignedQuotas: true
 					}
 				}
 			}
@@ -142,6 +145,27 @@ export const getServerSideProps = withPermissionCheckSsr(
 			}
 		});
 
+		const sessionsAttended = await prisma.sessionUser.findMany({
+			where: {
+				userid: BigInt(query?.uid as string),
+				session: {
+					ended: {
+						not: null
+					}
+				}
+			},
+		});
+
+		const sesisonsHosted = await prisma.session.findMany({
+			where: {
+				ownerId: BigInt(query?.uid as string),
+				ended: {
+					not: null
+				}
+			}
+		});
+		
+
 		return {
 			props: {
 				notices: (JSON.parse(JSON.stringify(notices, (_key, value) => (typeof value === 'bigint' ? value.toString() : value))) as typeof notices),
@@ -154,6 +178,9 @@ export const getServerSideProps = withPermissionCheckSsr(
 					avatar: await getThumbnail(parseInt(query?.uid as string))
 				},
 				isUser: req.session.userid === parseInt(query?.uid as string),
+				sesisonsHosted: sesisonsHosted.length,
+				sessionsAttended: sessionsAttended.length,
+				quotas: userTakingAction?.roles[0].assignedQuotas,
 				userBook: (JSON.parse(JSON.stringify(ubook, (_key, value) => (typeof value === 'bigint' ? value.toString() : value))) as typeof ubook)
 			}
 		};
@@ -171,9 +198,12 @@ type pageProps = {
 		avatar: string;
 	}
 	userBook: any;
+	quotas: Quota[];
+	sesisonsHosted: number;
+	sessionsAttended: number;
 	isUser: boolean;
 }
-const Profile: pageWithLayout<pageProps> = ({ notices, timeSpent, timesPlayed, data, userBook, isUser, info }) => {
+const Profile: pageWithLayout<pageProps> = ({ notices, timeSpent, timesPlayed, data, userBook, isUser, info, sesisonsHosted, sessionsAttended, quotas }) => {
 	const [login, setLogin] = useRecoilState(loginState)
 
 	return <div className="pagePadding">
@@ -208,7 +238,7 @@ const Profile: pageWithLayout<pageProps> = ({ notices, timeSpent, timesPlayed, d
 			
 			<Tab.Panels>
 				<Tab.Panel>
-					<Activity timeSpent={timeSpent} timesPlayed={timesPlayed} data={data} />
+					<Activity timeSpent={timeSpent} timesPlayed={timesPlayed} data={data} sessionsAttended={sessionsAttended} sessionsHosted={sesisonsHosted} quotas={quotas} />
 				</Tab.Panel>
 				<Tab.Panel>
 					<Book userBook={userBook} />
@@ -219,7 +249,7 @@ const Profile: pageWithLayout<pageProps> = ({ notices, timeSpent, timesPlayed, d
 			</Tab.Panels>
 		</Tab.Group>}
 		{
-			isUser && <Activity timeSpent={timeSpent} timesPlayed={timesPlayed} data={data} />
+			isUser && <Activity timeSpent={timeSpent} timesPlayed={timesPlayed} data={data} quotas={quotas} sessionsAttended={sessionsAttended} sessionsHosted={sesisonsHosted}  />
 		}
 		
 	</div>;

@@ -96,7 +96,8 @@ const Home: pageWithLayout<InferGetServerSidePropsType<GetServerSideProps>> = ({
 	const [allowUnscheduled, setAllowUnscheduled] = useState(session.allowUnscheduled);
 	const [webhooksEnabled, setWebhooksEnabled] = useState(session.webhookEnabled);
 	const [selectedGame, setSelectedGame] = useState(parseInt(session.gameId))
-	const [selectedRoles, setSelectedRoles] = useState<string[]>(session.hostingRoles.map((role: any) => role.roleId.toString()))
+	const [selectedRoles, setSelectedRoles] = useState<string[]>(session.hostingRoles.map((role: any) => role.id))
+	console.log(selectedRoles)
 	const router = useRouter();
 
 	const toggleRole = async (role: string) => {
@@ -203,7 +204,7 @@ const Home: pageWithLayout<InferGetServerSidePropsType<GetServerSideProps>> = ({
 	return <div className="pagePadding">
 		<p className="text-4xl font-bold">Edit session type</p>
 		<FormProvider {...form}>
-			<div className=" pt-5 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-3 gap-y-2" >
+			<div className=" pt-5 grid grid-cols-1 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-x-3 gap-y-2" >
 				<div className="bg-white p-4 border border-1 border-gray-300  rounded-md">
 					<p className="text-2xl font-bold">Info</p>
 					<Input {...form.register('name', { required: { value: true, message: "This field is required" } })} label="Name of session type" />
@@ -290,6 +291,7 @@ const Home: pageWithLayout<InferGetServerSidePropsType<GetServerSideProps>> = ({
 							<input
 								type="checkbox"
 								onChange={() => toggleRole(role.id)}
+								value={String(selectedRoles.includes(role.id))}
 
 								className="rounded-sm mr-2 w-4 h-4 transform transition text-primary bg-slate-100 border-gray-300 hover:bg-gray-300 focus-visible:bg-gray-300 checked:hover:bg-primary/75 checked:focus-visible:bg-primary/75 focus:ring-0"
 							/>

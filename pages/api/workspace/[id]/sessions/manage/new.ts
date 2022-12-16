@@ -15,7 +15,7 @@ export async function handler(
 	res: NextApiResponse<Data>
 ) {
 	if (req.method !== 'POST') return res.status(405).json({ success: false, error: 'Method not allowed' });
-	const { name, schedule, permissions, webhook } = req.body;
+	const { name, schedule, permissions, webhook, slots, statues } = req.body;
 	if (!name || !schedule || !permissions) return res.status(400).json({ success: false, error: 'Missing required fields' });
 	const { days, time, allowUnscheduled } = schedule;
 	if (schedule.enebaled && (!days || !time || !allowUnscheduled)) return res.status(400).json({ success: false, error: 'Missing required fields' });
@@ -27,6 +27,8 @@ export async function handler(
 				name,
 				gameId: (BigInt(req.body.gameId as string) || null),
 				allowUnscheduled: schedule.allowUnscheduled,
+				statues: statues || [],
+				slots: slots || [],
 				webhookEnabled: webhook?.enabled || false,
 				webhookUrl: webhook?.url,
 				webhookPing: webhook?.ping,
@@ -59,6 +61,8 @@ export async function handler(
 			webhookEnabled: webhook?.enabled || false,
 			webhookUrl: webhook?.url,
 			webhookPing: webhook?.ping,
+			slots: slots || [],
+			statues: statues || [],
 			webhookBody: webhook?.body,
 			webhookTitle: webhook?.title,
 			hostingRoles: {

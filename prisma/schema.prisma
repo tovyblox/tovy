@@ -21,6 +21,7 @@ model workspace {
   inactivityNotices inactivityNotice[]
   userBook          userBook[]
   ranks             rank[]
+  quotas            Quota[]
 }
 
 model config {
@@ -75,6 +76,7 @@ model role {
   workspaceGroupId Int
   name             String
   SessionType      SessionType[]
+  assignedQuotas   Quota[]
   documents        document[]
   groupRoles       Int[]
 }
@@ -205,4 +207,15 @@ model rank {
   workspaceGroupId Int
 
   @@id([userId, workspaceGroupId])
+}
+
+model Quota {
+  id 			 String    @id @unique @default(uuid()) @db.Uuid()
+  name           String
+  type			 String
+  value			 Int
+  workspace      workspace @relation(fields: [workspaceGroupId], references: [groupId])
+  workspaceGroupId Int
+  assignedRoles  role[]
+
 }
