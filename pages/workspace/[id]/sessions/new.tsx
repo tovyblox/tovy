@@ -2,6 +2,7 @@ import type { pageWithLayout } from "@/layoutTypes";
 import { loginState, workspacestate } from "@/state";
 import Button from "@/components/button";
 import Input from "@/components/input";
+import { v4 as uuidv4 } from "uuid";
 import Workspace from "@/layouts/workspace";
 import { useRecoilState } from "recoil";
 import { useEffect, useState } from "react";
@@ -52,6 +53,21 @@ const Home: pageWithLayout<InferGetServerSidePropsType<GetServerSideProps>> = ({
 	const [webhooksEnabled, setWebhooksEnabled] = useState(false);
 	const [selectedGame, setSelectedGame] = useState('')
 	const [selectedRoles, setSelectedRoles] = useState<string[]>([])
+	const [statues, setStatues] = useState<{
+		name: string;
+		timeAfter: number;
+		color: string;
+		id: string;
+	}[]>([])
+	const [slots, setSlots] = useState<{
+		name: string;
+		slots: number;
+		id: string;
+	}[]>([{
+		name: 'Co-Host',
+		slots: 1,
+		id: uuidv4()
+	}])
 	const router = useRouter();
 
 	const createSession = async () => {
@@ -78,6 +94,8 @@ const Home: pageWithLayout<InferGetServerSidePropsType<GetServerSideProps>> = ({
 				time: `${date.getUTCHours()}:${date.getUTCMinutes()}`,
 				allowUnscheduled,
 			},
+			slots,
+			statues,
 			webhook: {
 				enabled: webhooksEnabled,
 				url: form.getValues().webhookUrl,
@@ -116,6 +134,58 @@ const Home: pageWithLayout<InferGetServerSidePropsType<GetServerSideProps>> = ({
 		setDays(newdays);
 		console.log(days)
 	}
+
+	const newStatus = () => {
+		setStatues([...statues, {
+			name: 'New status',
+			timeAfter: 0,
+			color: 'green',
+			id: uuidv4()
+		}])
+	}
+
+	const deleteStatus = (index: number) => {
+		const newStatues = statues;
+		newStatues.splice(index, 1);
+		setStatues([...newStatues]);
+	}
+
+	const updateStatus = (id: string, name: string, color: string, timeafter: number) => {
+		const newStatues = statues;
+		const index = newStatues.findIndex((status) => status.id === id);
+		newStatues[index] = {
+			...newStatues[index],
+			name,
+			color,
+			timeAfter: timeafter
+		};
+		setStatues([...newStatues]);
+	}
+
+	const newSlot = () => {
+		setSlots([...slots, {
+			name: 'Co-Host',
+			slots: 1,
+			id: uuidv4()
+		}])
+	}
+
+	const deleteSlot = (index: number) => {
+		const newSlots = slots;
+		newSlots.splice(index, 1);
+		setSlots([...newSlots]);
+	}
+
+	const updateSlot = (id: string, name: string, slotsAvailble: number) => {
+		const newSlots = slots;
+		const index = slots.findIndex((slot) => slot.id === id);
+		newSlots[index] = {
+			...newSlots[index],
+			slots: slotsAvailble,
+			name
+		};
+		setSlots([...newSlots]);
+	} 
 
 	useEffect(() => { }, [days]);
 
@@ -291,6 +361,27 @@ const Home: pageWithLayout<InferGetServerSidePropsType<GetServerSideProps>> = ({
 
 
 				</div>
+				<div className="bg-white p-4 border border-1 border-gray-300  rounded-md">
+					<p className="text-2xl font-bold mb-2">Statuses  </p>
+					<Button onPress={() => newStatus()} classoverride=""> New Status </Button>
+					{statues.map((status: any, i) => (
+						<div className="p-3 outline outline-gray-300 rounded-md mt-4 outline-1" key={i}><Status updateStatus={(value, mins, color) => updateStatus(status.id, value, color, mins)} deleteStatus={() => deleteStatus(status.id)} data={status} /></div>
+
+					))}
+				</div>
+
+				<div className="bg-white p-4 border border-1 border-gray-300  rounded-md">
+					<p className="text-2xl font-bold mb-2">Slots  </p>
+					<Button onPress={() => newSlot()} classoverride=""> New Slot </Button>
+					<div className="p-3 outline outline-gray-300 rounded-md mt-4 outline-1"><Slot updateStatus={() => {}} isPrimary deleteStatus={() => {}} data={{
+						name: 'Host',
+						slots: 1
+					}} /></div>
+					{slots.map((status: any, i) => (
+						<div className="p-3 outline outline-gray-300 rounded-md mt-4 outline-1" key={i}><Slot updateStatus={(name, openSlots) => updateSlot(status.id, name, openSlots)} deleteStatus={() => deleteSlot(status.id)} data={status} /></div>
+
+					))}
+				</div>
 			</div>
 
 		</FormProvider>
@@ -303,5 +394,85 @@ const Home: pageWithLayout<InferGetServerSidePropsType<GetServerSideProps>> = ({
 };
 
 Home.layout = Workspace;
+
+const Status: React.FC<{
+	data: any
+	updateStatus: (value: string, minutes: number, color: string) => void
+	deleteStatus: () => void
+}> = (
+	{
+		updateStatus,
+		deleteStatus,
+		data,
+	}
+) => {
+		const methods = useForm<{
+			minutes: number,
+			value: string,
+		}>({
+			defaultValues: {
+				value: data.name,
+				minutes: data.timeAfter,
+			}
+		});
+		const { register, handleSubmit, getValues, watch } = methods;
+		useEffect(() => {
+			const subscription = methods.watch((value) => {
+				updateStatus(methods.getValues().value, Number(methods.getValues().minutes), 'green');
+			});
+			return () => subscription.unsubscribe();
+		}, [methods.watch]);
+
+
+
+		return (
+			<FormProvider {...methods}>
+				<div> <Button onClick={deleteStatus}> Delete </Button> </div>
+				{<Input {...register('value')} label="Status" />}
+				{<Input {...register('minutes')} label="After" append="minutes" prepend={`${watch('value')?.replace('ed', '')}'s after`} type="number" />}
+			</FormProvider>
+		)
+	}
+
+const Slot: React.FC<{
+	data: any
+	updateStatus: (value: string, slots: number) => void
+	deleteStatus: () => void,
+	isPrimary?: boolean
+}> = (
+	{
+		updateStatus,
+		deleteStatus,
+		isPrimary,
+		data,
+	}
+) => {
+		const methods = useForm<{
+			slots: number,
+			value: string,
+		}>({
+			defaultValues: {
+				value: data.name,
+				slots: data.slots,
+			}
+		});
+		const { register, handleSubmit, getValues, watch } = methods;
+		useEffect(() => {
+			const subscription = methods.watch((value) => {
+				updateStatus(methods.getValues().value, Number(methods.getValues().slots));
+			});
+			return () => subscription.unsubscribe();
+		}, [methods.watch]);
+
+
+
+		return (
+			<FormProvider {...methods}>
+				<div> <Button onClick={deleteStatus} disabled={isPrimary}> Delete </Button> </div>
+				{<Input {...register('value')} disabled={isPrimary} label="Name" />}
+				{<Input {...register('slots')} disabled={isPrimary} append="people can claim" type="number" />}
+			</FormProvider>
+		)
+	}
 
 export default Home;

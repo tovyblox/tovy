@@ -21,6 +21,7 @@ model workspace {
   inactivityNotices inactivityNotice[]
   userBook          userBook[]
   ranks             rank[]
+  quotas            Quota[]
 }
 
 model config {
@@ -56,6 +57,7 @@ model user {
   book              userBook[]         @relation("bookUser")
   writtenBooks      userBook[]         @relation("bookAdmin")
   ranks              rank[]
+  sessionsRoles	    sessionUser[]
 }
 
 model userInfo {
@@ -74,6 +76,7 @@ model role {
   workspaceGroupId Int
   name             String
   SessionType      SessionType[]
+  assignedQuotas   Quota[]
   documents        document[]
   groupRoles       Int[]
 }
@@ -103,6 +106,8 @@ model SessionType {
   sessions         Session[]
   hostingRoles     role[]
   workspace        workspace? @relation(fields: [workspaceGroupId], references: [groupId])
+  statues 		   Json[]
+  slots 		   Json[]
   workspaceGroupId Int
 }
 
@@ -116,10 +121,21 @@ model schedule {
   sessions      Session[]
 }
 
+model sessionUser {
+	userid BigInt
+	sessionid String @db.Uuid()
+	roleID String
+	slot   Int
+	session Session @relation(fields: [sessionid], references: [id])
+	user user @relation(fields: [userid], references: [userid])
+
+	@@id([userid, sessionid])
+}
+
 model Session {
   id            String      @id @unique @default(uuid()) @db.Uuid()
-  owner         user        @relation(fields: [ownerId], references: [userid])
-  ownerId       BigInt
+  owner         user?        @relation(fields: [ownerId], references: [userid])
+  ownerId       BigInt?
   date          DateTime
   startedAt     DateTime?
   ended         DateTime?
@@ -128,6 +144,7 @@ model Session {
   sessionTypeId String      @db.Uuid()
   schedule      schedule?   @relation(fields: [scheduleId], references: [id])
   scheduleId    String?     @db.Uuid()
+  users		    sessionUser[]
 }
 
 model ActivitySession {
@@ -190,4 +207,15 @@ model rank {
   workspaceGroupId Int
 
   @@id([userId, workspaceGroupId])
+}
+
+model Quota {
+  id 			 String    @id @unique @default(uuid()) @db.Uuid()
+  name           String
+  type			 String
+  value			 Int
+  workspace      workspace @relation(fields: [workspaceGroupId], references: [groupId])
+  workspaceGroupId Int
+  assignedRoles  role[]
+
 }

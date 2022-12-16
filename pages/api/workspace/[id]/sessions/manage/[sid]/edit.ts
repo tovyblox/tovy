@@ -15,8 +15,8 @@ export async function handler(
 	res: NextApiResponse<Data>
 ) {
 	if (req.method !== 'POST') return res.status(405).json({ success: false, error: 'Method not allowed' });
-	const { name, permissions, webhook } = req.body;
-	if (!name || !permissions) return res.status(400).json({ success: false, error: 'Missing required fields' });
+	const { name, permissions, webhook, statues, slots } = req.body;
+	if (!name || !permissions || !statues || !slots) return res.status(400).json({ success: false, error: 'Missing required fields' });
 
 	const findSession = await prisma.sessionType.findUnique({
 		where: {
@@ -28,6 +28,8 @@ export async function handler(
 	});
 	if (!findSession) return res.status(404).json({ success: false, error: 'Session not found' });
 
+	console.log(req.body.slots)
+
 	
 	const session = await prisma.sessionType.update({
 		where: {
@@ -36,10 +38,12 @@ export async function handler(
 		data: {
 			workspaceGroupId: parseInt(req.query.id as string),
 			name,
-			gameId: (BigInt(req.body.gameId as string) || null),
+			gameId: (req.body.gameId ? BigInt(req.body.gameId as string) : null),
 			webhookEnabled: webhook?.enabled || false,
 			webhookUrl: webhook?.url,
 			webhookPing: webhook?.ping,
+			statues: statues || [],
+			slots: slots || [],
 			webhookBody: webhook?.body,
 			webhookTitle: webhook?.title,
 			hostingRoles: {

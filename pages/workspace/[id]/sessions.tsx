@@ -8,7 +8,7 @@ import { useRecoilState } from "recoil";
 import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import randomText from "@/utils/randomText";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import axios from "axios";
 
 import { withPermissionCheckSsr } from "@/utils/permissionsManager";
@@ -49,6 +49,7 @@ const Home: pageWithLayout<pageProps> = (props) => {
 	const [login, setLogin] = useRecoilState(loginState);
 	const [sessions, setSessions] = useState(props.sessions);
 	const text = useMemo(() => randomText(login.displayname), []);
+	const [statues, setStatues] = useState(new Map<string, string>)
 
 	const router = useRouter();
 
@@ -56,27 +57,57 @@ const Home: pageWithLayout<pageProps> = (props) => {
 		await axios.delete(`/api/workspace/${router.query.id}/sessions/manage/${id}/end`, {});
 		setSessions(sessions.filter((session) => session.id !== id));
 	}
+
+	useEffect(() => {
+		const getAllStatues = async () => {
+			for (const session of sessions) {
+				for (const e of session.sessionType.statues.sort((a, b) => {
+					const object = JSON.parse(JSON.stringify(a));
+					const object2 = JSON.parse(JSON.stringify(b));
+					return object2.timeAfter - object.timeAfter;
+				})) {
+					//get how many minutes the session has been going on
+					const minutes = (new Date().getTime() - new Date(session.date).getTime()) / 1000 / 60;
+					console.log(minutes)
+					const slot = JSON.parse(JSON.stringify(e));
+					console.log(slot.timeAfter)
+					if (slot.timeAfter < minutes) {
+						statues.set(session.id, slot.name);
+						return;
+					}
+				}
+				statues.set(session.id, "Open")
+			}
+		}
+		getAllStatues();
 		
+		setInterval(() => {
+			getAllStatues();
+		}, 10000)
+	}, [sessions])
+
 
 
 	return <div className="pagePadding">
 		<p className="text-4xl font-bold">{text}</p>
 		<p className="text-3xl font-medium mt-5 mb-5">Ongoing sessions</p>
-		{sessions.map(session => (
-			<div className="" key={session.id}>
-				<div className="to-primary from-primary/75 bg-gradient-to-t w-full rounded-md overflow-clip text-white">
-					<div className="px-5 py-4 backdrop-blur flex">
-						<div><p className="text-xl font-bold"> Training session </p>
-							<div className="flex mt-1">
-								<img src={`https://www.roblox.com/headshot-thumbnail/image?userId=${session.ownerId}&width=50&height=50&format=png`} className="bg-primary rounded-full w-8 h-8 my-auto" />
-								<p className="font-semibold pl-2 leading-5 my-auto"> Hosted by ItsWHOOOP  </p>
+		{sessions.map(session => {
+			return (
+				<div className="" key={session.id}>
+					<div className="to-primary from-primary/75 bg-gradient-to-t w-full rounded-md overflow-clip text-white">
+						<div className="px-5 py-4 backdrop-blur flex">
+							<div><p className="text-xl font-bold"> {session.sessionType.name} </p>
+								<div className="flex mt-1">
+									<img src={`https://www.roblox.com/headshot-thumbnail/image?userId=${session.ownerId}&width=50&height=50&format=png`} className="bg-primary rounded-full w-8 h-8 my-auto" />
+									<p className="font-semibold pl-2 leading-5 my-auto"> {session.owner.username} <br /> {statues.get(session.id)}  </p>
+								</div>
 							</div>
+							<Button classoverride="my-auto ml-auto" onClick={() => endSession(session.id)}> End </Button>
 						</div>
-						<Button classoverride="my-auto ml-auto" onClick={() => endSession(session.id)}> End </Button>
 					</div>
 				</div>
-			</div>
-		))}
+			)
+		})}
 		{!sessions.length && (
 			<div className="w-full lg:4/6 xl:5/6 rounded-md h-96 bg-white outline-gray-300 outline outline-[1.4px] flex flex-col p-5">
 				<img className="mx-auto my-auto h-72" alt="fallback image" src={'/conifer-charging-the-battery-with-a-windmill.png'} />

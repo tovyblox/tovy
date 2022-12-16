@@ -12,7 +12,7 @@ export const sendWebhook = async (session: (Session & {
 		.setColor("Green")
 		.setTimestamp()
 		.setAuthor({
-			name: await getUsername(session.ownerId),
+			name: await getUsername(session.ownerId!),
 			iconURL: `https://www.roblox.com/headshot-thumbnail/image?userId=${session.ownerId}&width=420&height=420&format=png`,
 			url: `https://www.roblox.com/users/${session.ownerId}/profile`
 		})
@@ -50,7 +50,7 @@ export const sendWebhook = async (session: (Session & {
 			[key: string]: string;
 		} = {};
 		replacements[`%TYPE%`] = session.sessionType.name;
-		replacements[`%HOST%`] = await getUsername(session.ownerId);
+		replacements[`%HOST%`] = await getUsername(session.ownerId!);
 
 		return text.replace(/%\w+%/g, (all) => {
 			return typeof replacements[all] !== "undefined"
@@ -71,7 +71,7 @@ export const deleteWebhook = async (session: (Session & {
 		.setColor("Red")
 		.setTimestamp()
 		.setAuthor({
-			name: await getUsername(session.ownerId),
+			name: await getUsername(session.ownerId!),
 			iconURL: `https://www.roblox.com/headshot-thumbnail/image?userId=${session.ownerId}&width=420&height=420&format=png`,
 			url: `https://www.roblox.com/users/${session.ownerId}/profile`
 		})
@@ -90,7 +90,7 @@ export const deleteWebhook = async (session: (Session & {
 			[key: string]: string;
 		} = {};
 		replacements[`%TYPE%`] = session.sessionType.name;
-		replacements[`%HOST%`] = await getUsername(session.ownerId);
+		replacements[`%HOST%`] = await getUsername(session.ownerId!);
 
 		return text.replace(/%\w+%/g, (all) => {
 			return typeof replacements[all] !== "undefined"

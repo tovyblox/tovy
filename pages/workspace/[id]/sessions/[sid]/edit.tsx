@@ -4,6 +4,7 @@ import Button from "@/components/button";
 import toast, { Toaster } from 'react-hot-toast'
 import Input from "@/components/input";
 import Workspace from "@/layouts/workspace";
+import { v4 as uuidv4 } from "uuid";
 import { useRecoilState } from "recoil";
 import { useEffect, useState } from "react";
 import { Listbox } from "@headlessui/react";
@@ -65,6 +66,22 @@ const Home: pageWithLayout<InferGetServerSidePropsType<GetServerSideProps>> = ({
 	const [login, setLogin] = useRecoilState(loginState);
 	const [enabled, setEnabled] = useState(false);
 	const [days, setDays] = useState<string[]>([])
+	console.log(session.statues)
+	const [statues, setStatues] = useState<{
+		name: string;
+		timeAfter: number;
+		color: string;
+		id: string;
+	}[]>(session.statues?.length ? session.statues : [])
+	const [slots, setSlots] = useState<{
+		name: string;
+		slots: number;
+		id: string;
+	}[]>(session.slots || [{
+		name: 'Co-Host',
+		slots: 1,
+		id: uuidv4()
+	}])
 	const form = useForm({
 		defaultValues: {
 			name: session.name,
@@ -79,7 +96,8 @@ const Home: pageWithLayout<InferGetServerSidePropsType<GetServerSideProps>> = ({
 	const [allowUnscheduled, setAllowUnscheduled] = useState(session.allowUnscheduled);
 	const [webhooksEnabled, setWebhooksEnabled] = useState(session.webhookEnabled);
 	const [selectedGame, setSelectedGame] = useState(parseInt(session.gameId))
-	const [selectedRoles, setSelectedRoles] = useState<string[]>(session.hostingRoles.map((role: any) => role.roleId.toString()))
+	const [selectedRoles, setSelectedRoles] = useState<string[]>(session.hostingRoles.map((role: any) => role.id))
+	console.log(selectedRoles)
 	const router = useRouter();
 
 	const toggleRole = async (role: string) => {
@@ -103,7 +121,9 @@ const Home: pageWithLayout<InferGetServerSidePropsType<GetServerSideProps>> = ({
 				body: data.webhookBody,
 				ping: data.webhookPing
 			},
+			statues,
 			name: data.name,
+			slots,
 			gameId: selectedGame,
 			permissions: selectedRoles
 		});
@@ -117,8 +137,64 @@ const Home: pageWithLayout<InferGetServerSidePropsType<GetServerSideProps>> = ({
 
 	}
 
+	
+
 
 	useEffect(() => { }, [days]);
+
+	const newStatus = () => {
+		setStatues([...statues, {
+			name: 'New status',
+			timeAfter: 0,
+			color: 'green',
+			id: uuidv4()
+		}])
+	}
+
+	const deleteStatus = (index: number) => {
+		const newStatues = statues;
+		newStatues.splice(index, 1);
+		setStatues([...newStatues]);
+	}
+
+	const updateStatus = (id: string, name: string, color: string, timeafter: number) => {
+		const newStatues = statues;
+		const index = newStatues.findIndex((status) => status.id === id);
+		newStatues[index] = {
+			...newStatues[index],
+			name,
+			color,
+			timeAfter: timeafter
+		};
+		setStatues([...newStatues]);
+	}
+
+	const newSlot = () => {
+		setSlots([...slots, {
+			name: 'Co-Host',
+			slots: 1,
+			id: uuidv4()
+		}])
+	}
+
+	const deleteSlot = (index: number) => {
+		const newSlots = slots;
+		newSlots.splice(index, 1);
+		setSlots([...newSlots]);
+	}
+
+	const updateSlot = (id: string, name: string, slotsAvailble: number) => {
+		const newSlots = slots;
+		const index = slots.findIndex((slot) => slot.id === id);
+		newSlots[index] = {
+			...newSlots[index],
+			slots: slotsAvailble,
+			name
+		};
+		setSlots([...newSlots]);
+	}
+
+
 
 
 
@@ -128,7 +204,7 @@ const Home: pageWithLayout<InferGetServerSidePropsType<GetServerSideProps>> = ({
 	return <div className="pagePadding">
 		<p className="text-4xl font-bold">Edit session type</p>
 		<FormProvider {...form}>
-			<div className=" pt-5 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-3 gap-y-2" >
+			<div className=" pt-5 grid grid-cols-1 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-x-3 gap-y-2" >
 				<div className="bg-white p-4 border border-1 border-gray-300  rounded-md">
 					<p className="text-2xl font-bold">Info</p>
 					<Input {...form.register('name', { required: { value: true, message: "This field is required" } })} label="Name of session type" />
@@ -215,6 +291,7 @@ const Home: pageWithLayout<InferGetServerSidePropsType<GetServerSideProps>> = ({
 							<input
 								type="checkbox"
 								onChange={() => toggleRole(role.id)}
+								value={String(selectedRoles.includes(role.id))}
 
 								className="rounded-sm mr-2 w-4 h-4 transform transition text-primary bg-slate-100 border-gray-300 hover:bg-gray-300 focus-visible:bg-gray-300 checked:hover:bg-primary/75 checked:focus-visible:bg-primary/75 focus:ring-0"
 							/>
@@ -243,14 +320,14 @@ const Home: pageWithLayout<InferGetServerSidePropsType<GetServerSideProps>> = ({
 									value: false,
 									message: 'Webhook Ping is required',
 								}
-							})} label="Title" type="text" placeholder={`Session ping`}/>
+							})} label="Title" type="text" placeholder={`Session ping`} />
 
 							<Input {...form.register('webhookTitle', {
 								required: {
 									value: false,
 									message: 'Webhook is required',
 								}
-							})} label="Title" type="text" placeholder={`Session name`}/>
+							})} label="Title" type="text" placeholder={`Session name`} />
 
 							<Input {...form.register('webhookBody', {
 								required: {
@@ -265,6 +342,28 @@ const Home: pageWithLayout<InferGetServerSidePropsType<GetServerSideProps>> = ({
 
 
 				</div>
+
+				<div className="bg-white p-4 border border-1 border-gray-300  rounded-md">
+					<p className="text-2xl font-bold mb-2">Statuses  </p>
+					<Button onPress={() => newStatus()} classoverride=""> New Status </Button>
+					{statues.map((status: any, i) => (
+						<div className="p-3 outline outline-gray-300 rounded-md mt-4 outline-1" key={i}><Status updateStatus={(value, mins, color) => updateStatus(status.id, value, color, mins)} deleteStatus={() => deleteStatus(status.id)} data={status} /></div>
+
+					))}
+				</div>
+
+				<div className="bg-white p-4 border border-1 border-gray-300  rounded-md">
+					<p className="text-2xl font-bold mb-2">Slots  </p>
+					<Button onPress={() => newSlot()} classoverride=""> New Slot </Button>
+					<div className="p-3 outline outline-gray-300 rounded-md mt-4 outline-1"><Slot updateStatus={() => {}} isPrimary deleteStatus={() => {}} data={{
+						name: 'Host',
+						slots: 1
+					}} /></div>
+					{slots.map((status: any, i) => (
+						<div className="p-3 outline outline-gray-300 rounded-md mt-4 outline-1" key={i}><Slot updateStatus={(name, openSlots) => updateSlot(status.id, name, openSlots)} deleteStatus={() => deleteSlot(status.id)} data={status} /></div>
+
+					))}
+				</div>
 			</div>
 
 		</FormProvider>
@@ -278,5 +377,86 @@ const Home: pageWithLayout<InferGetServerSidePropsType<GetServerSideProps>> = ({
 };
 
 Home.layout = Workspace;
+
+const Status: React.FC<{
+	data: any
+	updateStatus: (value: string, minutes: number, color: string) => void
+	deleteStatus: () => void
+}> = (
+	{
+		updateStatus,
+		deleteStatus,
+		data,
+	}
+) => {
+		const methods = useForm<{
+			minutes: number,
+			value: string,
+		}>({
+			defaultValues: {
+				value: data.name,
+				minutes: data.timeAfter,
+			}
+		});
+		const { register, handleSubmit, getValues, watch } = methods;
+		useEffect(() => {
+			const subscription = methods.watch((value) => {
+				updateStatus(methods.getValues().value, Number(methods.getValues().minutes), 'green');
+			});
+			return () => subscription.unsubscribe();
+		}, [methods.watch]);
+
+
+
+		return (
+			<FormProvider {...methods}>
+				<div> <Button onClick={deleteStatus}> Delete </Button> </div>
+				{<Input {...register('value')} label="Status" />}
+				{<Input {...register('minutes')} label="After" append="minutes" prepend={`${watch('value')?.replace('ed', '')}'s after`} type="number" />}
+			</FormProvider>
+		)
+	}
+
+const Slot: React.FC<{
+	data: any
+	updateStatus: (value: string, slots: number) => void
+	deleteStatus: () => void,
+	isPrimary?: boolean
+}> = (
+	{
+		updateStatus,
+		deleteStatus,
+		isPrimary,
+		data,
+	}
+) => {
+		const methods = useForm<{
+			slots: number,
+			value: string,
+		}>({
+			defaultValues: {
+				value: data.name,
+				slots: data.slots,
+			}
+		});
+		const { register, handleSubmit, getValues, watch } = methods;
+		useEffect(() => {
+			const subscription = methods.watch((value) => {
+				updateStatus(methods.getValues().value, Number(methods.getValues().slots));
+			});
+			return () => subscription.unsubscribe();
+		}, [methods.watch]);
+
+
+
+		return (
+			<FormProvider {...methods}>
+				<div> <Button onClick={deleteStatus} disabled={isPrimary}> Delete </Button> </div>
+				{<Input {...register('value')} disabled={isPrimary} label="Name" />}
+				{<Input {...register('slots')} disabled={isPrimary} append="people can claim" type="number" />}
+			</FormProvider>
+		)
+	}
+
 
 export default Home;

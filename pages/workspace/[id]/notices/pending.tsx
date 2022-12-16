@@ -48,7 +48,7 @@ export const getServerSideProps = withPermissionCheckSsr(
 				notices: (JSON.parse(JSON.stringify(notices, (key, value) => (typeof value === 'bigint' ? value.toString() : value))) as typeof notices)
 			}
 		}
-	}
+	}, 'manage_activity'
 )
 
 type pageProps = InferGetServerSidePropsType<typeof getServerSideProps>
