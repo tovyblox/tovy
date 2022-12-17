@@ -1,4 +1,4 @@
-version: 2
+version: 2.1
 commands:
   install-docker-buildx:
     description: Install Docker Buildx
