@@ -1,0 +1,14 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: jdrouet/docker-with-buildx:stable
+    steps:
+      - checkout
+      - setup_remote_docker:
+          version: 18.09.3
+      - run: docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
+      - run: |
+          docker buildx build --push \
+            --platform linux/arm64,linux/amd64
+            --tag itswhooop/tovy:latest .
