@@ -1,10 +1,25 @@
 version: 2
+commands:
+  install-docker-buildx:
+    description: Install Docker Buildx
+    steps:
+      - run:
+          name: Install Docker Buildx
+          command: |
+            mkdir -vp ~/.docker/cli-plugins/
+            curl --silent -L "https://github.com/docker/buildx/releases/download/v0.5.1/buildx-v0.5.1.linux-amd64" > ~/.docker/cli-plugins/docker-buildx
+            chmod a+x ~/.docker/cli-plugins/docker-buildx
+            docker buildx version
+            sudo apt-get update && sudo apt-get install -y binfmt-support qemu-user-static
+            docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+            docker run --privileged --rm tonistiigi/binfmt --install arm64
+            docker context create buildcontext
+            docker buildx create buildcontext --use
 jobs:
   build:
-    docker:
-      - image: jdrouet/docker-with-buildx:stable
     steps:
       - checkout
+      - install-docker-buildx
       - setup_remote_docker:
           version: 18.09.3
       - run: docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
