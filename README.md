@@ -1,7 +1,7 @@
 <div>
   <small>⚠️ Tovy2 is in early beta right now. Features are not complete and bugs may occur</small>
   <div align="center">
-    <img height="250px" src="./logo.png"></img>
+    <img height="250px" src=".github/logo.png"></img>
     <h1>Tovy, a staff management system for Roblox groups</h1>
   </div>
   <ul>
