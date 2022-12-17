@@ -53,7 +53,8 @@ export async function handler(
 		const session = await prisma.session.findFirst({
 			where: {
 				scheduleId: schedule.id,
-				date: date
+				date: date,
+				startedAt: null
 			},
 			include: {
 				sessionType: true
