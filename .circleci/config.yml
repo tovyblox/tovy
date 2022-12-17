@@ -17,24 +17,13 @@ commands:
             docker buildx create buildcontext --use
 jobs:
   build:
-    parameters:
-      resource_size:
-        description: Resource agent size
-        type: string
-        default: medium
-      repo:
-        description: repository without tag, e.g. yourproject/foo
-        type: string
-      directory:
-        description: Directory path without trailing slash relative to repo root
-        type: string
     docker:
       - image: cimg/base:stable
-    resource_class: << parameters.resource_size >>
     steps:
       - checkout
       - setup_remote_docker:
-          version: 18.09.3
+          version: 19.03.13
+          docker_layer_caching: true
       - install-docker-buildx
       - run: docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
       - run: docker buildx build --push --platform linux/arm64,linux/amd64 --tag itswhooop/tovy:latest .
