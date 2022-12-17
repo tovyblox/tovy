@@ -17,6 +17,8 @@ commands:
             docker buildx create buildcontext --use
 jobs:
   build:
+    docker:
+      - image: cimg/base:stable
     steps:
       - checkout
       - install-docker-buildx
