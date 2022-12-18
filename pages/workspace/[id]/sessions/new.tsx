@@ -269,7 +269,7 @@ const Home: pageWithLayout<InferGetServerSidePropsType<GetServerSideProps>> = ({
 									value: false,
 									message: 'Webhook Ping is required',
 								}
-							})} label="Title" type="text" placeholder={`Session Ping [<@&id>]`}/>
+							})} label="Ping" type="text" placeholder={`Session Ping [<@&id>]`}/>
 
 							<Input {...form.register('webhookTitle', {
 								required: {
