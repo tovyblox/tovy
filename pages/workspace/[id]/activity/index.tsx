@@ -6,6 +6,7 @@ import { useRouter } from "next/router";
 import { useEffect, useState, useMemo } from "react";
 import { useRecoilState } from "recoil";
 import moment from "moment";
+import { IconChevronRight  } from "@tabler/icons";
 import Tooltip from "@/components/tooltip";
 import randomText from "@/utils/randomText";
 import toast, { Toaster } from 'react-hot-toast';
@@ -70,6 +71,7 @@ const Activity: pageWithLayout = () => {
 						</Tooltip>
 					))}
 				</div>
+				{activeUsers.length === 0 && <p className="text-gray-700">No staff are in-game</p>}
 			</div>
 
 			<div className="grid gap-2 lg:grid-cols-2 grid-rows-1 mt-2">
@@ -87,6 +89,7 @@ const Activity: pageWithLayout = () => {
 							</Tooltip>
 						))}
 					</div>
+					{topStaff.length === 0 && <p className="text-gray-700">No staff are have been active yet</p>}
 				</div>
 				<div className="bg-white p-4 rounded-md">
 					<p className="font-bold text-2xl leading-4 mt-1">Inactive right now</p>
@@ -102,34 +105,40 @@ const Activity: pageWithLayout = () => {
 							</Tooltip>
 						))}
 					</div>
+					{inactiveUsers.length === 0 && <p className="text-gray-700">No staff are inactive right now</p>}
 				</div>
 			</div>
 
-			<p className="text-3xl font-bold !mt-8 !mb-4">Manage</p>
-			<div className="grid gap-5 lg:grid-cols-4 md:grid-cols-2 grid-rows-1">
-				{workspace.yourPermission.includes('manage_activity') && <div className="bg-white p-4 rounded-md border cursor-pointer hover:bg-gray-200 transition" onClick={() => router.push(`/workspace/${id}/notices/pending`)}>
-					<p className="font-bold text-2xl leading-6 mt-1">View notices</p>
-					<p className="text-gray-500 text-xl mt-2">View all the pending inactivity notices</p>
+			<p className="text-3xl font-bold !mt-8 !mb-2">Manage</p>
+			<div className="grid gap-y-1 gap-x-3 lg:grid-cols-2 3xl:grid-cols-4 2xl:grid-cols-3 md:grid-cols-2 grid-rows-1">
+				{workspace.yourPermission.includes('manage_activity') && <div className="cardBtn" onClick={() => router.push(`/workspace/${id}/notices/pending`)}>
+					<div className="flex flex-row">
+						<div className="flex flex-col">
+							<p className="font-bold text-2xl leading-6 mt-1">View notices</p>
+							<p className="text-gray-500 text-xl mt-2">View all the pending inactivity notices</p>
+						</div>
+
+
+					</div>
 				</div>}
-				<div className="bg-white p-4 rounded-md border cursor-pointer hover:bg-gray-200 transition" onClick={() => router.push(`/workspace/${id}/profile/${login.userId}`)}>
+				<div className="cardBtn cursor-pointer" onClick={() => router.push(`/workspace/${id}/profile/${login.userId}`)}>
 					<p className="font-bold text-2xl leading-6 mt-1">View my profile</p>
 					<p className="text-gray-500 text-xl mt-2">View your profile on this workspace</p>
 				</div>
-				<div className="bg-white p-4 rounded-md border cursor-pointer hover:bg-gray-200 transition" onClick={() => router.push(`/workspace/${id}/notices`)}>
+				<div className="cardBtn" onClick={() => router.push(`/workspace/${id}/notices`)}>
 					<p className="font-bold text-2xl leading-6 mt-1">View my notices</p>
 					<p className="text-gray-500 text-xl mt-2">View your pending and past notices</p>
 				</div>
-				{workspace.yourPermission.includes('manage_activity') && <div className="bg-white p-4 rounded-md border cursor-pointer hover:bg-gray-200 transition" onClick={resetActivity}>
+				{workspace.yourPermission.includes('manage_activity') && <div className="cardBtn" onClick={resetActivity}>
 					<p className="font-bold text-2xl leading-6 mt-1">New timeframe</p>
-					<p className="text-gray-500 text-xl mt-2">This will create a new timeframe and reset all activity</p>
+					<p className="text-gray-500 text-xl mt-2">This will create a new timeframe</p>
 				</div>}
-				{workspace.yourPermission.includes('admin') && <div className="bg-white p-4 rounded-md border cursor-pointer hover:bg-gray-200 transition" onClick={() => router.push(`/workspace/${id}/activity/quotas`)}>
+				{workspace.yourPermission.includes('admin') && <div className="cardBtn" onClick={() => router.push(`/workspace/${id}/activity/quotas`)}>
 					<p className="font-bold text-2xl leading-6 mt-1">Manage quotas</p>
-					<p className="text-gray-500 text-xl mt-2">Manage your groups quotas</p>
+					<p className="text-gray-500 text-xl mt-2">Manage your workspaces quotas</p>
 				</div>}
 			</div>
 
-			<p className="text-sm font-light">Activity may take a moment to load.</p>
 			<Toaster position="bottom-center" />
 		</div>
 	</>;

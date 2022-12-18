@@ -4,15 +4,10 @@ const randomTextFromArray = (texts: string[]) => {
 const randomText = (text: string) => {
 	const coolTexts = [
 		`Howdy, ${text}!`, 
-		`OMG IT\'S ${text}!`,
 		`Whats up, ${text}?`,
 		`Hey, ${text}!`,
 		`Hello, ${text}!`,
-		`I set fire to ${text}!`,
 		`I\'m so glad to see you, ${text}!`,
-		`Hey, ${text}, do you ever stop to think about me?`,
-		`I\'m sorry, the old ${text} can't come to the phone right now. Why? Oh, 'cause their dead!`,
-		`But if it's always me and you, and your friend ${text}`,
 		`Lovely to see you, ${text}!`,
 	];
 	const nightOnlyTexts = [

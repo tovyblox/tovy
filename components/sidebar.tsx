@@ -79,7 +79,7 @@ const Topbar: NextPage = () => {
 	}
 
 	return (
-		<div className="sticky top-0 w-60 h-full bg-white drop-shadow dark:bg-gray-900 z-50">
+		<div className="sticky top-0 w-60 h-full bg-white border-r-[1px] border-gray-300 dark:bg-gray-900 z-50">
 			<div className="flex flex-col py-3 px-3 gap-2 focus-visible:bg-blue-200">
 				<Menu as="div" className="relative inline-block w-full text-left">
 					<div className="w-full">
@@ -198,12 +198,17 @@ const Topbar: NextPage = () => {
 				<div className="h-[1px] rounded-xl w-full px-3 bg-gray-300 mb-1" />
 				{pages.map((page, i) => (
 					(page.accessible?.valueOf ? page.accessible : true) && (
-						<button key={i} className={`h-auto flex flex-row rounded-xl py-1 px-2 transition cursor-pointer focus-visible:outline-none border-[3px] text-black dark:text-white hover:bg-gray-200 focus-visible:bg-gray-200 dark:hover:bg-gray-800 dark:focus-visible:bg-gray-800 ${router.pathname === page.href ? `border-primary` : "border-white dark:border-gray-900 hover:border-gray-200 focus-visible:border-gray-200 dark:hover:border-gray-800 dark:focus-visible:border-gray-800"}`} tabIndex={0} role="button" onClick={() => gotopage(page.href)}>
-							<page.icon size={36} className="my-auto p-1" />
-							<p className="my-auto text-xl pl-2 font-medium">
-								{page.name}
-							</p>
-						</button>
+						<>
+							<button key={i} className={`h-auto flex flex-row rounded-xl py-1 px-2 transition cursor-pointer focus-visible:outline-none border-[3px] text-black dark:text-white hover:bg-gray-200 focus-visible:bg-gray-200 dark:hover:bg-gray-800 dark:focus-visible:bg-gray-800 ${router.pathname === page.href ? `border-primary` : "border-white dark:border-gray-900 hover:border-gray-200 focus-visible:border-gray-200 dark:hover:border-gray-800 dark:focus-visible:border-gray-800"}`} tabIndex={0} role="button" onClick={() => gotopage(page.href)}>
+								<page.icon size={36} className="my-auto p-1" />
+								<p className="my-auto text-xl pl-2 font-medium">
+									{page.name}
+								</p>
+							</button>
+							
+							
+							
+						</>
 					)
 				))}
 			</div>
