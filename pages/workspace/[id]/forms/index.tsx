@@ -9,6 +9,7 @@ import { useRecoilState } from "recoil";
 import { useMemo, useRef, useState } from "react";
 import randomText from "@/utils/randomText";
 import FormList from "@/components/forms/FormList";
+import { useRouter } from "next/router";
 
 export const getServerSideProps = withPermissionCheckSsr(
 	async ({ query, req }) => {
@@ -19,36 +20,36 @@ export const getServerSideProps = withPermissionCheckSsr(
 )
 
 type pageProps = {}
-const Profile: pageWithLayout<pageProps> = () => {
+const Forms: pageWithLayout<pageProps> = () => {
 	const [login, setLogin] = useRecoilState(loginState);
 	const [activeForms, setActiveForms] = useState([]);
 	const [inactiveForms, setInactiveForms] = useState([]);
 	const text = useMemo(() => randomText(login.displayname), []);
-
-	const activeCstr = useRef(null);
-	const inactiveCstr = useRef(null);
+	
+	const router = useRouter();
+	const { id } = router.query;
 
 	return <div className="pagePadding space-y-6">
 		<p className="text-4xl font-bold">{text}</p>
-		<button className="cardBtn">
+		<button className="cardBtn" onClick={() => router.push(`/workspace/${id}/forms/create`)}>
 			<p className="font-bold text-2xl leading-5 mt-1">Create form</p>
 			<p className="text-gray-400 font-normal text-base mt-1">Forms allow your members to apply for a specific role.</p>
 		</button>
 		<h1 className="text-3xl font-bold">Forms</h1>
 		<div className="bg-white p-4 rounded-lg !mt-3">
 			<h1 className="text-2xl font-semibold mb-3 ml-0.5">Open Forms</h1>
-			<div className="grid grid-cols-1 gap-2 mb-4" ref={activeCstr}>
+			<div className="grid grid-cols-1 gap-2 mb-4">
 				<FormList />
 				<FormList />
 			</div>
 			<h1 className="text-2xl font-semibold mb-3 ml-0.5">Closed Forms</h1>
-			<div className="grid grid-cols-1 gap-2 mb-4" ref={activeCstr}>
+			<div className="grid grid-cols-1 gap-2 mb-4">
 				<FormList />
 			</div>
 		</div>
 	</div>;
 }
 
-Profile.layout = workspace
+Forms.layout = workspace
 
-export default Profile
+export default Forms
