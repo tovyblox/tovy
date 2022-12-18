@@ -109,7 +109,7 @@ const Home: pageWithLayout<InferGetServerSidePropsType<GetServerSideProps>> = ({
 		});
 		if (!session) return;
 		form.clearErrors()
-		router.push(`/workspace/${workspace.groupId}/sessions/schedule`)
+		router.push(`/workspace/${workspace.groupId}/sessions/schedules`)
 	}
 
 	const toggleRole = async (role: string) => {
@@ -339,21 +339,21 @@ const Home: pageWithLayout<InferGetServerSidePropsType<GetServerSideProps>> = ({
 									value: false,
 									message: 'Webhook Ping is required',
 								}
-							})} label="Title" type="text" placeholder={`Session ping`}/>
+							})} label="Ping" type="text" placeholder={`Session Ping [<@&id>]`}/>
 
 							<Input {...form.register('webhookTitle', {
 								required: {
 									value: false,
 									message: 'Webhook is required',
 								}
-							})} label="Title" type="text" placeholder={`Session name`}/>
+							})} label="Title" type="text" placeholder={`Embed Title / Session Name`}/>
 
 							<Input {...form.register('webhookBody', {
 								required: {
 									value: false,
 									message: 'Webhook is required',
 								}
-							})} label="Text" type="text" textarea placeholder="This grouyp is hosting a session and shit" />
+							})} label="Text" type="text" textarea placeholder="Come and join us for a fun session!" />
 						</>
 					)}
 

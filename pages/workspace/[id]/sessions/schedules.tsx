@@ -160,7 +160,7 @@ const Home: pageWithLayout<{
 		<button onClick={() => router.push(`/workspace/${router.query.id}/sessions/new`)} className="cardBtn"><p className="font-bold text-2xl leading-5 mt-1"> New session type <br /><span className="text-gray-400 font-normal text-base "> Create a new session type   </span></p> </button>
 		<p className="text-3xl font-medium mt-5">Schedules</p>
 		<div className=" pt-5 flex flex-col lg:flex-row gap-x-3 gap-y-2">
-			{!!activeSessions.length && <div className="flex flex-col w-full">
+			{!!activeSessions.length && <div className="flex flex-col w-full gap-y-2">
 				{activeSessions.map((session) => {
 					const date = new Date(selectedDate);
 					date.setUTCMinutes(session.Minute)
