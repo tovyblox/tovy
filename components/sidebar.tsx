@@ -144,7 +144,7 @@ const Topbar: NextPage = () => {
 				<Listbox onChange={() => { }} value={workspace.groupId} as="div" className="relative inline-block w-full text-left">
 					<Listbox.Button className="h-auto w-full flex flex-row rounded-xl py-1 hover:bg-gray-200 dark:hover:bg-gray-800 dark:focus-visible:bg-gray-800 px-2 transition cursor-pointer outline-1 outline-gray-300 outline mb-1 focus-visible:bg-gray-200">
 						<img
-							src={workspace.groupThumbnail}
+							src={workspace.groupThumbnail ? workspace.groupThumbnail : "/favicon-32x32.png"}
 							alt="group name"
 							className="rounded-full h-[36px] w-[36px] my-auto p-1"
 						/>
