@@ -52,9 +52,11 @@ const Wall: pageWithLayout<pageProps> = (props) => {
 	const [workspace, setWorkspace] = useRecoilState(workspacestate);
 	const [wallMessage, setWallMessage] = useState("");
 	const [posts, setPosts] = useState(props.posts);
+	const [loading, setLoading] = useState(false);
 	
 
 	function sendPost(){
+		setLoading(true);
 		axios.post(
 			`/api/workspace/${id}/wall/post`,
 			{
@@ -63,10 +65,12 @@ const Wall: pageWithLayout<pageProps> = (props) => {
 		).then((req) => {
 			toast.success("Wall message posted!");
 			setWallMessage("");
-			setPosts([req.data.post, ...posts])
+			setPosts([req.data.post, ...posts]);
+			setLoading(false);
 		}).catch(error => {
 			console.error(error);
 			toast.error("Could not post wall message.");
+			setLoading(false);
 		});
 	}
 
@@ -74,7 +78,7 @@ const Wall: pageWithLayout<pageProps> = (props) => {
 		<Toaster position="bottom-center" />
 		<p className="text-4xl font-bold mb-5">Wall</p>
 		<textarea className="border border-[#AAAAAA] p-2.5 rounded-md w-full focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-primary focus-visible:outline-none placeholder-[#AAAAAA] resize-y h-16 " placeholder="Type your wall message here" onChange={(e) => setWallMessage(e.target.value)} value={wallMessage} />
-		{!!wallMessage.length && <Button classoverride="mt-2" workspace onPress={sendPost}>Post</Button>}
+		{!!wallMessage.length && <Button classoverride="mt-2" workspace onPress={sendPost} loading={loading}>Post</Button>}
 		{posts.length < 1 && (
 			<div className="w-full lg:4/6 xl:5/6 rounded-md h-96 bg-white outline-gray-300 outline outline-[1.4px] flex flex-col p-5 mt-3">
 				<img className="mx-auto my-auto h-72" alt="fallback image" src={'/conifer-charging-the-battery-with-a-windmill.png'} />
