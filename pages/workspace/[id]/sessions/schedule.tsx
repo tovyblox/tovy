@@ -261,7 +261,7 @@ const Home: pageWithLayout<{
 							<div className={`to-primary from-primary/75 bg-gradient-to-t w-full rounded-md overflow-clip text-white`}>
 								<div className="px-5 py-4 backdrop-blur flex z-10">
 									<div><p className="text-xl font-semibold"> {session.sessionType.name} </p>
-										{session.sessions.find(e => new Date(e.date).getUTCDate() === selectedDate.getUTCDate()) ?
+										{session.sessions.find(e => new Date(e.date).getUTCDate() === selectedDate.getUTCDate())?.ownerId ?
 											<div className="flex mt-1">
 												<img src={(session.sessions.find(e => new Date(e.date).getUTCDate() === selectedDate.getUTCDate())?.owner.picture as string)} className="bg-primary rounded-full w-8 h-8 my-auto" />
 												<p className="font-medium pl-2 leading-5 my-auto"> Hosted by {session.sessions.find(e => new Date(e.date).getUTCDate() === selectedDate.getUTCDate())?.owner.username} <br /> <span className=""> {`${moment(date).format(`hh:mm A`)}`} </span> </p>
@@ -342,7 +342,7 @@ const Home: pageWithLayout<{
 																					</div>
 																					<Menu.Items className="absolute left-0 z-20 mt-2 w-34 origin-top-right rounded-md bg-white dark:bg-gray-800 shadow-lg ring-1 ring-gray-400 focus-visible:outline-none">
 																						<div className="py-2 px-2">
-																							{session?.users?.find(e => (e.roleID === slot.id && e.slot === i))?.user.userid === BigInt(login.userId) && <Menu.Item>
+																							{session?.users?.find(e => (e.roleID === slot.id && e.slot === i))?.user.userid !== BigInt(login.userId) && <Menu.Item>
 																								{({ active }) => (
 																									<button
 																									className="ml-auto w-full disabled:bg-gray-200 disabled:cursor-default cursor-pointer my-auto hover:bg-gray-300 text-gray-500 transition rounded-md px-2 py-1 flex" 
@@ -352,7 +352,7 @@ const Home: pageWithLayout<{
 																									</button>
 																								)}
 																							</Menu.Item>}
-																							{session?.users?.find(e => (e.roleID === slot.id && e.slot === i))?.user.userid !== BigInt(login.userId) && <Menu.Item>
+																							{session?.users?.find(e => (e.roleID === slot.id && e.slot === i))?.user.userid === BigInt(login.userId) && <Menu.Item>
 																								{({ active }) => (
 																									<button
 																									className="ml-auto w-full disabled:bg-gray-200 disabled:cursor-default cursor-pointer my-auto hover:bg-gray-300 text-gray-500 transition rounded-md px-2 py-1 flex"
