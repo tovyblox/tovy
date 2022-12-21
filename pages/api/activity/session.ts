@@ -30,7 +30,9 @@ export async function handler(
 	if (typeof req.body.userid !== "number") return res.status(400).json({ success: false, error: "User ID not a number" });
 	const value = JSON.parse(JSON.stringify(config.value));
 	if (value.role) {
-		const userank = await noblox.getRankInGroup(config.workspaceGroupId, req.session.userid);
+		const userank = await noblox.getRankInGroup(config.workspaceGroupId, req.body.userid);
+		//check if the user is above value.role
+		
 		if (userank <= value.role) {
 			res.status(200).json({ success: true, error: "Did not create session as user is not the right rank" });
 			console.log(`${req.body.userid} is not the right rank to create a session`)
