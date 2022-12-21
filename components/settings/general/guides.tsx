@@ -17,7 +17,6 @@ const Guide: FC<props> = (props) => {
 	const [workspace, setWorkspace] = useRecoilState(workspacestate);
 
 	const updateColor = async () => {
-		console.log("update color");
 		const res = await axios.patch(`/api/workspace/${workspace.groupId}/settings/general/guides`, { 
 			enabled: !workspace.settings.guidesEnabled
 		 });

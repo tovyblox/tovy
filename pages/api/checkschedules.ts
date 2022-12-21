@@ -26,7 +26,6 @@ export async function handler(
 	const regkey = JSON.parse(JSON.stringify(registryconfig.value)).key;
 	if (key !== regkey) return res.status(401).json({ success: false, error: 'Invalid key' });
 	//find all schedules that have past times today
-	console.log(new Date().getUTCMinutes(), new Date().getUTCHours(), new Date().getUTCDay());
 	const schedules = await prisma.schedule.findMany({
 		where: {
 			Days: {
@@ -40,7 +39,6 @@ export async function handler(
 			}
 		}
 	});
-	console.log(schedules)
 
 	for (const schedule of schedules) {
 		const date = new Date();
@@ -48,7 +46,6 @@ export async function handler(
 		date.setUTCMinutes(schedule.Minute);
 		date.setUTCSeconds(0);
 		date.setUTCMilliseconds(0);
-		console.log(date)
 
 		const session = await prisma.session.findFirst({
 			where: {
@@ -60,7 +57,6 @@ export async function handler(
 				sessionType: true
 			}
 		});
-		console.log(session)
 		if (!session?.ownerId) continue;
 		await prisma.session.update({
 			where: {

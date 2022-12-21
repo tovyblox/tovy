@@ -42,7 +42,6 @@ const Activity: FC<props> = (props) => {
 	};
 
 	const updateRole = async (id: number) => {
-		console.log(id)
 		const req = await axios.post(`/api/workspace/${workspace.groupId}/settings/activity/setRole`, { role: id });
 		if (req.status === 200) {
 			setSelectedRole((roles.find((role: any) => role.rank === id) as any).rank);

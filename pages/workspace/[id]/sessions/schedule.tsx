@@ -94,7 +94,6 @@ const Home: pageWithLayout<{
 
 	const getLastThreeDays = useMemo(() => {
 		const today = new Date();
-		console.log(today)
 		const lastThreeDays = [];
 		const nextThreeDays = [];
 		for (let i = 0; i < 4; i++) {
@@ -117,7 +116,6 @@ const Home: pageWithLayout<{
 
 	const claimSession = async (schedule: any) => {
 		setDoingAction(true);
-		console.log(selectedDate)
 		const res = await axios.post(`/api/workspace/${router.query.id}/sessions/manage/${schedule.id}/claim`, {
 			date: selectedDate.getTime(),
 			timezoneOffset: new Date().getTimezoneOffset()
@@ -134,7 +132,6 @@ const Home: pageWithLayout<{
 
 	const claimSessionSlot = async (schedule: any, slotId: string, slotNum: number) => {
 		setDoingAction(true);
-		console.log(selectedDate)
 		const res = await axios.post(`/api/workspace/${router.query.id}/sessions/manage/${schedule.id}/claimSlot`, {
 			date: selectedDate.getTime(),
 			slotId,
@@ -154,7 +151,6 @@ const Home: pageWithLayout<{
 
 	const unclaimSessionSlot = async (schedule: any, slotId: string, slotNum: number) => {
 		setDoingAction(true);
-		console.log(selectedDate)
 		const res = await axios.post(`/api/workspace/${router.query.id}/sessions/manage/${schedule.id}/unclaimSlot`, {
 			date: selectedDate.getTime(),
 			slotId,
@@ -174,7 +170,6 @@ const Home: pageWithLayout<{
 
 	const unclaimSession = async (schedule: any) => {
 		setDoingAction(true);
-		console.log(selectedDate)
 		const res = await axios.post(`/api/workspace/${router.query.id}/sessions/manage/${schedule.id}/unclaim`, {
 			date: selectedDate.getTime(),
 			timezoneOffset: new Date().getTimezoneOffset()
@@ -218,7 +213,6 @@ const Home: pageWithLayout<{
 		};
 
 		if (!s?.date) return { disabled: false, text: "Claims the session so people know you\'re the host" };
-		console.log(s.date)
 		if (s.date < new Date()) {
 			return {
 				disabled: true,
@@ -253,7 +247,6 @@ const Home: pageWithLayout<{
 					for (const s of session.sessions) {
 						const d8 = new Date(s.date);
 						const d2 = selectedDate.getUTCDate();
-						console.log(`${s.id} is on ${d8.getUTCDate()} (${d8.getDate()}) and selected is ${d2}`)
 					}
 
 					return (
@@ -321,7 +314,6 @@ const Home: pageWithLayout<{
 												<div className="gap-y-4 flex flex-col max-h-96 overflow-auto py-2 px-1 rounded-xl">
 													{selectedSession?.sessionType.slots.map((s, index) => {
 														if (typeof s !== 'object') return;
-														console.log(s)
 														const slot = JSON.parse(JSON.stringify(s))
 														return (
 															<div className="flex flex-col outline outline-gray-300 p-3 rounded-xl outline-1 gap-y-3" key={index}>

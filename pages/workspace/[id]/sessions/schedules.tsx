@@ -120,9 +120,7 @@ const Home: pageWithLayout<{
 	};
 
 	useEffect(() => {
-		console.log(sessions)
 		const activeSessions = sessionsData.filter((session: any) => {
-			console.log(sessions)
 			return session.Days.includes(selectedDate.getDay());
 		});
 		setActiveSessions(activeSessions);

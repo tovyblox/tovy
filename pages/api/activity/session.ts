@@ -86,7 +86,6 @@ export async function handler(
 				workspaceGroupId: config.workspaceGroupId
 			}
 		})
-		console.log(session.length)
 
 		if(session.length < 1) return res.status(400).json({ success: false, error: "Session not found" })
 

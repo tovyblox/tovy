@@ -80,11 +80,9 @@ const Home: pageWithLayout<InferGetServerSidePropsType<GetServerSideProps>> = ({
 			udate.setMinutes(date.getMinutes());
 			udate.setSeconds(0);
 			udate.setMilliseconds(0);
-			console.log(udate.getUTCDay())
 
 			return udate.getUTCDay();
 		})
-		console.log(days2)
 		const session = await axios.post(`/api/workspace/${workspace.groupId}/sessions/manage/new`, {
 			name: form.getValues().name,
 			gameId: selectedGame,
@@ -132,7 +130,6 @@ const Home: pageWithLayout<InferGetServerSidePropsType<GetServerSideProps>> = ({
 			newdays.push(day);
 		}
 		setDays(newdays);
-		console.log(days)
 	}
 
 	const newStatus = () => {

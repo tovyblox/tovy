@@ -101,9 +101,7 @@ export async function checkGroupRoles(groupID: number) {
 	if (ranks && ranks.length) {
 		for (const rank of ranks) {
 			const role = rs.find(r => r.groupRoles?.includes(rank.id));
-			console.log(role)
 			const members = await noblox.getPlayers(groupID, rank.id).catch(e => {
-				console.log(e);
 				return null;
 			});
 			if (!members) continue;
@@ -128,7 +126,6 @@ export async function checkGroupRoles(groupID: number) {
 			for (const user of users) {
 				if (user.ranks?.find(r => r.workspaceGroupId === groupID)?.rankId === BigInt(rank.rank)) continue;
 				if (members.find(member => member.userId === Number(user.userid))) {
-					console.log(`${user.username} is in ${rank.name} (${rank.rank})`)
 					await prisma.rank.upsert({
 						where: {
 							userId_workspaceGroupId: {

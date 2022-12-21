@@ -27,7 +27,6 @@ const Login: NextPage = ({ }) => {
 			req = await axios.post('/api/auth/login', data)
 		} catch (e: any) {
 			setLoading(false);
-			console.log(e.response.status)
 			if (e.response.status === 404) {
 				setError('username', { type: 'custom', message: e.response.data.error })
 				return;

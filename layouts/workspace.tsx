@@ -42,13 +42,10 @@ const workspace: LayoutProps = ({ children }) => {
 	}
 
 	useEffect(() => {
-		console.log('running')
 		router.events.on('routeChangeStart', () => {
-			console.log('starting')
 			setLoading(true)
 		});
 		router.events.on('routeChangeComplete', () => {
-			console.log('complete')
 			setLoading(false)
 		});
 	}, [])
@@ -90,7 +87,6 @@ const workspace: LayoutProps = ({ children }) => {
 	}, [workspace.groupTheme]);
 
 	useEffect(() => {
-		console.log(window.innerWidth)
 		if (window.innerWidth < 768) {
 			setIsMobile(true)
 		} else {

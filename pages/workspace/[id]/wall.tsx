@@ -15,8 +15,6 @@ import { useRouter } from "next/router";
 import axios from "axios";
 
 export const getServerSideProps: GetServerSideProps = withPermissionCheckSsr(async ({ query, req }) => {
-	console.log(req.session.userid)
-	console.log('wall loading ')
 
 	const posts = await prisma.wallPost.findMany({
 		where: {

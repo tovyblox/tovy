@@ -10,9 +10,7 @@ export const getRegistry = async (url: string) => {
 	if (!regconfig?.value) {
 		return setRegistry(url);
 	};
-	console.log(regconfig.value)
 	const config = JSON.parse(JSON.stringify(regconfig.value));
-	console.log(config)
 	if (!config.setup) { 
 		console.log('registry not setup')
 		return setRegistry(url);

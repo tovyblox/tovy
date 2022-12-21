@@ -66,7 +66,6 @@ const Home: pageWithLayout<InferGetServerSidePropsType<GetServerSideProps>> = ({
 	const [login, setLogin] = useRecoilState(loginState);
 	const [enabled, setEnabled] = useState(false);
 	const [days, setDays] = useState<string[]>([])
-	console.log(session.statues)
 	const [statues, setStatues] = useState<{
 		name: string;
 		timeAfter: number;
@@ -97,7 +96,6 @@ const Home: pageWithLayout<InferGetServerSidePropsType<GetServerSideProps>> = ({
 	const [webhooksEnabled, setWebhooksEnabled] = useState(session.webhookEnabled);
 	const [selectedGame, setSelectedGame] = useState(parseInt(session.gameId))
 	const [selectedRoles, setSelectedRoles] = useState<string[]>(session.hostingRoles.map((role: any) => role.id))
-	console.log(selectedRoles)
 	const router = useRouter();
 
 	const toggleRole = async (role: string) => {

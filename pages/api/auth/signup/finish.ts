@@ -19,7 +19,6 @@ export async function handler(
 ) {
 	if (req.method !== 'POST') return res.status(405).json({ success: false, error: 'Method not allowed' })
 	const verification = req.session.verification;
-	console.log(req.session)
 	if (!verification) return res.status(400).json({ success: false, error: 'Missing verification' })
 	const { userid, verificationCode } = verification;
 	const user = await noblox.getPlayerInfo(userid);

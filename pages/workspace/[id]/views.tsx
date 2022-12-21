@@ -251,19 +251,15 @@ const Views: pageWithLayout<pageProps> = ({ usersInGroup, ranks }) => {
 	}[]>([]);
 
 	const newfilter = () => {
-		console.log('new filter');
 		setColFilters([...colFilters, { id: uuidv4(), column: 'username', filter: 'equal', value: '' }])
 	};
 	const removeFilter = (id: string) => {
 		setColFilters(colFilters.filter((filter) => filter.id !== id));
 	}
 	const updateFilter = (id: string, column: string, filter: string, value: string) => {
-		console.log('e')
 		const OBJ = Object.assign(([] as typeof colFilters), colFilters);
 		const index = OBJ.findIndex((filter) => filter.id === id);
-		console.log({ index, id, column, filter, value })
 		OBJ[index] = { id, column, filter, value };
-		console.log(OBJ)
 		setColFilters(OBJ);
 	};
 
@@ -304,9 +300,7 @@ const Views: pageWithLayout<pageProps> = ({ usersInGroup, ranks }) => {
 				} else if (filter.column === 'rank') {
 					if (!filter.value) return;
 					if (filter.filter === 'equal') {
-						console.log(user.rankID, filter.value)
 						if (user.rankID !== parseInt(filter.value)) {
-							console.log(`${user.rankID} !== ${filter.value}`)
 							valid = false;
 						}
 					} else if (filter.filter === 'greaterThan') {

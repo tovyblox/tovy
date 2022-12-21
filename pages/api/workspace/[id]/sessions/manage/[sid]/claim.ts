@@ -45,7 +45,6 @@ export async function handler(
 		}
 	});
 
-	console.log(day.getUTCDay())
 	const schedule = await prisma.schedule.findFirst({
 		where: {
 			id: (sid as string),
@@ -73,7 +72,6 @@ export async function handler(
 	dateTime.setUTCMonth(day.getUTCMonth());
 	dateTime.setUTCFullYear(day.getUTCFullYear());
 
-	console.log(dateTime)
 
 	const findSession = await prisma.session.findFirst({
 		where: {

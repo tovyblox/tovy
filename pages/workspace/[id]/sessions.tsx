@@ -31,7 +31,6 @@ export const getServerSideProps = withPermissionCheckSsr(async ({ query }) => {
 			sessionType: true
 		}
 	});
-	console.log(sessions)
 	return {
 		props: {
 			sessions: (JSON.parse(JSON.stringify(sessions, (key, value) => (typeof value === 'bigint' ? value.toString() : value))) as typeof sessions)
@@ -68,9 +67,7 @@ const Home: pageWithLayout<pageProps> = (props) => {
 				})) {
 					//get how many minutes the session has been going on
 					const minutes = (new Date().getTime() - new Date(session.date).getTime()) / 1000 / 60;
-					console.log(minutes)
 					const slot = JSON.parse(JSON.stringify(e));
-					console.log(slot.timeAfter)
 					if (slot.timeAfter < minutes) {
 						statues.set(session.id, slot.name);
 						return;

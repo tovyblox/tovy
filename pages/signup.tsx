@@ -41,7 +41,6 @@ const SignUp: NextPage = ({ }) => {
 			if (!request) return;
 			setSelectedSlide(selectedSlide + 1);
 			setCode(request.data.code)
-			console.log(request)
 		}
 	}
 
@@ -68,7 +67,6 @@ const SignUp: NextPage = ({ }) => {
 				Router.reload();
 			}, 1000)
 			
-			console.log(request)
 		}
 	}
 

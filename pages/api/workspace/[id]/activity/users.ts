@@ -68,8 +68,6 @@ export async function handler(
 		userId: number, username: string, reason: string, from: Date, to: Date
 	}[] = [];
 	
-	console.log(activeSession)
-	console.log(inactiveSession)
 	for (const user of activeSession) {
 		activeUsers.push({
 			userId: Number(user.userId),

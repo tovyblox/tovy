@@ -37,7 +37,6 @@ export const getServerSideProps = withPermissionCheckSsr(
 			]
 		});
 
-		console.log(notices)
 		
 		return {
 			props: {
@@ -177,7 +176,6 @@ const Notices: pageWithLayout<pageProps> = (props) => {
 											<div className="grid gap-3 grid-cols-2">
 												<Input label="Start Time" type="date" id="startTime" {...register("startTime", { required: { value: true, message: "This field is required" }, validate: {
 													mm: (value) => {
-														console.log(new Date(value), new Date());
 														const date = new Date();
 														date.setMilliseconds(0);
 														date.setSeconds(0);
@@ -186,7 +184,6 @@ const Notices: pageWithLayout<pageProps> = (props) => {
 														date.setDate(parseInt(value.split("-")[2]));
 														date.setMonth(parseInt(value.split("-")[1]) - 1);
 														date.setFullYear(parseInt(value.split("-")[0]));
-														console.log(date, new Date(value), new Date());
 
 														if (date.getTime() < new Date().getTime()) return "Please select a date in the future";
 													}
