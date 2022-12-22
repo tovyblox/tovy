@@ -76,7 +76,7 @@ const Activity: pageWithLayout = () => {
 				</div>
 				<div className="bg-white p-4 rounded-md">
 					<p className="font-bold text-2xl leading-4 mt-1">Time spent idling</p>
-					<p className="mt-3 text-6xl font-extralight">{Math.round(idleTime / 60000)}m</p>
+					<p className="mt-3 text-6xl font-extralight">{Math.round(idleTime)}m</p>
 				</div>
 			</div>
 

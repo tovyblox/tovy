@@ -108,13 +108,24 @@ const Activity: FC<Props> = ({ timeSpent, timesPlayed, data, quotas, sessionsAtt
 		}
 	}
 
-	const fetchSession = async(sessionId: string) => {
+	const idleMins = sessions.reduce((acc, session) => { return acc + Number(session.idleTime) }, 0);
+	const messages = sessions.reduce((acc, session) => { return acc + Number(session.messages) }, 0);
+
+	const fetchSession = async (sessionId: string) => {
 		setLoading(true);
 		setIsOpen(true);
 		try {
 			const { data, status } = await axios.get(`/api/workspace/${id}/activity/${sessionId}`);
 			if (status !== 200) return toast.error("Could not fetch session.");
-			if (!data.universe) return toast.error("Universe not found.");
+			if (!data.universe) {
+				setLoading(false)
+				return setDialogData({
+					type: "session",
+					data: data.message,
+					universe: null
+				});
+				
+			}
 
 			setDialogData({
 				type: "session",
@@ -148,6 +159,37 @@ const Activity: FC<Props> = ({ timeSpent, timesPlayed, data, quotas, sessionsAtt
 						<div className="bg-white p-2 rounded-md">
 							<Line options={chartOptions} data={chartData} />
 						</div>
+						<div className="bg-white p-4 rounded-md mt-4">
+							<p className="font-semibold text-2xl">Timeline</p>
+							{!sessions.length && <p>There is no timeline for this user.</p>}
+							<ol className={`relative border-l border-gray-200 ml-3 ${sessions.length ? "mt-3" : ""}`}>
+								{timeline.map((session: any, index: number) => (
+									<div key={session.id}>
+										{"reason" in session ? (
+											<li className="mb-10 ml-6">
+												<span className="flex absolute -left-3 justify-center items-center w-6 h-6 bg-primary rounded-full ring-4 ring-white">
+													<img className="rounded-full" src={avatar} alt="timeline avatar" />
+												</span>
+												<div className="justify-between items-center p-4 bg-white rounded-lg border border-gray-200 sm:flex">
+													<time className="mb-1 text-xs font-normal text-gray-400 sm:order-last sm:mb-0">{moment(session.startTime).format("DD MMMM YYYY")} to {moment(session.endTime).format("DD MMMM YYYY")}</time>
+													<p className="text-lg font-semibold">Inactivity Notice - {session.reason}</p>
+												</div>
+											</li>
+										) : (
+											<li className="mb-10 ml-6">
+												<span className="flex absolute -left-3 justify-center items-center w-6 h-6 bg-primary rounded-full ring-4 ring-white">
+													<img className="rounded-full" src={session.user.picture ? session.user.picture : avatar} alt="timeline avatar" />
+												</span>
+												<div className="justify-between items-center p-4 bg-white rounded-lg border border-gray-200 sm:flex cursor-pointer hover:bg-gray-100 transition-colors" onClick={() => fetchSession(session.id)}>
+													<time className="mb-1 text-xs font-normal text-gray-400 sm:order-last sm:mb-0">{moment(session.startTime).format("HH:mm")} to {moment(session.endTime).format("HH:mm")} on {moment(session.startTime).format("dddd[, ] DD MMMM YYYY")}</time>
+													<p className="text-lg font-semibold">Activity Session</p>
+												</div>
+											</li>
+										)}
+									</div>
+								))}
+							</ol>
+						</div>
 					</div>
 					<div className="grid gap-2 grid-cols-1">
 						<div>
@@ -158,48 +200,25 @@ const Activity: FC<Props> = ({ timeSpent, timesPlayed, data, quotas, sessionsAtt
 								<p className="font-medium text-xl leading-4 mt-1 text-gray-400">Time spent in-game</p>
 								<p className="mt-3 text-8xl font-extralight">{timeSpent}m</p>
 							</div>
+							<div className="bg-white p-4 rounded-md mt-4">
+								<p className="font-medium text-xl leading-4 mt-1 text-gray-400">Times played</p>
+								<p className="mt-3 text-8xl font-extralight">{timesPlayed} {timesPlayed == 1 ? 'time' : 'times'}</p>
+							</div>
+							<div className="bg-white p-4 rounded-md mt-4">
+								<p className="font-medium text-xl leading-4 mt-1 text-gray-400">Messages sent</p>
+								<p className="mt-3 text-8xl font-extralight">{messages} {messages == 1 ? 'message' : 'msgs'}</p>
+							</div>
+							<div className="bg-white p-4 rounded-md mt-4">
+								<p className="font-medium text-xl leading-4 mt-1 text-gray-400">Idle minutes</p>
+								<p className="mt-3 text-8xl font-extralight">{idleMins}m</p>
+							</div>
 						</div>
-						<div className="bg-white p-4 rounded-md">
-							<p className="font-medium text-xl leading-4 mt-1 text-gray-400">Times played</p>
-							<p className="mt-3 text-8xl font-extralight">{timesPlayed} {timesPlayed == 1 ? 'time' : 'times'}</p>
-						</div>
+
 					</div>
 
 				</div>
 
-				<div className="mt-4">
-					<div className="bg-white p-4 rounded-md">
-						<p className="font-semibold text-2xl">Timeline</p>
-						{!sessions.length && <p>There is no timeline for this user.</p>}
-						<ol className={`relative border-l border-gray-200 ml-3 ${sessions.length ? "mt-3" : ""}`}>
-							{timeline.map((session: any, index: number) => (
-								<div key={session.id}>
-									{"reason" in session ? (
-										<li className="mb-10 ml-6">
-											<span className="flex absolute -left-3 justify-center items-center w-6 h-6 bg-primary rounded-full ring-4 ring-white">
-												<img className="rounded-full" src={avatar} alt="timeline avatar" />
-											</span>
-											<div className="justify-between items-center p-4 bg-white rounded-lg border border-gray-200 sm:flex">
-												<time className="mb-1 text-xs font-normal text-gray-400 sm:order-last sm:mb-0">{moment(session.startTime).format("DD MMMM YYYY")} to {moment(session.endTime).format("DD MMMM YYYY")}</time>
-												<p className="text-lg font-semibold">Inactivity Notice - {session.reason}</p>
-											</div>
-										</li>
-									) : (
-										<li className="mb-10 ml-6">
-											<span className="flex absolute -left-3 justify-center items-center w-6 h-6 bg-primary rounded-full ring-4 ring-white">
-												<img className="rounded-full" src={session.user.picture ? session.user.picture : avatar} alt="timeline avatar" />
-											</span>
-											<div className="justify-between items-center p-4 bg-white rounded-lg border border-gray-200 sm:flex cursor-pointer hover:bg-gray-100 transition-colors" onClick={() => fetchSession(session.id)}>
-												<time className="mb-1 text-xs font-normal text-gray-400 sm:order-last sm:mb-0">{moment(session.startTime).format("HH:mm")} to {moment(session.endTime).format("HH:mm")} on {moment(session.startTime).format("dddd[, ] DD MMMM YYYY")}</time>
-												<p className="text-lg font-semibold">Activity Session</p>
-											</div>
-										</li>
-									)}
-								</div>
-							))}
-						</ol>
-					</div>
-				</div>
+
 
 				<div className="mt-4">
 					<div className="bg-white p-4 rounded-md mb-4">
@@ -253,55 +272,61 @@ const Activity: FC<Props> = ({ timeSpent, timesPlayed, data, quotas, sessionsAtt
 								leaveFrom="opacity-100 scale-100"
 								leaveTo="opacity-0 scale-95"
 							>
-									<Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-xl bg-white text-left align-middle shadow-xl transition-all">
-										{!loading && <img className="object-cover h-[128px] w-full" draggable="false" src={dialogData?.universe?.thumbnail} alt="thumbnail" />}
-										{loading && (
-											<div className="h-[128px] w-full bg-gray-200 animate-pulse" />
-										)}
+								<Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-xl bg-white text-left align-middle shadow-xl transition-all">
+									{!loading && (
+										<>
+										 {dialogData.universe && (
+											<img className="object-cover h-[128px] w-full" draggable="false" src={dialogData?.universe?.thumbnail} alt="thumbnail" />
+										 )}
+										</>
+									)}
+									{loading && (
+										<div className="h-[128px] w-full bg-gray-200 animate-pulse" />
+									)}
 
-										<div className="p-4">
-											<div className="bg-white p-2 border rounded-lg border-gray-200 mb-3 text-center shadow-sm">
-												{!loading && <p className="text-lg font-bold">{dialogData?.universe?.name}</p>}
-												{loading && (
-													<div className="h-3 my-2 bg-gray-200 mx-auto rounded-full dark:bg-gray-700 max-w-[360px] mb-2.5"></div>
-												)}
-											</div>
-
-											<div className="flex flex-row space-x-1">
-												<IconMoon className="my-auto p-0.5" />
-												{!loading && <p className="my-auto pl-1">Time spent idling - <strong>{Math.round(dialogData.data.idleTime / 60000)} minutes</strong></p>}
-												{loading && (
-													<div className="my-auto pl-1 h-2 w-64 rounded-full bg-gray-200"></div>
-												)}
-											</div>
-											<div className="flex flex-row space-x-1">
-												<IconWalk className="my-auto p-0.5" />
-												{!loading && <p className="my-auto pl-1">Time spent active - <strong>{Math.round(((new Date(dialogData.data.endTime).getTime() - new Date(dialogData.data.startTime).getTime()) - dialogData.data.idleTime) / 60000)} minutes</strong></p>}
-												{loading && (
-													<div className="my-auto pl-1 h-2 w-64 rounded-full bg-gray-200"></div>
-												)}
-											</div>
-											<div className="flex flex-row space-x-1">
-												<IconMessages className="my-auto p-0.5" />
-												{!loading && <p className="my-auto pl-1">Messages sent - <strong>{dialogData.data.messages ? dialogData.data.messages : "Not tracked"}</strong></p>}
-												{loading && (
-													<div className="my-auto pl-1 h-2 w-64 rounded-full bg-gray-200"></div>
-												)}
-											</div>
-											<div className="flex flex-row space-x-1">
-												<IconPlayerPlay className="my-auto p-0.5" />
-												{!loading && <p className="my-auto pl-1">Total time spent - <strong>{Math.round((new Date(dialogData.data.endTime).getTime() - new Date(dialogData.data.startTime).getTime()) / 60000)} minutes</strong></p>}
-												{loading && (
-													<div className="my-auto pl-1 h-2 w-64 rounded-full bg-gray-200"></div>
-												)}
-											</div>
-
-											<div className="mt-4 flex">
-												<Button classoverride="bg-red-500 hover:bg-red-300 ml-0 w-full" onPress={() => setIsOpen(false)}> Close </Button>
-											</div>
+									<div className="p-4">
+										<div className="bg-white p-2 border rounded-lg border-gray-200 mb-3 text-center shadow-sm">
+											{!loading && <p className="text-lg font-bold">{dialogData?.universe?.name || 'Unknown Universe'}</p>}
+											{loading && (
+												<div className="h-3 my-2 bg-gray-200 mx-auto rounded-full dark:bg-gray-700 max-w-[360px] mb-2.5"></div>
+											)}
 										</div>
-									</Dialog.Panel>
-								
+
+										<div className="flex flex-row space-x-1">
+											<IconMoon className="my-auto p-0.5" />
+											{!loading && <p className="my-auto pl-1">Time spent idling - <strong>{Math.round(dialogData.data.idleTime)} minutes</strong></p>}
+											{loading && (
+												<div className="my-auto pl-1 h-2 w-64 rounded-full bg-gray-200"></div>
+											)}
+										</div>
+										<div className="flex flex-row space-x-1">
+											<IconWalk className="my-auto p-0.5" />
+											{!loading && <p className="my-auto pl-1">Time spent active - <strong>{Math.round(((new Date(dialogData.data.endTime).getTime() - new Date(dialogData.data.startTime).getTime()) - dialogData.data.idleTime) / 60000)} minutes</strong></p>}
+											{loading && (
+												<div className="my-auto pl-1 h-2 w-64 rounded-full bg-gray-200"></div>
+											)}
+										</div>
+										<div className="flex flex-row space-x-1">
+											<IconMessages className="my-auto p-0.5" />
+											{!loading && <p className="my-auto pl-1">Messages sent - <strong>{dialogData.data.messages ? dialogData.data.messages : "Not tracked"}</strong></p>}
+											{loading && (
+												<div className="my-auto pl-1 h-2 w-64 rounded-full bg-gray-200"></div>
+											)}
+										</div>
+										<div className="flex flex-row space-x-1">
+											<IconPlayerPlay className="my-auto p-0.5" />
+											{!loading && <p className="my-auto pl-1">Total time spent - <strong>{Math.round((new Date(dialogData.data.endTime).getTime() - new Date(dialogData.data.startTime).getTime()) / 60000)} minutes</strong></p>}
+											{loading && (
+												<div className="my-auto pl-1 h-2 w-64 rounded-full bg-gray-200"></div>
+											)}
+										</div>
+
+										<div className="mt-4 flex">
+											<Button classoverride="bg-red-500 hover:bg-red-300 ml-0 w-full" onPress={() => setIsOpen(false)}> Close </Button>
+										</div>
+									</div>
+								</Dialog.Panel>
+
 							</Transition.Child>
 						</div>
 					</div>

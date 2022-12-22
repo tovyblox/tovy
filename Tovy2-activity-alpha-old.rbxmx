@@ -2,232 +2,147 @@
 	<Meta name="ExplicitAutoJoints">true</Meta>
 	<External>null</External>
 	<External>nil</External>
-	<Item class="Script" referent="RBXCECA62ACDA2D4192A6C8F8D8F115829C">
+	<Item class="Script" referent="RBXf68af0213dfd4f78a006213eda19f673">
 		<Properties>
 			<BinaryString name="AttributesSerialize"></BinaryString>
 			<bool name="Disabled">false</bool>
 			<Content name="LinkedSource"><null></null></Content>
 			<string name="Name">TovyActivity</string>
 			<token name="RunContext">0</token>
-			<string name="ScriptGuid">{57280D02-3DDB-4992-BA62-09F779557E92}</string>
-			<ProtectedString name="Source"><![CDATA[--[[
+			<string name="ScriptGuid">{ED1C22E5-278D-4EFC-B81E-F6090239172A}</string>
+			<ProtectedString name="Source"><![CDATA[local httpService = game:GetService('HttpService')
+local players = game:GetService('Players')
 
+local Http = require(script.HttpQueue)
 
-██╗███╗░░██╗██╗░░██╗███████╗██████╗░███╗░░░███╗███╗░░██╗██████╗░
-██║████╗░██║██║░░██║██╔════╝██╔══██╗████╗░████║████╗░██║██╔══██╗
-██║██╔██╗██║███████║█████╗░░██████╔╝██╔████╔██║██╔██╗██║██║░░██║
-██║██║╚████║██╔══██║██╔══╝░░██╔══██╗██║╚██╔╝██║██║╚████║██║░░██║
-██║██║░╚███║██║░░██║███████╗██║░░██║██║░╚═╝░██║██║░╚███║██████╔╝
-╚═╝╚═╝░░╚══╝╚═╝░░╚═╝╚══════╝╚═╝░░╚═╝╚═╝░░░░░╚═╝╚═╝░░╚══╝╚═════╝░
-
-Author: inhermnd
-For: Tovy
-Description: Handles Tovy activity tracking
-
-]]
-
-if game:GetService("RunService"):IsStudio() or game.PrivateServerId ~= "" and game.PrivateServerOwnerId ~= 0 then
-	return warn("Tovy: Your activity does not track in private servers or Studio.")
-end
-
--- Define services
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local HttpService = game:GetService("HttpService")
-local Players = game:GetService("Players")
-
-local HttpQueue = require(script.Components.HttpQueue)
-local FastWait = require(script.Components.FastWait)
-
--- Set up Tovy events
-local TovyFolder = Instance.new("Folder", ReplicatedStorage)
-TovyFolder.Name = "Tovy Assets"
-
-local TovyEvent = Instance.new("RemoteEvent", TovyFolder)
-TovyEvent.Name = "Activity"
-
-local TovyClient = script:WaitForChild("Components"):WaitForChild("TovyClient")
-TovyClient.Event.Value = TovyEvent
-
-local Close = Instance.new("BindableEvent")
-
--- Set up critical tables
-local messageTable = {}
-local rankTable = {}
-local afkTable = {}
-
--- Configuration
-local Configuration = {
-	-- Do not touch
+local config = {
 	url = "<url>",
 	auth = "<apikey>",
-	-- Edit to your liking
-	bansEnabled = false, -- Set to false if you do not want Tovy to handle bans (This will use less HTTP requests)
-	cooldownPeriod = 30, -- The interval (seconds) between retrying failed HTTP requests
-	rankChecking = false, -- Enables rank checking on player join/leave to ensure only relevant data is sent to Tovy
-	groupId = 3167534, -- The group ID to perform activity tracking for
-	minTrackedRank = 99,	 -- The minimum rank ID to perform activity tracking for (This value is retrieved from your Tovy instance on game launch)
-	minutesTillAFK = 2, -- How long a player can last without moving before being marked AFK
+
+	bansEnabled = true, --// Set to false if you do not want Tovy to handle bans (This will use less HTTP requests)
+
+	cooldownPeriod = 30, --// The interval (seconds) between retrying failed HTTP requests
+
+	rankChecking = false, --// Enables rank checking on player join/leave to ensure only relevant data is sent to Tovy
+	groupId = 2700627, --// The group ID to perform activity tracking for
+	minTrackedRank = 0	 --// The minimum rank ID to perform activity tracking for (This value is retrieved from your Tovy instance on game launch)
 }
 
-warn("Tovy: Module loaded; activity will be tracked.")
+local HttpQueue = Http.HttpQueue.new({
+	retryAfter = {
+		cooldown = config.cooldownPeriod
+	}
+})
 
--- Functions
-local function isUserTracked(Player)
-	if not Configuration.rankChecking then
+--[[
+	Determines if a user should or should not be tracked based on the Tovy configuration
+]]--
+local function isUserTracked(player)
+	if not config.rankChecking then
 		return true
-	elseif rankTable[Player.UserId].Rank >= Configuration.minTrackedRank then
-		return true		
+
+	elseif player:GetRankInGroup(config.groupId) >= config.minTrackedRank then
+		return true
 	end
+
 	return false
 end
 
-local function CreateSession(Player)
-	local request = HttpQueue.HttpRequest.new(
-		Configuration.url .. "/api/activity/session?type=create",
-		"POST",
-		HttpService:JSONEncode({ userid = Player.UserId, placeid = game.GameId }),
-		nil,
-		{
-			["Content-Type"] = "application/json",
-			['authorization'] = Configuration.auth
-		}
-	);
-	
-	local result = request:Send()
-
-end
-
-local function EndSession(Player)
-	if isUserTracked(Player) then
-		local request = HttpQueue.HttpRequest.new(
-			Configuration.url .. "/api/activity/session?type=end",
+--[[
+	Queues the requested player to begin their session
+]]--
+local function createSession(player)
+	if isUserTracked(player) then
+		-- Construct the request
+		local request = Http.HttpRequest.new(
+			config.url .. "/api/activity/session?type=create",
 			"POST",
-			HttpService:JSONEncode({ userid = Player.UserId, idleTime = Player["Tovy AFK Timer"].Value, messages = messageTable[Player.UserId] }),
+			httpService:JSONEncode({ userid = player.UserId }),
 			nil,
 			{
 				["Content-Type"] = "application/json",
-				['authorization'] = Configuration.auth
+				['authorization'] = config.auth
 			}
 		);
 
-		local result = request:Send()
-
+		-- Send off the request
+		request:Send()
 	end
 end
 
-local function InputChange(Player, Status)
-	if Status and not table.find(afkTable, Player) then
-		table.insert(afkTable, Player)
-	elseif not Status then
-		table.remove(afkTable, table.find(afkTable, Player))
+--[[
+	Queues the requested player to end their session
+]]--
+local function endSession(player)
+	if isUserTracked(player) then
+		-- Construct the request
+		local request = Http.HttpRequest.new(
+			config.url .. "/api/activity/session?type=end",
+			"POST",
+			httpService:JSONEncode({ userid = player.UserId }),
+			nil,
+			{
+				["Content-Type"] = "application/json",
+				['authorization'] = config.auth
+			}
+		);
+
+		-- Send off the request
+		request:Send()
 	end
 end
 
-local function MovementDetection(Player)
-	local lastMovement = os.clock()
-	local Character = Player.Character or Player.CharacterAdded:Wait()
-	local Humanoid = Character:WaitForChild("Humanoid")
-	
-	local function MovementChanged(Speed)
-		if Speed <= 0 then
-			local CurrentTime = os.clock()
-			lastMovement = CurrentTime
-			
-			FastWait(60*Configuration.minutesTillAFK)
-			
-			if lastMovement == CurrentTime then
-				if not table.find(afkTable, Player) then
-					table.insert(afkTable, Player)
-				end	
-			end
-		else
-			if table.find(afkTable, Player) then
-				table.remove(afkTable, table.find(afkTable, Player))
-			end	
-		end
-	end
-	
-	local function MovementListeners()
-		Humanoid.Swimming:Connect(MovementChanged);
-		Humanoid.Climbing:Connect(MovementChanged);
-		Humanoid.Running:Connect(MovementChanged);
-	end
-	
-	MovementListeners()
-	
-end
+--[[
+	Checks whether or not a player is banned through Tovy (if enabled)
+]]--
 
-local function InitiateTovy(Player)
-	rankTable[Player.UserId] = {
-		Rank = Player:GetRankInGroup(Configuration.groupId)
-	}
-	messageTable[Player.UserId] = 0
-	if isUserTracked(Player) then
-		local TovyAFKTimer = Instance.new("NumberValue", Player)
-		TovyAFKTimer.Name = "Tovy AFK Timer"
-		TovyClient:Clone().Parent = Player:WaitForChild("PlayerGui")
-		CreateSession(Player)
-		MovementDetection(Player)
-	end
-end
-
--- Events
-TovyEvent.OnServerEvent:Connect(InputChange)
-
-Players.PlayerAdded:Connect(function(Player)
-	InitiateTovy(Player)
-	Player.CharacterAdded:Connect(function()
-		MovementDetection(Player)
+--[[
+	Retrieve Tovy tracking configuration
+]]--
+--[[while true do
+	local success, data = pcall(function()
+		return httpService:GetAsync(config.url..'/activity/activityconfig', false, {
+			['authorization'] = config.auth
+		})
 	end)
-	Player.Chatted:Connect(function()
-		if isUserTracked(Player) then
-			messageTable[Player.UserId] += 1
-		end
-	end)
-end)
 
-Players.PlayerRemoving:Connect(function(Player)
-	EndSession(Player)
-	rankTable[Player.UserId] = nil
-end)
+	if success then
+		-- Decode and set appropriate configuration items
+		data = httpService:JSONDecode(data)
+		config.minTrackedRank = data.mintrackedrank
 
-game:BindToClose(function()
-	task.wait(10)
-		Close.Event:Connect()
-end)
-
-for _,Player in pairs(Players:GetPlayers()) do
-	InitiateTovy(Player)
-end
-
-while true do
-	for index, Player in pairs(afkTable) do
-		local t = Player["Tovy AFK Timer"]
-		if Players:GetPlayerByUserId(Player.UserId) and t then
-			t.Value += 1
-		else 
-			table.remove(afkTable, index)
-		end
+		break
+	else
+		-- On failure, wait 2 seconds and try again
+		print("Failed to retrieve Tovy configuration data:", tostring(data))
+		task.wait(2)
 	end
-	task.wait(60)
+end
+]]--
+
+--[[
+	Hook player added/removing events
+]]--
+players.PlayerAdded:Connect(createSession)
+
+players.PlayerRemoving:Connect(endSession)
+
+--[[
+	Track all players who were in the game before events were hooked
+]]--
+for _, player in pairs(players:GetPlayers()) do
+	createSession(player)
 end]]></ProtectedString>
 			<int64 name="SourceAssetId">-1</int64>
 			<BinaryString name="Tags"></BinaryString>
 		</Properties>
-		<Item class="Folder" referent="RBX238D356AB25F4F25852A0C920DE85681">
+		<Item class="ModuleScript" referent="RBX8867397f991a44c4b07c4fab4b6a60e6">
 			<Properties>
 				<BinaryString name="AttributesSerialize"></BinaryString>
-				<string name="Name">Components</string>
-				<int64 name="SourceAssetId">-1</int64>
-				<BinaryString name="Tags"></BinaryString>
-			</Properties>
-			<Item class="ModuleScript" referent="RBXD471738D591B46AB9AB6226958E77B5C">
-				<Properties>
-					<BinaryString name="AttributesSerialize"></BinaryString>
-					<Content name="LinkedSource"><null></null></Content>
-					<string name="Name">HttpQueue</string>
-					<string name="ScriptGuid">{2BB9B888-6C73-4B84-A683-74D862D82A62}</string>
-					<ProtectedString name="Source"><![CDATA[--[[
+				<Content name="LinkedSource"><null></null></Content>
+				<string name="Name">HttpQueue</string>
+				<string name="ScriptGuid">{89B3574F-B918-4296-9FCA-E26C5351D37B}</string>
+				<ProtectedString name="Source"><![CDATA[--[[
     File: http-queue/init.lua
     Description: Front-end for the http-queue library
 
@@ -246,16 +161,16 @@ end
 
 return exports
 ]]></ProtectedString>
-					<int64 name="SourceAssetId">-1</int64>
-					<BinaryString name="Tags"></BinaryString>
-				</Properties>
-				<Item class="ModuleScript" referent="RBX7E0BBDEB21ED4C68B2E8427578E00916">
-					<Properties>
-						<BinaryString name="AttributesSerialize"></BinaryString>
-						<Content name="LinkedSource"><null></null></Content>
-						<string name="Name">DataUtils</string>
-						<string name="ScriptGuid">{95267CF8-5E6D-4D0B-AA31-743CF67888AA}</string>
-						<ProtectedString name="Source"><![CDATA[--[[
+				<int64 name="SourceAssetId">-1</int64>
+				<BinaryString name="Tags"></BinaryString>
+			</Properties>
+			<Item class="ModuleScript" referent="RBXc2563b4715af4397aeee2d24b0875140">
+				<Properties>
+					<BinaryString name="AttributesSerialize"></BinaryString>
+					<Content name="LinkedSource"><null></null></Content>
+					<string name="Name">DataUtils</string>
+					<string name="ScriptGuid">{84BCD928-6FF2-4A5C-BCA3-0BC541B7CCDE}</string>
+					<ProtectedString name="Source"><![CDATA[--[[
     File: http-queue/DataUtils.lua
     Description: Data structures and basic synchronization utilities
 
@@ -295,17 +210,17 @@ end
 
 return dataUtils
 ]]></ProtectedString>
-						<int64 name="SourceAssetId">-1</int64>
-						<BinaryString name="Tags"></BinaryString>
-					</Properties>
-				</Item>
-				<Item class="ModuleScript" referent="RBX070B0F0303354FDEA2282EB34F1385D4">
-					<Properties>
-						<BinaryString name="AttributesSerialize"></BinaryString>
-						<Content name="LinkedSource"><null></null></Content>
-						<string name="Name">HttpQueue</string>
-						<string name="ScriptGuid">{7E2B1575-0241-440F-8611-F7080AA6D8F2}</string>
-						<ProtectedString name="Source"><![CDATA[--[[
+					<int64 name="SourceAssetId">-1</int64>
+					<BinaryString name="Tags"></BinaryString>
+				</Properties>
+			</Item>
+			<Item class="ModuleScript" referent="RBXa1bad432d7b74d148696aec720551812">
+				<Properties>
+					<BinaryString name="AttributesSerialize"></BinaryString>
+					<Content name="LinkedSource"><null></null></Content>
+					<string name="Name">HttpQueue</string>
+					<string name="ScriptGuid">{99EE3318-ABA9-48AA-97FD-CCD973093880}</string>
+					<ProtectedString name="Source"><![CDATA[--[[
     File: http-queue/HttpQueue.lua
     Description: Creates a self-regulating queue for rate-limited services
 
@@ -543,17 +458,17 @@ return setmetatable(HttpQueue, {
     end
 })
 ]]></ProtectedString>
-						<int64 name="SourceAssetId">-1</int64>
-						<BinaryString name="Tags"></BinaryString>
-					</Properties>
-				</Item>
-				<Item class="ModuleScript" referent="RBX505E14CEEF064E10A46CA8741F4EE1EB">
-					<Properties>
-						<BinaryString name="AttributesSerialize"></BinaryString>
-						<Content name="LinkedSource"><null></null></Content>
-						<string name="Name">HttpRequest</string>
-						<string name="ScriptGuid">{5B4551CE-AFE0-4077-82F8-84C15E5C3909}</string>
-						<ProtectedString name="Source"><![CDATA[--[[
+					<int64 name="SourceAssetId">-1</int64>
+					<BinaryString name="Tags"></BinaryString>
+				</Properties>
+			</Item>
+			<Item class="ModuleScript" referent="RBX3c31e8e77370422f86d309f11633b927">
+				<Properties>
+					<BinaryString name="AttributesSerialize"></BinaryString>
+					<Content name="LinkedSource"><null></null></Content>
+					<string name="Name">HttpRequest</string>
+					<string name="ScriptGuid">{352BFDC1-7253-4F75-A35D-77A21BF3AA39}</string>
+					<ProtectedString name="Source"><![CDATA[--[[
     File: http-queue/HttpRequest.lua
     Description: Wrapper for an HttpService request
 
@@ -628,7 +543,7 @@ function HttpRequest.new(Url, Method, Body, Query, Headers)
                 Headers = Headers,
                 Body = (Method == "GET" or Method == "HEAD") and nil or Body
             })
-		end)
+        end)
 
         return newHttpResponse(success, result)
     end
@@ -664,17 +579,17 @@ return setmetatable(HttpRequest, {
     end
 })
 ]]></ProtectedString>
-						<int64 name="SourceAssetId">-1</int64>
-						<BinaryString name="Tags"></BinaryString>
-					</Properties>
-				</Item>
-				<Item class="ModuleScript" referent="RBXB6A56CF0E979456D95C53662EA450E1C">
-					<Properties>
-						<BinaryString name="AttributesSerialize"></BinaryString>
-						<Content name="LinkedSource"><null></null></Content>
-						<string name="Name">HttpRequestPriority</string>
-						<string name="ScriptGuid">{C9C86114-C43E-4081-AE12-A924A8204282}</string>
-						<ProtectedString name="Source"><![CDATA[--[[
+					<int64 name="SourceAssetId">-1</int64>
+					<BinaryString name="Tags"></BinaryString>
+				</Properties>
+			</Item>
+			<Item class="ModuleScript" referent="RBX90d3212fbc104aae94c53e5984697010">
+				<Properties>
+					<BinaryString name="AttributesSerialize"></BinaryString>
+					<Content name="LinkedSource"><null></null></Content>
+					<string name="Name">HttpRequestPriority</string>
+					<string name="ScriptGuid">{073AD707-2C35-416A-B03D-0CD09330C3C4}</string>
+					<ProtectedString name="Source"><![CDATA[--[[
     File: http-queue/HttpRequestPriority.lua
     Description: Enum to determine how a request should be queued.
 
@@ -701,17 +616,17 @@ return setmetatable({
     end
 })
 ]]></ProtectedString>
-						<int64 name="SourceAssetId">-1</int64>
-						<BinaryString name="Tags"></BinaryString>
-					</Properties>
-				</Item>
-				<Item class="ModuleScript" referent="RBX3DE7A579686B4A2AA64706359FCBEAEE">
-					<Properties>
-						<BinaryString name="AttributesSerialize"></BinaryString>
-						<Content name="LinkedSource"><null></null></Content>
-						<string name="Name">HttpResponse</string>
-						<string name="ScriptGuid">{6C392898-FC92-4814-9E19-644205D11DC1}</string>
-						<ProtectedString name="Source"><![CDATA[--[[
+					<int64 name="SourceAssetId">-1</int64>
+					<BinaryString name="Tags"></BinaryString>
+				</Properties>
+			</Item>
+			<Item class="ModuleScript" referent="RBXf48eb6ca6b05413fb7b30b1ec00269eb">
+				<Properties>
+					<BinaryString name="AttributesSerialize"></BinaryString>
+					<Content name="LinkedSource"><null></null></Content>
+					<string name="Name">HttpResponse</string>
+					<string name="ScriptGuid">{7C62B987-46E0-4F99-B24A-577EE1D8B02C}</string>
+					<ProtectedString name="Source"><![CDATA[--[[
     File: http-queue/HttpResponse.lua
     Description: Private wrapper for an HttpService response
 
@@ -738,17 +653,17 @@ end
 
 return newHttpResponse
 ]]></ProtectedString>
-						<int64 name="SourceAssetId">-1</int64>
-						<BinaryString name="Tags"></BinaryString>
-					</Properties>
-				</Item>
-				<Item class="ModuleScript" referent="RBX77245AE0C27B4592B46B384745C8C143">
-					<Properties>
-						<BinaryString name="AttributesSerialize"></BinaryString>
-						<Content name="LinkedSource"><null></null></Content>
-						<string name="Name">TypeGuards</string>
-						<string name="ScriptGuid">{382423F1-5F84-44A8-A2DF-13BD679896B5}</string>
-						<ProtectedString name="Source"><![CDATA[--[[
+					<int64 name="SourceAssetId">-1</int64>
+					<BinaryString name="Tags"></BinaryString>
+				</Properties>
+			</Item>
+			<Item class="ModuleScript" referent="RBXdc44522dead54c479a151a3cdafe15cf">
+				<Properties>
+					<BinaryString name="AttributesSerialize"></BinaryString>
+					<Content name="LinkedSource"><null></null></Content>
+					<string name="Name">TypeGuards</string>
+					<string name="ScriptGuid">{56214012-FFBD-49EB-9297-BE25E1C1CA71}</string>
+					<ProtectedString name="Source"><![CDATA[--[[
     File: https-queue/TypeGuards.lua
     Description: Type guards to validate http-queue interfaces
 
@@ -795,17 +710,17 @@ end)
 
 return guards
 ]]></ProtectedString>
-						<int64 name="SourceAssetId">-1</int64>
-						<BinaryString name="Tags"></BinaryString>
-					</Properties>
-				</Item>
-				<Item class="ModuleScript" referent="RBXBE0CB7CD96284A88BDECE31F32EB25C0">
-					<Properties>
-						<BinaryString name="AttributesSerialize"></BinaryString>
-						<Content name="LinkedSource"><null></null></Content>
-						<string name="Name">DependencyLoader</string>
-						<string name="ScriptGuid">{EF6C05AA-C118-4C7A-BF02-071824745A03}</string>
-						<ProtectedString name="Source"><![CDATA[--[[
+					<int64 name="SourceAssetId">-1</int64>
+					<BinaryString name="Tags"></BinaryString>
+				</Properties>
+			</Item>
+			<Item class="ModuleScript" referent="RBX072fb9216c1f4043a5e0f92295730d70">
+				<Properties>
+					<BinaryString name="AttributesSerialize"></BinaryString>
+					<Content name="LinkedSource"><null></null></Content>
+					<string name="Name">DependencyLoader</string>
+					<string name="ScriptGuid">{CF549AA6-89D3-4287-863F-78A244BC2602}</string>
+					<ProtectedString name="Source"><![CDATA[--[[
     File: http-queue/DependencyLoader.lua
     Description: Loads runtime dependencies
 
@@ -835,16 +750,16 @@ dependencies.HttpService = game:GetService("HttpService")
 
 return dependencies
 ]]></ProtectedString>
-						<int64 name="SourceAssetId">-1</int64>
-						<BinaryString name="Tags"></BinaryString>
-					</Properties>
-					<Item class="ModuleScript" referent="RBX428159ECAF6A4FE0BD2D69AA07030F52">
-						<Properties>
-							<BinaryString name="AttributesSerialize"></BinaryString>
-							<Content name="LinkedSource"><null></null></Content>
-							<string name="Name">Promise</string>
-							<string name="ScriptGuid">{FEAE220C-41AE-42E8-A99E-7B6B2C89983A}</string>
-							<ProtectedString name="Source"><![CDATA[--[[
+					<int64 name="SourceAssetId">-1</int64>
+					<BinaryString name="Tags"></BinaryString>
+				</Properties>
+				<Item class="ModuleScript" referent="RBX348b97fe832248e48df9860e0f33c98f">
+					<Properties>
+						<BinaryString name="AttributesSerialize"></BinaryString>
+						<Content name="LinkedSource"><null></null></Content>
+						<string name="Name">Promise</string>
+						<string name="ScriptGuid">{9609F776-D185-4BEC-8846-6CEEF968AEA6}</string>
+						<ProtectedString name="Source"><![CDATA[--[[
 	An implementation of Promises similar to Promise/A+.
 ]]
 
@@ -2247,17 +2162,17 @@ end
 
 return Promise
 ]]></ProtectedString>
-							<int64 name="SourceAssetId">-1</int64>
-							<BinaryString name="Tags"></BinaryString>
-						</Properties>
-					</Item>
-					<Item class="ModuleScript" referent="RBX27428138EB6F4C2C887A4D3B71DB26B4">
-						<Properties>
-							<BinaryString name="AttributesSerialize"></BinaryString>
-							<Content name="LinkedSource"><null></null></Content>
-							<string name="Name">t</string>
-							<string name="ScriptGuid">{6B071370-EF1E-4257-8581-61EC1AE6E181}</string>
-							<ProtectedString name="Source"><![CDATA[-- t: a runtime typechecker for Roblox
+						<int64 name="SourceAssetId">-1</int64>
+						<BinaryString name="Tags"></BinaryString>
+					</Properties>
+				</Item>
+				<Item class="ModuleScript" referent="RBX53d312f821c14a75a18b4fede8daad53">
+					<Properties>
+						<BinaryString name="AttributesSerialize"></BinaryString>
+						<Content name="LinkedSource"><null></null></Content>
+						<string name="Name">t</string>
+						<string name="ScriptGuid">{D11315A7-5A57-4967-BE4C-7D5C453BCBEA}</string>
+						<ProtectedString name="Source"><![CDATA[-- t: a runtime typechecker for Roblox
 
 -- regular lua compatibility
 local typeof = typeof or type
@@ -3442,105 +3357,10 @@ end
 
 return t
 ]]></ProtectedString>
-							<int64 name="SourceAssetId">-1</int64>
-							<BinaryString name="Tags"></BinaryString>
-						</Properties>
-					</Item>
-				</Item>
-			</Item>
-			<Item class="LocalScript" referent="RBXC95484D11F404BB68A5C4232E4B79F75">
-				<Properties>
-					<BinaryString name="AttributesSerialize"></BinaryString>
-					<bool name="Disabled">false</bool>
-					<Content name="LinkedSource"><null></null></Content>
-					<string name="Name">TovyClient</string>
-					<token name="RunContext">0</token>
-					<string name="ScriptGuid">{EC2C7152-6EB3-4E25-8EA5-8767FF7B9CC6}</string>
-					<ProtectedString name="Source"><![CDATA[--[[
-
-█▀▀█ █░░ █▀▀█ █▀▀ █▀▀█ █▀▀▄ █░░█ █▀▀ █▀▀█ █▀▀▄ █▀▀ 
-█▄▄█ █░░ █▄▄▀ █▀▀ █▄▄█ █░░█ █▄▄█ █▀▀ █▄▄█ █░░█ ▀▀█ 
-▀░░▀ ▀▀▀ ▀░▀▀ ▀▀▀ ▀░░▀ ▀▀▀░ ▄▄▄█ ▀░░ ▀░░▀ ▀░░▀ ▀▀▀
-
-Author: alreadyfans
-For: Tovy
-Description: Handles Tovy activity tracking
-
-]]
-
-local UserInputService = game:GetService("UserInputService")
-local Event = script:WaitForChild("Event").Value
-
-UserInputService.WindowFocusReleased:Connect(function()
-	Event:FireServer(true)
-end)
-
-UserInputService.WindowFocused:Connect(function()
-	Event:FireServer(false)
-end)]]></ProtectedString>
-					<int64 name="SourceAssetId">-1</int64>
-					<BinaryString name="Tags"></BinaryString>
-				</Properties>
-				<Item class="ObjectValue" referent="RBX3365C8FAE5364EF8B930E72D7E82F813">
-					<Properties>
-						<BinaryString name="AttributesSerialize"></BinaryString>
-						<string name="Name">Event</string>
 						<int64 name="SourceAssetId">-1</int64>
 						<BinaryString name="Tags"></BinaryString>
-						<Ref name="Value">null</Ref>
 					</Properties>
 				</Item>
-			</Item>
-			<Item class="ModuleScript" referent="RBXA566235B9FAA464A9D641F8F5F7BF6BF">
-				<Properties>
-					<BinaryString name="AttributesSerialize"></BinaryString>
-					<Content name="LinkedSource"><null></null></Content>
-					<string name="Name">FastWait</string>
-					<string name="ScriptGuid">{5B258459-AE3A-4831-9064-352668083AF2}</string>
-					<ProtectedString name="Source"><![CDATA[local RunService = game:GetService("RunService")
-local threads = {}
-
-RunService.Stepped:Connect(function ()
-	local now = tick()
-	local resumePool
-
-	for thread, resumeTime in pairs(threads) do
-		-- Resume if we're reasonably close enough.
-		local diff = (resumeTime - now)
-
-		if diff < 0.005 then
-			if not resumePool then
-				resumePool = {}
-			end
-
-			table.insert(resumePool, thread)
-		end
-	end
-
-	if resumePool then
-		for _,thread in pairs(resumePool) do
-			threads[thread] = nil
-			coroutine.resume(thread, now)
-		end
-	end
-end)
-
-local function fastWait(t)
-	local t = tonumber(t) or 1 / 30
-	local start = tick()
-
-	local thread = coroutine.running()
-	threads[thread] = start + t
-
-	-- Wait for the thread to resume.
-	local now = coroutine.yield()
-	return now - start, elapsedTime()
-end
-
-return fastWait]]></ProtectedString>
-					<int64 name="SourceAssetId">-1</int64>
-					<BinaryString name="Tags"></BinaryString>
-				</Properties>
 			</Item>
 		</Item>
 	</Item>

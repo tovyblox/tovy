@@ -100,9 +100,9 @@ export async function handler(
 		if (!session.endTime) return;
 		const found = combinedMinutes.find(x => x.userId == Number(session.userId));
 		if (found){
-			found.ms.push(session.endTime.getTime() - session.startTime.getTime())
+			found.ms.push((session.endTime.getTime() - session.startTime.getTime()) - (session.idleTime ? Number(session.idleTime) * 60000 : 0))
 		} else {
-			combinedMinutes.push({ userId: Number(session.userId), ms: [session.endTime.getTime() - session.startTime.getTime()] });
+			combinedMinutes.push({ userId: Number(session.userId), ms: [session.endTime.getTime() - session.startTime.getTime() - (session.idleTime ? Number(session.idleTime) * 60000 : 0)] });
 		}
 	});
 
