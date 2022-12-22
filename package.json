@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "ts-node --esm migrateDatabase.mts && next start",
+    "start": "ts-node --esm migrateDatabase.mts && node startup.js",
     "lint": "next lint",
     "prisma:generate": "prisma generate"
   },
