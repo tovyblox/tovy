@@ -67,6 +67,7 @@ export async function handler(
 					userId: req.body.userid,
 					active: true,
 					startTime: new Date(),
+					universeId: req.body.universeId ? BigInt(req.body.universeId) : null,
 					workspaceGroupId: config.workspaceGroupId
 				}
 			});
@@ -77,6 +78,8 @@ export async function handler(
 			return res.status(500).json({ success: false, error: "Unexpected error, check console" })
 		}
 	} else if (req.query.type == "end"){
+		if(!req.body.messages || !req.body.idleTime) return res.status(400).json({ success: false, error: "Missing field(s)" });
+
 		const session = await prisma.activitySession.findMany({
 			where: {
 				userId: BigInt(req.body.userid),
@@ -95,7 +98,9 @@ export async function handler(
 				},
 				data: {
 					endTime: new Date(),
-					active: false
+					active: false,
+					idleTime: BigInt(req.body.idleTime),
+					messages: parseInt(req.body.messages),
 				}
 			})
 		

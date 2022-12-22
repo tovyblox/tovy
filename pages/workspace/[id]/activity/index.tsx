@@ -21,6 +21,8 @@ const Activity: pageWithLayout = () => {
 	const [activeUsers, setActiveUsers] = useState([]);
 	const [inactiveUsers, setInactiveUsers] = useState([]);
 	const [topStaff, setTopStaff] = useState([]);
+	const [messages, setMessages] = useState(0);
+	const [idleTime, setIdleTime] = useState(0);
 
 	async function resetActivity() {
 		toast.promise(
@@ -38,11 +40,20 @@ const Activity: pageWithLayout = () => {
 			return await axios.get(`/api/workspace/${id}/activity/users`);
 		}
 
+		async function fetchStats() {
+			return await axios.get(`/api/workspace/${id}/activity/stats`);
+		}
+
 		function setData() {
 			fetchUsers().then(({ data }) => {
 				setActiveUsers(data.message.activeUsers);
 				setInactiveUsers(data.message.inactiveUsers);
 				setTopStaff(data.message.topStaff)
+			});
+
+			fetchStats().then(({ data }) => {
+				setMessages(data.message.messages);
+				setIdleTime(data.message.idle);
 			});
 		}
 
@@ -57,6 +68,18 @@ const Activity: pageWithLayout = () => {
 			<p className="text-4xl font-bold">{text}</p>
 
 			<p className="text-3xl font-bold !mt-8 !mb-4">Activity</p>
+
+			<div className="grid gap-2 lg:grid-cols-2 grid-rows-1 my-2">
+				<div className="bg-white p-4 rounded-md">
+					<p className="font-bold text-2xl leading-4 mt-1">Messages sent</p>
+					<p className="mt-3 text-6xl font-extralight">{messages}</p>
+				</div>
+				<div className="bg-white p-4 rounded-md">
+					<p className="font-bold text-2xl leading-4 mt-1">Time spent idling</p>
+					<p className="mt-3 text-6xl font-extralight">{Math.round(idleTime / 60000)}m</p>
+				</div>
+			</div>
+
 			<div className="bg-white p-4 rounded-md">
 				<p className="font-bold text-2xl leading-4 mt-1">In-game</p>
 				<p className="text-gray-500 text-xl mt-2 mb-1">Staff which are in-game</p>
@@ -89,7 +112,7 @@ const Activity: pageWithLayout = () => {
 							</Tooltip>
 						))}
 					</div>
-					{topStaff.length === 0 && <p className="text-gray-700">No staff are have been active yet</p>}
+					{topStaff.length === 0 && <p className="text-gray-700">No staff have been active yet</p>}
 				</div>
 				<div className="bg-white p-4 rounded-md">
 					<p className="font-bold text-2xl leading-4 mt-1">Inactive right now</p>

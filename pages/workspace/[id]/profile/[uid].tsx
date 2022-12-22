@@ -49,6 +49,13 @@ export const getServerSideProps = withPermissionCheckSsr(
 				userId: BigInt(parseInt(query?.uid as string)),
 				active: false
 			},
+			include: {
+				user: {
+					select: {
+						picture: true
+					}
+				}
+			},
 			orderBy: {
 				endTime: "desc"
 			}
@@ -172,6 +179,7 @@ export const getServerSideProps = withPermissionCheckSsr(
 				timeSpent,
 				timesPlayed: sessions.length,
 				data,
+				sessions: (JSON.parse(JSON.stringify(sessions, (_key, value) => (typeof value === 'bigint' ? value.toString() : value))) as typeof sessions),
 				info: {
 					username: await getUsername(parseInt(query?.uid as string)),
 					displayName: await getDisplayName(parseInt(query?.uid as string)),
@@ -192,6 +200,11 @@ type pageProps = {
 	timeSpent: number;
 	timesPlayed: number;
 	data: number[];
+	sessions: (ActivitySession & {
+		user: {
+			picture: string | null;
+		};
+	})[];
 	info: {
 		username: string;
 		displayName: string;
@@ -203,7 +216,7 @@ type pageProps = {
 	sessionsAttended: number;
 	isUser: boolean;
 }
-const Profile: pageWithLayout<pageProps> = ({ notices, timeSpent, timesPlayed, data, userBook, isUser, info, sesisonsHosted, sessionsAttended, quotas }) => {
+const Profile: pageWithLayout<pageProps> = ({ notices, timeSpent, timesPlayed, data, sessions, userBook, isUser, info, sesisonsHosted, sessionsAttended, quotas }) => {
 	const [login, setLogin] = useRecoilState(loginState)
 
 	return <div className="pagePadding">
@@ -238,7 +251,7 @@ const Profile: pageWithLayout<pageProps> = ({ notices, timeSpent, timesPlayed, d
 			
 			<Tab.Panels>
 				<Tab.Panel>
-					<Activity timeSpent={timeSpent} timesPlayed={timesPlayed} data={data} sessionsAttended={sessionsAttended} sessionsHosted={sesisonsHosted} quotas={quotas} />
+					<Activity timeSpent={timeSpent} timesPlayed={timesPlayed} data={data} sessionsAttended={sessionsAttended} sessionsHosted={sesisonsHosted} quotas={quotas} avatar={info.avatar} sessions={sessions} notices={notices} />
 				</Tab.Panel>
 				<Tab.Panel>
 					<Book userBook={userBook} />
@@ -249,7 +262,7 @@ const Profile: pageWithLayout<pageProps> = ({ notices, timeSpent, timesPlayed, d
 			</Tab.Panels>
 		</Tab.Group>}
 		{
-			isUser && <Activity timeSpent={timeSpent} timesPlayed={timesPlayed} data={data} quotas={quotas} sessionsAttended={sessionsAttended} sessionsHosted={sesisonsHosted}  />
+			isUser && <Activity timeSpent={timeSpent} timesPlayed={timesPlayed} data={data} quotas={quotas} sessionsAttended={sessionsAttended} sessionsHosted={sesisonsHosted} avatar={info.avatar} sessions={sessions} notices={notices} />
 		}
 		
 	</div>;
