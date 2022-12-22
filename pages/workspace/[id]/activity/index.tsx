@@ -116,7 +116,7 @@ const Activity: pageWithLayout = () => {
 				</div>
 				<div className="bg-white p-4 rounded-md">
 					<p className="font-bold text-2xl leading-4 mt-1">Inactive right now</p>
-					<p className="text-gray-500 text-xl mt-2">Staff which are not in-game</p>
+					<p className="text-gray-500 text-xl mt-2">Staff which are on an active inactivity notice</p>
 					<div className="flex gap-2">
 						{inactiveUsers.map((user: any) => (
 							<Tooltip key={user.userId} tooltipText={`${user.username} (${user.userId}) | ${moment(user.from).format("DD MMM")} - ${moment(user.to).format("DD MMM")} for ${user.reason} `} orientation="bottom">
