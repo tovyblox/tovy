@@ -10,11 +10,7 @@
 			<string name="Name">TovyActivity</string>
 			<token name="RunContext">0</token>
 			<string name="ScriptGuid">{57280D02-3DDB-4992-BA62-09F779557E92}</string>
-			<ProtectedString name="Source"><![CDATA[--[[
-
-Made by TheCakeChicken & Inhermnd
-
-]]
+			<ProtectedString name="Source"><![CDATA
 
 if game:GetService("RunService"):IsStudio() or game.PrivateServerId ~= "" and game.PrivateServerOwnerId ~= 0 then
 	return warn("Tovy: Your activity does not track in private servers or Studio.")
