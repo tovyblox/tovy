@@ -56,8 +56,8 @@ model user {
   inactivityNotices inactivityNotice[]
   book              userBook[]         @relation("bookUser")
   writtenBooks      userBook[]         @relation("bookAdmin")
-  ranks              rank[]
-  sessionsRoles	    sessionUser[]
+  ranks             rank[]
+  sessionsRoles     sessionUser[]
 }
 
 model userInfo {
@@ -98,16 +98,16 @@ model SessionType {
   gameId           BigInt?
   webhookEnabled   Boolean?
   webhookPing      String?
-  webhookUrl	   String?
-  webhookTitle	   String?
-  webhookBody	   String?
+  webhookUrl       String?
+  webhookTitle     String?
+  webhookBody      String?
   schedule         schedule[]
   allowUnscheduled Boolean
   sessions         Session[]
   hostingRoles     role[]
   workspace        workspace? @relation(fields: [workspaceGroupId], references: [groupId])
-  statues 		   Json[]
-  slots 		   Json[]
+  statues          Json[]
+  slots            Json[]
   workspaceGroupId Int
 }
 
@@ -122,29 +122,29 @@ model schedule {
 }
 
 model sessionUser {
-	userid BigInt
-	sessionid String @db.Uuid()
-	roleID String
-	slot   Int
-	session Session @relation(fields: [sessionid], references: [id])
-	user user @relation(fields: [userid], references: [userid])
+  userid    BigInt
+  sessionid String  @db.Uuid()
+  roleID    String
+  slot      Int
+  session   Session @relation(fields: [sessionid], references: [id])
+  user      user    @relation(fields: [userid], references: [userid])
 
-	@@id([userid, sessionid])
+  @@id([userid, sessionid])
 }
 
 model Session {
-  id            String      @id @unique @default(uuid()) @db.Uuid()
-  owner         user?        @relation(fields: [ownerId], references: [userid])
+  id            String        @id @unique @default(uuid()) @db.Uuid()
+  owner         user?         @relation(fields: [ownerId], references: [userid])
   ownerId       BigInt?
   date          DateTime
   startedAt     DateTime?
   ended         DateTime?
   messageId     String?
-  sessionType   SessionType @relation(fields: [sessionTypeId], references: [id])
-  sessionTypeId String      @db.Uuid()
-  schedule      schedule?   @relation(fields: [scheduleId], references: [id])
-  scheduleId    String?     @db.Uuid()
-  users		    sessionUser[]
+  sessionType   SessionType   @relation(fields: [sessionTypeId], references: [id])
+  sessionTypeId String        @db.Uuid()
+  schedule      schedule?     @relation(fields: [scheduleId], references: [id])
+  scheduleId    String?       @db.Uuid()
+  users         sessionUser[]
 }
 
 model ActivitySession {
@@ -154,7 +154,9 @@ model ActivitySession {
   active           Boolean
   startTime        DateTime
   endTime          DateTime?
-  idleTime         Int?
+  idleTime         BigInt?
+  messages         Int?
+  universeId       BigInt?
   workspace        workspace? @relation(fields: [workspaceGroupId], references: [groupId])
   workspaceGroupId Int
 }
@@ -210,12 +212,11 @@ model rank {
 }
 
 model Quota {
-  id 			 String    @id @unique @default(uuid()) @db.Uuid()
-  name           String
-  type			 String
-  value			 Int
-  workspace      workspace @relation(fields: [workspaceGroupId], references: [groupId])
+  id               String    @id @unique @default(uuid()) @db.Uuid()
+  name             String
+  type             String
+  value            Int
+  workspace        workspace @relation(fields: [workspaceGroupId], references: [groupId])
   workspaceGroupId Int
-  assignedRoles  role[]
-
+  assignedRoles    role[]
 }

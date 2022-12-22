@@ -25,9 +25,12 @@ export async function handler(
 			}
 		}
 	})
+	console.log(config)
+
 	if (!config) return res.status(401).json({ success: false, error: "Unauthorized" })
 	if (!req.body.userid) return res.status(400).json({ success: false, error: "Missing user ID from request body" })
 	if (typeof req.body.userid !== "number") return res.status(400).json({ success: false, error: "User ID not a number" });
+	console.log(`${req.body.userid} is creating a session`)
 	const value = JSON.parse(JSON.stringify(config.value));
 	if (value.role) {
 		const userank = await noblox.getRankInGroup(config.workspaceGroupId, req.body.userid);
@@ -69,6 +72,7 @@ export async function handler(
 					userId: req.body.userid,
 					active: true,
 					startTime: new Date(),
+					universeId: req.body.placeid ? BigInt(req.body.placeid) : null,
 					workspaceGroupId: config.workspaceGroupId
 				}
 			});
@@ -88,6 +92,7 @@ export async function handler(
 		})
 
 		if(session.length < 1) return res.status(400).json({ success: false, error: "Session not found" })
+		console.log(req.body.idleTime)
 
 		try {
 			await prisma.activitySession.update({
@@ -96,7 +101,9 @@ export async function handler(
 				},
 				data: {
 					endTime: new Date(),
-					active: false
+					active: false,
+					idleTime: req.body.idleTime  ? Number(req.body.idleTime) : 0,
+					messages: req.body.messages ? Number(req.body.messages) : 0,
 				}
 			})
 		
