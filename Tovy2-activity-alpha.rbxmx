@@ -175,6 +175,14 @@ end)
 Players.PlayerRemoving:Connect(function(Player)
 	EndSession(Player)
 	rankTable[Player.UserId] = nil
+	
+	if messageTable[Player.UserId] then
+		messageTable[Player.UserId] = nil
+	end
+	
+	if afkTable[Player] then
+		afkTable[Player] = nil
+	end
 end)
 
 game:BindToClose(function()
