@@ -5,5 +5,5 @@
 
 */
 -- AlterTable
-ALTER TABLE "ActivitySession" ADD COLUMN     "gameId" BIGINT NOT NULL,
+ALTER TABLE "ActivitySession" ADD COLUMN     "gameId" BIGINT NOT NULL DEFAULT 0,
 ALTER COLUMN "idleTime" SET DATA TYPE BIGINT;
