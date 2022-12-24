@@ -3,7 +3,7 @@ import { loginState, workspacestate } from "@/state";
 import { useRecoilState } from "recoil";
 import { Menu, Listbox } from "@headlessui/react";
 import { useRouter } from "next/router";
-import { IconHome, IconWall, IconClipboardList, IconSpeakerphone, IconUsers, IconSettings, IconChevronDown, IconFileText, IconLogout, IconCheck, IconUser } from "@tabler/icons";
+import { IconHome, IconWall, IconClipboardList, IconSpeakerphone, IconUsers, IconSettings, IconChevronDown, IconFileText, IconLogout, IconCheck, IconUser, IconBuildingCommunity } from "@tabler/icons";
 import Image from "next/image";
 import axios from "axios";
 import workspace from "@/layouts/workspace";
@@ -29,6 +29,12 @@ const Topbar: NextPage = () => {
 			href: "/workspace/[id]/activity",
 			icon: IconClipboardList,
 			current: false,
+		},
+		{
+			name: "Allys",
+			href: "/workspace/[id]/allys",
+			icon: IconBuildingCommunity,
+			
 		},
 		{
 			name: "Sessions",
