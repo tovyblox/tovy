@@ -3,6 +3,7 @@ import { pageWithLayout } from "@/layoutTypes";
 import { loginState } from "@/state";
 import axios from "axios";
 import { useRouter } from "next/router";
+import { getConfig } from "@/utils/configEngine";
 import { useState, Fragment, useMemo } from "react";
 import randomText from "@/utils/randomText";
 import { useRecoilState } from "recoil";
@@ -26,30 +27,27 @@ type Form = {
 
 export const getServerSideProps = withPermissionCheckSsr(
 	async ({ req, res, params }) => {
-
-
-
-
-		const quotas = await prisma.quota.findMany({
+		const users = await prisma.user.findMany({
 			where: {
-				workspaceGroupId: parseInt(params?.id as string)
-			},
-			include: {
-				assignedRoles: true
+				roles: {
+					some: {
+						workspaceGroupId: parseInt(params?.id as string),
+						permissions: {
+							has: 'represent_alliance'
+						}
+					}
+				}
 			}
 		});
 
-		const roles = await prisma.role.findMany({
-			where: {
-				workspaceGroupId: Number(params?.id),
-				isOwnerRole: false
-			},
-		});
+
+
+
+		
 
 		return {
 			props: {
-				quotas,
-				roles
+				users
 			}
 		}
 	}, 'manage_activity'
