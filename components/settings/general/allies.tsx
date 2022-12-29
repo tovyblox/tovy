@@ -40,7 +40,6 @@ const Color: FC<props> = (props) => {
 
 	return (
 		<div className="z-10 relative">
-			<p> Color </p>
 			<Input type="number" value={count} onChange={(e) => setCount(parseInt(e.target.value))} label="Minimum rep count" placeholder="1"/>
 			<Button onClick={() => updateAllyCount(count)}  classoverride="mt-2"> Save</Button>
 		</div>

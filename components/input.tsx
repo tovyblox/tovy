@@ -12,12 +12,13 @@ type Props = {
 	textarea?: boolean | false
 	id?: string;
 	type?: string | "text";
+	value?: string
 };
 
 const Input = React.forwardRef<
 	HTMLInputElement | HTMLTextAreaElement,
 	Props & ReturnType<UseFormRegister<any>>
->(({ placeholder, label, classoverride, id, onChange, onBlur, name, type, textarea, append, prepend, disabled }, ref) => {
+>(({ placeholder, label, classoverride, id, onChange, onBlur, name, type, textarea, append, prepend, disabled, value }, ref) => {
 	const { formState: { errors } } = useFormContext();
 	return (
 		<div className="mb-3">
@@ -40,6 +41,7 @@ const Input = React.forwardRef<
 					onChange={onChange}
 					onBlur={onBlur}
 					name={name}
+					value={value}
 					ref={(ref as any)}
 					className={
 						`text-gray-600 dark:text-white flex-1 rounded-lg p-2 border-2 border-gray-300  dark:border-gray-500 w-full  bg-gray-50 disabled:bg-gray-200 focus-visible:outline-none dark:bg-gray-700 ${prepend ? 'rounded-l-none' : 'rounded-l-lg'} ${append ? 'rounded-r-none' : 'rounded-r-lg'} ` + classoverride + `${errors[name] ? " focus-visible:ring-red-500 focus-visible:border-red-500" : "focus-visible:ring-blue-500 focus-visible:border-blue-500"}`
@@ -57,6 +59,7 @@ const Input = React.forwardRef<
 				onBlur={onBlur}
 				name={name}
 				ref={(ref as any)}
+				value={value}
 				className={
 					"text-gray-600 dark:text-white rounded-lg p-2 border-2 border-gray-300  dark:border-gray-500 w-full bg-gray-50 focus-visible:outline-none dark:bg-gray-700 " + classoverride + `${errors[name] ? " focus-visible:ring-red-500 focus-visible:border-red-500" : "focus-visible:ring-blue-500 focus-visible:border-blue-500"}`
 				}

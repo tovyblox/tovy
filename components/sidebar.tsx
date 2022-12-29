@@ -31,8 +31,8 @@ const Topbar: NextPage = () => {
 			current: false,
 		},
 		{
-			name: "Allys",
-			href: "/workspace/[id]/allys",
+			name: "Allies",
+			href: "/workspace/[id]/allies",
 			icon: IconBuildingCommunity,
 			
 		},
