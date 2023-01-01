@@ -32,6 +32,8 @@ const Button: FC<Props> = ({ roles, setRoles, grouproles }) => {
 		"Manage activity & members": "manage_activity",
 		"Post on wall": "post_on_wall",
 		"View members": "view_members",
+		'Manage alliances': 'manage_alliances',
+		'Represent alliance': 'represent_alliance',
 		"Manage docs": "manage_docs",
 	};
 

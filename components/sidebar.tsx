@@ -3,7 +3,7 @@ import { loginState, workspacestate } from "@/state";
 import { useRecoilState } from "recoil";
 import { Menu, Listbox } from "@headlessui/react";
 import { useRouter } from "next/router";
-import { IconHome, IconWall, IconClipboardList, IconSpeakerphone, IconUsers, IconSettings, IconChevronDown, IconFileText, IconLogout, IconCheck, IconUser } from "@tabler/icons";
+import { IconHome, IconWall, IconClipboardList, IconSpeakerphone, IconUsers, IconSettings, IconChevronDown, IconFileText, IconLogout, IconCheck, IconUser, IconBuildingCommunity } from "@tabler/icons";
 import Image from "next/image";
 import axios from "axios";
 import workspace from "@/layouts/workspace";
@@ -29,6 +29,12 @@ const Topbar: NextPage = () => {
 			href: "/workspace/[id]/activity",
 			icon: IconClipboardList,
 			current: false,
+		},
+		{
+			name: "Allies",
+			href: "/workspace/[id]/allies",
+			icon: IconBuildingCommunity,
+			
 		},
 		{
 			name: "Sessions",
@@ -165,9 +171,9 @@ const Topbar: NextPage = () => {
 								>
 									{({ selected, active }) => (
 										<>
-											<div className="flex items-center">
+											<div onClick={() => { router.replace(`/workspace/${ws.groupId}`).then(() => { router.reload() }) }} className="flex items-center">
 												<img
-													src={workspace.groupThumbnail}
+													src={ws.groupThumbnail}
 													alt="group name"
 													className="rounded-full h-[32px] w-[32px] my-auto p-0"
 												/>

@@ -420,9 +420,9 @@
   dependencies:
     "glob" "7.1.7"
 
-"@next/swc-darwin-arm64@12.3.3":
-  "integrity" "sha512-GtZdDLerM+VToCMFp+W+WhnT6sxHePQH4xZZiYD/Y8KFiwHbDRcJr2FPG0bAJnGNiSvv/QQnBq74wjZ9+7vhcQ=="
-  "resolved" "https://registry.npmjs.org/@next/swc-darwin-arm64/-/swc-darwin-arm64-12.3.3.tgz"
+"@next/swc-win32-x64-msvc@12.3.3":
+  "integrity" "sha512-Ku9mfGwmNtk44o4B/jEWUxBAT4tJ3S7QbBMLJdL1GmtRZ05LGL36OqWjLvBPr8dFiHOQQbYoAmYfQw7zeGypYA=="
+  "resolved" "https://registry.npmjs.org/@next/swc-win32-x64-msvc/-/swc-win32-x64-msvc-12.3.3.tgz"
   "version" "12.3.3"
 
 "@nodelib/fs.scandir@2.1.5":
@@ -490,10 +490,10 @@
   "resolved" "https://registry.npmjs.org/@prisma/engines-version/-/engines-version-4.7.1-1.272861e07ab64f234d3ffc4094e32bd61775599c.tgz"
   "version" "4.7.1-1.272861e07ab64f234d3ffc4094e32bd61775599c"
 
-"@prisma/engines@4.7.1":
-  "integrity" "sha512-zWabHosTdLpXXlMefHmnouhXMoTB1+SCbUU3t4FCmdrtIOZcarPKU3Alto7gm/pZ9vHlGOXHCfVZ1G7OIrSbog=="
-  "resolved" "https://registry.npmjs.org/@prisma/engines/-/engines-4.7.1.tgz"
-  "version" "4.7.1"
+"@prisma/engines@4.8.0":
+  "integrity" "sha512-A1Asn2rxZMlLAj1HTyfaCv0VQrLUv034jVay05QlqZg1qiHPeA3/pGTfNMijbsMYCsGVxfWEJuaZZuNxXGMCrA=="
+  "resolved" "https://registry.npmjs.org/@prisma/engines/-/engines-4.8.0.tgz"
+  "version" "4.8.0"
 
 "@radix-ui/primitive@1.0.0":
   "integrity" "sha512-3e7rn8FDMin4CgeL7Z/49smCA3rFYY3Ha2rUQ7HRWFadS5iCRw08ZgVT1LaNTCNqgvrUiyczLflrVrF0SRQtNA=="
@@ -4610,12 +4610,12 @@
   "resolved" "https://registry.npmjs.org/prelude-ls/-/prelude-ls-1.2.1.tgz"
   "version" "1.2.1"
 
-"prisma@*", "prisma@^4.7.1":
-  "integrity" "sha512-CCQP+m+1qZOGIZlvnL6T3ZwaU0LAleIHYFPN9tFSzjs/KL6vH9rlYbGOkTuG9Q1s6Ki5D0LJlYlW18Z9EBUpGg=="
-  "resolved" "https://registry.npmjs.org/prisma/-/prisma-4.7.1.tgz"
-  "version" "4.7.1"
+"prisma@*", "prisma@^4.8.0":
+  "integrity" "sha512-DWIhxvxt8f4h6MDd35mz7BJff+fu7HItW3WPDIEpCR3RzcOWyiHBbLQW5/DOgmf+pRLTjwXQob7kuTZVYUAw5w=="
+  "resolved" "https://registry.npmjs.org/prisma/-/prisma-4.8.0.tgz"
+  "version" "4.8.0"
   dependencies:
-    "@prisma/engines" "4.7.1"
+    "@prisma/engines" "4.8.0"
 
 "prop-types@^15.0.0", "prop-types@^15.8.1", "prop-types@>=15.5.0":
   "integrity" "sha512-oj87CgZICdulUohogVAR7AjlC0327U4el4L6eAvOqCeudMDVU0NThNaV+b9Df4dXgSP1gXMTnPdhfe/2qDH5cg=="
