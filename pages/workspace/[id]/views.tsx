@@ -15,6 +15,7 @@ import {
 	flexRender,
 	getCoreRowModel,
 	getFilteredRowModel,
+	onColumnVisibilityChange,
 	getSortedRowModel,
 	SortingState,
 	getPaginationRowModel,
@@ -22,6 +23,7 @@ import {
 } from '@tanstack/react-table'
 import { FormProvider, useForm } from "react-hook-form";
 import Button from "@/components/button";
+import SwitchComponenet from "@/components/switch";
 import { inactivityNotice, Session, user, userBook, wallPost } from "@prisma/client";
 import Checkbox from "@/components/checkbox";
 import toast, { Toaster } from 'react-hot-toast';
@@ -35,19 +37,22 @@ type User = {
 		userId: BigInt
 		username: string | null
 	}
-	writtenBooks: userBook[]
+	book: userBook[]
 	wallPosts: wallPost[]
 	inactivityNotices: inactivityNotice[]
 	sessions: Session[]
 	rankID: number
 	minutes: number
+	idleMinutes: number
+	hostedSessions: any,
+	messages: number
 }
 
 export const getServerSideProps = withPermissionCheckSsr(async ({ params }: GetServerSidePropsContext) => {
 	const allUsers = await prisma.user.findMany({
 		where: {},
 		include: {
-			writtenBooks: true,
+			book: true,
 			wallPosts: true,
 			inactivityNotices: true,
 			sessions: true,
@@ -60,6 +65,14 @@ export const getServerSideProps = withPermissionCheckSsr(async ({ params }: GetS
 		}
 	});
 
+	const allHostedSessions = await prisma.session.findMany({
+		where: {
+			ended: {
+				not: null
+			}
+		}
+	});
+
 	const computedUsers: any[] = []
 	const ranks = await noblox.getRoles(parseInt(params?.id as string));
 
@@ -69,17 +82,35 @@ export const getServerSideProps = withPermissionCheckSsr(async ({ params }: GetS
 			ms.push(session.endTime?.getTime() as number - session.startTime.getTime());
 		});
 
+		const ims: number[] = [];
+		allActivity.filter((x: any) => BigInt(x.userId) == user.userid).forEach((s: any) => {
+			ims.push(s.idleTime)
+		})
+
+		const sh: any[] = []
+		allHostedSessions.filter((x: any) => BigInt(x.ownerId) == user.userid).forEach((s) => {
+			sh.push(s)
+		})
+
+		const messages: number[] = []
+		allActivity.filter((x: any) => BigInt(x.userId) == user.userid).forEach((s: any) => {
+			messages.push(s.messages)
+		})
+
 		computedUsers.push({
 			info: {
 				userId: user.userid,
 				username: user.username,
 			},
-			writtenBooks: user.writtenBooks,
+			book: user.book,
 			wallPosts: user.wallPosts,
 			inactivityNotices: user.inactivityNotices,
 			sessions: user.sessions,
 			rankID: user.ranks[0]?.rankId ? Number(user.ranks[0]?.rankId) : 0,
-			minutes: ms.length ? Math.round(ms.reduce((p, c) => p + c) / 60000) : 0
+			minutes: ms.length ? Math.round(ms.reduce((p, c) => p + c) / 60000) : 0,
+			idleMinutes: ims.length ? Math.round(ims.reduce((p, c) => p + c)) : 0,
+			hostedSessions: sh,
+			messages: messages.length ? Math.round(messages.reduce((p, c) => p + c)) : 0
 		})
 	}
 
@@ -141,8 +172,11 @@ const Views: pageWithLayout<pageProps> = ({ usersInGroup, ranks }) => {
 	const [message, setMessage] = useState("");
 	const [type, setType] = useState("");
 	const [minutes, setMinutes] = useState(0);
-
 	const [users, setUsers] = useState(usersInGroup);
+
+	const updateUsers = async (query: string) => {
+		
+	}
 
 	const columns = [
 		{
@@ -187,7 +221,15 @@ const Views: pageWithLayout<pageProps> = ({ usersInGroup, ranks }) => {
 				);
 			}
 		}),
-		columnHelper.accessor("writtenBooks", {
+		columnHelper.accessor("hostedSessions", {
+			header: 'Sessions hosted',
+			cell: (row) => {
+				return (
+					<p>{row.getValue().length}</p>
+				);
+			}
+		}),
+		columnHelper.accessor("book", {
 			header: 'Warnings',
 			cell: (row) => {
 				return (
@@ -220,7 +262,23 @@ const Views: pageWithLayout<pageProps> = ({ usersInGroup, ranks }) => {
 			}
 		}),
 		columnHelper.accessor("minutes", {
-			header: 'Minutes in-game',
+			header: 'Minutes',
+			cell: (row) => {
+				return (
+					<p>{row.getValue()}</p>
+				);
+			}
+		}),
+		columnHelper.accessor("idleMinutes", {
+			header: 'Idle minutes',
+			cell: (row) => {
+				return (
+					<p>{row.getValue()}</p>
+				);
+			}
+		}),
+		columnHelper.accessor("messages", {
+			header: 'Messages',
 			cell: (row) => {
 				return (
 					<p>{row.getValue()}</p>
@@ -229,13 +287,17 @@ const Views: pageWithLayout<pageProps> = ({ usersInGroup, ranks }) => {
 		}),
 	];
 
+	const [columnVisibility, setColumnVisibility] = useState([])
+
 	const table = useReactTable({
 		columns,
 		data: users,
 		state: {
 			sorting,
-			rowSelection
+			rowSelection,
+			columnVisibility,
 		},
+		onColumnVisibilityChange: setColumnVisibility,
 		onRowSelectionChange: setRowSelection,
 		onSortingChange: setSorting,
 		getCoreRowModel: getCoreRowModel(),
@@ -355,6 +417,51 @@ const Views: pageWithLayout<pageProps> = ({ usersInGroup, ranks }) => {
 		setType("");
 	}
 
+	const [searchOpen, setSearchOpen] = useState(false)
+	const [searchQuery, setSearchQuery] = useState('')
+	const [searchResults, setSearchResults] = useState([])
+
+	const updateSearchQuery = async (query: any) => {
+		setSearchQuery(query)
+		setSearchOpen(true)
+		if(query == "") {
+			 setSearchOpen(false) 
+			 setColFilters([])
+			 return
+			} else { setSearchOpen(true) }
+		const userRequest = await axios.get(`/api/workspace/${id}/staff/search/${query}`)
+		const userList = userRequest.data.users
+		setSearchResults(userList)
+	}
+
+	const updateSearchFilter = async (username: string) => {
+		setSearchQuery(username)
+		setSearchOpen(false)
+		setColFilters([{ id: uuidv4(), column: 'username', filter: 'equal', value: username }])
+	}
+
+	const getSelectionName = (columnId: string) => {
+		if (columnId == "sessions") { 
+			return "Sessions claimed"
+		} else if (columnId == "hostedSessions") {
+			return 'Hosted sessions'
+		} else if (columnId == "book") {
+			return "Warnings"
+		} else if (columnId == "wallPosts") {
+			return "Wall Posts"
+		} else if (columnId == "rankID") {
+			return "Rank"
+		} else if (columnId == "inactivityNotices") {
+			return "Inactivity notices"
+		} else if (columnId == "minutes") {
+			return "Minutes"
+		} else if (columnId == "idleMinutes") {
+			return "Idle minutes"
+		} else if (columnId == "messages") {
+			return "Messages"
+		}
+ 	}
+
 	return <>
 		<Toaster position="bottom-center" />
 
@@ -413,29 +520,71 @@ const Views: pageWithLayout<pageProps> = ({ usersInGroup, ranks }) => {
 		</Transition>
 
 		<div className="pagePadding">
-			<Popover as="div" className="relative inline-block w-full text-left pb-2">
-				<div className="w-full flex flex-col lg:flex-row lg:space-x-2 space-y-2 lg:space-y-0">
-					<Popover.Button as={Button} classoverride="ml-0" >
-						Filters
-					</Popover.Button>
-					{table.getSelectedRowModel().flatRows.length > 0 && (
-						<div className="grid grid-cols-1 gap-2 auto-cols-max md:grid-cols-5">
-							<Button classoverride="bg-green-500 hover:bg-green-500/50 ml-0" onPress={() => { setType("promotion"); setIsOpen(true) }}>Mass promote {table.getSelectedRowModel().flatRows.length} users</Button>
-							<Button classoverride="bg-orange-500 hover:bg-orange-500/50 ml-0" onPress={() => { setType("warning"); setIsOpen(true) }}>Mass warn {table.getSelectedRowModel().flatRows.length} users</Button>
-							<Button classoverride="bg-gray-800 hover:bg-gray-800/50 ml-0" onPress={() => { setType("suspension"); setIsOpen(true) }}>Mass suspend {table.getSelectedRowModel().flatRows.length} users</Button>
-							<Button classoverride="bg-red-500 hover:bg-red-500/50 ml-0" onPress={() => { setType("fire"); setIsOpen(true) }}>Mass fire {table.getSelectedRowModel().flatRows.length} users</Button>
-							<Button classoverride="bg-emerald-500 hover:bg-emerald-500/50 ml-0" onPress={() => { setType("add"); setIsOpen(true) }}>Add minutes to {table.getSelectedRowModel().flatRows.length} users</Button>
-						</div>
-					)}
-				</div>
-				<Popover.Panel className="absolute left-0 z-20 mt-2 w-80 origin-top-left rounded-xl bg-white dark:bg-gray-800 shadow-lg ring-1 ring-gray-300 focus-visible:outline-none p-3">
-					<Button onClick={newfilter}> Add filter </Button>
-					{colFilters.map((filter) => (
-						<div className="p-3 outline outline-gray-300 rounded-md mt-4 outline-1" key={filter.id}> <Filter ranks={ranks} updateFilter={(col, op, value) => updateFilter(filter.id, col, op, value)} deleteFilter={() => removeFilter(filter.id)} data={filter} /> </div>
-					))}
 
-				</Popover.Panel>
-			</Popover>
+			<div className="flex flex-row gap-2">
+			<Popover as="div" className="relative inline-block text-left pb-2">
+					<div className="w-full flex flex-col lg:flex-row lg:space-x-2 space-y-2 lg:space-y-0">
+						<Popover.Button as={Button} classoverride="ml-0 min-w-fit" >
+							Rows
+						</Popover.Button>
+					</div>
+					<Popover.Panel className="absolute left-0 z-20 mt-2 w-80 origin-top-left rounded-xl bg-white dark:bg-gray-800 shadow-lg ring-1 ring-gray-300 focus-visible:outline-none p-3">
+						<div className="flex flex-col gap-1">
+								{table.getAllLeafColumns().map((column: any) => {
+									if (column.id !== "select" && column.id !== "info") {
+										return (
+											<div key={column.id}>
+												<Checkbox {...{
+													type: 'checkbox',
+													checked: column.getIsVisible(),
+													onChange: column.getToggleVisibilityHandler(),
+												}} />{' '}
+												{getSelectionName(column.id)}
+											</div>
+										)
+									}
+								})}
+							</div>
+					</Popover.Panel>
+				</Popover>
+				<Popover as="div" className="relative inline-block text-left pb-2">
+					<div className="w-full flex flex-col lg:flex-row lg:space-x-2 space-y-2 lg:space-y-0">
+						<Popover.Button as={Button} classoverride="ml-0" >
+							Filters
+						</Popover.Button>
+						{table.getSelectedRowModel().flatRows.length > 0 && (
+							<div className="grid grid-cols-1 gap-2 auto-cols-max md:grid-cols-5">
+								<Button classoverride="bg-green-500 hover:bg-green-500/50 ml-0" onPress={() => { setType("promotion"); setIsOpen(true) }}>Mass promote {table.getSelectedRowModel().flatRows.length} users</Button>
+								<Button classoverride="bg-orange-500 hover:bg-orange-500/50 ml-0" onPress={() => { setType("warning"); setIsOpen(true) }}>Mass warn {table.getSelectedRowModel().flatRows.length} users</Button>
+								<Button classoverride="bg-gray-800 hover:bg-gray-800/50 ml-0" onPress={() => { setType("suspension"); setIsOpen(true) }}>Mass suspend {table.getSelectedRowModel().flatRows.length} users</Button>
+								<Button classoverride="bg-red-500 hover:bg-red-500/50 ml-0" onPress={() => { setType("fire"); setIsOpen(true) }}>Mass fire {table.getSelectedRowModel().flatRows.length} users</Button>
+								<Button classoverride="bg-emerald-500 hover:bg-emerald-500/50 ml-0" onPress={() => { setType("add"); setIsOpen(true) }}>Add minutes to {table.getSelectedRowModel().flatRows.length} users</Button>
+							</div>
+						)}
+					</div>
+					<Popover.Panel className="absolute left-0 z-20 mt-2 w-80 origin-top-left rounded-xl bg-white dark:bg-gray-800 shadow-lg ring-1 ring-gray-300 focus-visible:outline-none p-3">
+						<Button onClick={newfilter}> Add filter </Button>
+						{colFilters.map((filter) => (
+							<div className="p-3 outline outline-gray-300 rounded-md mt-4 outline-1" key={filter.id}> <Filter ranks={ranks} updateFilter={(col, op, value) => updateFilter(filter.id, col, op, value)} deleteFilter={() => removeFilter(filter.id)} data={filter} /> </div>
+						))}
+					</Popover.Panel>
+				</Popover>
+				{table.getSelectedRowModel().flatRows.length == 0 && (
+					<div className="relative inline-block w-full pb-2">
+					<input type="text" value={searchQuery} onChange={(e:any) => { updateSearchQuery(e.target.value) }} className="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full h-full" placeholder="Search Username" />
+					<div className={`absolute bg-white border border-gray-300 p-3 mt-2 rounded-lg w-full flex flex-col gap-1 ${searchOpen ? "" : "hidden"}`}>
+						{searchResults.length < 1 && <p className="text-gray-400 text-center">No results found</p>} 
+						{searchResults.map((u: any) => {
+							return (<button onClick={() => { updateSearchFilter(u.username) }} className="flex flex-row gap-3 flex-wrap rounded-xl bg-white hover:bg-gray-100 items-center p-2">
+								<img src={u.thumbnail} className="w-10 h-10 rounded-full bg-primary" />
+								<p className="font-semibold">{u.username}</p>
+							</button>)
+						})}
+					</div>
+				</div>
+				)}
+				
+			</div>
 			<div className="max-w-screen overflow-x-auto bg-white w-full rounded-xl border-1 p-3 border border-separate border-gray-300">
 				<table className="min-w-full">
 					<thead className="text-left text-slate-400 text-sm">

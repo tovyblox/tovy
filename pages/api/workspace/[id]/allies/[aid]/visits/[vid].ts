@@ -26,6 +26,7 @@ export async function handler(
 			// @ts-ignore
 			const visit = await prisma.allyVisit.delete({
 				where: {
+					// @ts-ignore
 					id: req.query.vid
 				}
 			})
@@ -43,6 +44,7 @@ export async function handler(
 			// @ts-ignore
 			const visit = await prisma.allyVisit.update({
 				where: {
+					// @ts-ignore
 					id: req.query.vid
 				},
 				data: {

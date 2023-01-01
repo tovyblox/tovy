@@ -33,7 +33,7 @@ export async function handler(
 	});
 
 	
-	const session = await prisma.sessionType.delete({
+	await prisma.sessionType.delete({
 		where: {
 			id: (req.query.sid as string)
 		},	

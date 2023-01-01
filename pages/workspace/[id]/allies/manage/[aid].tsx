@@ -100,6 +100,7 @@ export const getServerSideProps = withPermissionCheckSsr(
 		// @ts-ignore
 		const visits = await prisma.allyVisit.findMany({
 			where: {
+				// @ts-ignore
 				allyId: params?.aid
 			},
 		})
