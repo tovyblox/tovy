@@ -715,7 +715,7 @@ const Views: pageWithLayout<pageProps> = ({ usersInGroup, ranks }) => {
 					<div className={`absolute bg-white border border-gray-300 p-3 mt-2 rounded-lg w-full flex flex-col gap-1 ${searchOpen ? "" : "hidden"}`}>
 						{searchResults.length < 1 && <p className="text-gray-400 text-center">No results found</p>} 
 						{searchResults.map((u: any) => {
-							return (<button onClick={() => { updateSearchFilter(u.username) }} className="flex flex-row gap-3 flex-wrap rounded-xl bg-white hover:bg-gray-100 items-center p-2">
+							return (<button key={u.username} onClick={() => { updateSearchFilter(u.username) }} className="flex flex-row gap-3 flex-wrap rounded-xl bg-white hover:bg-gray-100 items-center p-2">
 								<img src={u.thumbnail} className="w-10 h-10 rounded-full bg-primary" />
 								<p className="font-semibold">{u.username}</p>
 							</button>)
