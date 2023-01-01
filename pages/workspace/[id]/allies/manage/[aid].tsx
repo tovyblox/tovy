@@ -482,7 +482,7 @@ const ManageAlly: pageWithLayout<pageProps> = (props) => {
 			<div className="flex flex-col gap-4">
 				{visits.map((visit: any) => {
 					return (
-						<div className="p-4 bg-white rounded-md ring-1 ring-gray-300">
+						<div key={visit.id} className="p-4 bg-white rounded-md ring-1 ring-gray-300">
 							<p className="font-bold text-2xl leading-5 mt-1">{visit.name}</p>
 							<div className="flex flex-row gap-4 mt-4 items-center">
 								<img src={visit.hostThumbnail} className="rounded-full w-12 h-12 bg-primary" />
