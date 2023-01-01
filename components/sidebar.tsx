@@ -171,9 +171,9 @@ const Topbar: NextPage = () => {
 								>
 									{({ selected, active }) => (
 										<>
-											<div className="flex items-center">
+											<div onClick={() => { router.replace(`/workspace/${ws.groupId}`).then(() => { router.reload() }) }} className="flex items-center">
 												<img
-													src={workspace.groupThumbnail}
+													src={ws.groupThumbnail}
 													alt="group name"
 													className="rounded-full h-[32px] w-[32px] my-auto p-0"
 												/>

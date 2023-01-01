@@ -51,7 +51,13 @@ type User = {
 
 export const getServerSideProps = withPermissionCheckSsr(async ({ params }: GetServerSidePropsContext) => {
 	const allUsers = await prisma.user.findMany({
-		where: {},
+		where: {
+			roles: {
+				some: {
+					workspaceGroupId: parseInt(params?.id as string)
+				}
+			}
+		},
 		include: {
 			book: true,
 			wallPosts: true,
@@ -63,7 +69,18 @@ export const getServerSideProps = withPermissionCheckSsr(async ({ params }: GetS
 	const allActivity = await prisma.activitySession.findMany({
 		where: {
 			workspaceGroupId: parseInt(params?.id as string)
+		},
+		include: {
+			user: {
+				include: {
+					writtenBooks: true,
+					wallPosts: true,
+					inactivityNotices: true,
+					sessions: true,
+					ranks: true
+				}
 		}
+	}
 	});
 
 	const allHostedSessions = await prisma.session.findMany({
