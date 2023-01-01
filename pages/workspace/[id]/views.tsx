@@ -15,6 +15,7 @@ import {
 	flexRender,
 	getCoreRowModel,
 	getFilteredRowModel,
+	// @ts-ignore
 	onColumnVisibilityChange,
 	getSortedRowModel,
 	SortingState,
@@ -135,11 +136,41 @@ const filters: {
 		'greaterThan',
 		'lessThan',
 	],
+	idle: [
+		'equal',
+		'greaterThan',
+		'lessThan'
+	],
 	rank: [
 		'equal',
 		'greaterThan',
 		'lessThan',
 	],
+	sessions: [
+		'equal',
+		'greaterThan',
+		'lessThan'
+	],
+	hosted: [
+		'equal',
+		'greaterThan',
+		'lessThan'
+	],
+	warnings : [
+		'equal',
+		'greaterThan',
+		'lessThan'
+	],
+	messages: [
+		'equal',
+		'greaterThan',
+		'lessThan'
+	],
+	notices: [
+		'equal',
+		'greaterThan',
+		'lessThan'
+	]
 }
 
 const filterNames: {
@@ -295,8 +326,10 @@ const Views: pageWithLayout<pageProps> = ({ usersInGroup, ranks }) => {
 		state: {
 			sorting,
 			rowSelection,
+			// @ts-ignore
 			columnVisibility,
 		},
+		// @ts-ignore
 		onColumnVisibilityChange: setColumnVisibility,
 		onRowSelectionChange: setRowSelection,
 		onSortingChange: setSorting,
@@ -359,6 +392,21 @@ const Views: pageWithLayout<pageProps> = ({ usersInGroup, ranks }) => {
 							valid = false;
 						}
 					}
+				} else if (filter.column === 'idle') {
+					if (!filter.value) return;
+					if (filter.filter === 'equal') {
+						if (user.idleMinutes !== parseInt(filter.value)) {
+							valid = false;
+						}
+					} else if (filter.filter === 'greaterThan') {
+						if (user.idleMinutes <= parseInt(filter.value)) {
+							valid = false;
+						}
+					} else if (filter.filter === 'lessThan') {
+						if (user.idleMinutes >= parseInt(filter.value)) {
+							valid = false;
+						}
+					}
 				} else if (filter.column === 'rank') {
 					if (!filter.value) return;
 					if (filter.filter === 'equal') {
@@ -371,6 +419,81 @@ const Views: pageWithLayout<pageProps> = ({ usersInGroup, ranks }) => {
 						}
 					} else if (filter.filter === 'lessThan') {
 						if (user.rankID >= parseInt(filter.value)) {
+							valid = false;
+						}
+					}
+				} else if (filter.column === 'hosted') {
+					if (!filter.value) return;
+					if (filter.filter === 'equal') {
+						if (user.hostedSessions.length !== parseInt(filter.value)) {
+							valid = false;
+						}
+					} else if (filter.filter === 'greaterThan') {
+						if (user.hostedSessions.length <= parseInt(filter.value)) {
+							valid = false;
+						}
+					} else if (filter.filter === 'lessThan') {
+						if (user.hostedSessions.length >= parseInt(filter.value)) {
+							valid = false;
+						}
+					}
+				}  else if (filter.column === 'sessions') {
+					if (!filter.value) return;
+					if (filter.filter === 'equal') {
+						if (user.sessions.length !== parseInt(filter.value)) {
+							valid = false;
+						}
+					} else if (filter.filter === 'greaterThan') {
+						if (user.sessions.length <= parseInt(filter.value)) {
+							valid = false;
+						}
+					} else if (filter.filter === 'lessThan') {
+						if (user.sessions.length >= parseInt(filter.value)) {
+							valid = false;
+						}
+					}
+				} else if (filter.column === 'warnings') {
+					if (!filter.value) return;
+					if (filter.filter === 'equal') {
+						if (user.book.filter(x => x.type == "warning").length !== parseInt(filter.value)) {
+							valid = false;
+						}
+					} else if (filter.filter === 'greaterThan') {
+						if (user.book.filter(x => x.type == "warning").length <= parseInt(filter.value)) {
+							valid = false;
+						}
+					} else if (filter.filter === 'lessThan') {
+						if (user.book.filter(x => x.type == "warning").length >= parseInt(filter.value)) {
+							valid = false;
+						}
+					}
+				} else if (filter.column === 'messages') {
+					if (!filter.value) return;
+					if (filter.filter === 'equal') {
+						if (user.messages !== parseInt(filter.value)) {
+							valid = false;
+						}
+					} else if (filter.filter === 'greaterThan') {
+						if (user.messages <= parseInt(filter.value)) {
+							valid = false;
+						}
+					} else if (filter.filter === 'lessThan') {
+						if (user.messages >= parseInt(filter.value)) {
+							valid = false;
+						}
+					}
+				} else if (filter.column === 'notices') {
+					if (!filter.value) return;
+					if (filter.filter === 'equal') {
+						if (user.inactivityNotices.length !== parseInt(filter.value)) {
+							valid = false;
+						}
+					} else if (filter.filter === 'greaterThan') {
+						if (user.inactivityNotices.length <= parseInt(filter.value)) {
+							valid = false;
+						}
+					} else if (filter.filter === 'lessThan') {
+						if (user.inactivityNotices.length >= parseInt(filter.value)) {
 							valid = false;
 						}
 					}
