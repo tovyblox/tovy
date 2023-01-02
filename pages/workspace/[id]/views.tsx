@@ -117,7 +117,7 @@ export const getServerSideProps = withPermissionCheckSsr(async ({ params }: GetS
 
 		computedUsers.push({
 			info: {
-				userId: user.userid,
+				userId: Number(user.userid),
 				username: user.username,
 			},
 			book: user.book,
