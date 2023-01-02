@@ -102,7 +102,7 @@ export const getServerSideProps = withPermissionCheckSsr(async ({ params }: GetS
 
 		const ims: number[] = [];
 		allActivity.filter((x: any) => BigInt(x.userId) == user.userid).forEach((s: any) => {
-			ims.push(s.idleTime)
+			ims.push(Number(s.idleTime))
 		})
 
 		const sh: any[] = []
