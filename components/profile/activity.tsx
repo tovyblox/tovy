@@ -83,7 +83,7 @@ const Activity: FC<Props> = ({ timeSpent, timesPlayed, data, quotas, sessionsAtt
 	const getQuotaPercentage = (quota: Quota) => {
 		switch (quota.type) {
 			case "mins": {
-				return (timesPlayed / quota.value) * 100;
+				return (timeSpent / quota.value) * 100;
 			}
 			case "sessions_hosted": {
 				return (sessionsHosted / quota.value) * 100;
@@ -97,7 +97,7 @@ const Activity: FC<Props> = ({ timeSpent, timesPlayed, data, quotas, sessionsAtt
 	const getQuotaProgress = (quota: Quota) => {
 		switch (quota.type) {
 			case "mins": {
-				return `${timesPlayed} / ${quota.value} minutes`;
+				return `${timeSpent} / ${quota.value} minutes`;
 			}
 			case "sessions_hosted": {
 				return `${sessionsHosted} / ${quota.value} sessions hosted`;

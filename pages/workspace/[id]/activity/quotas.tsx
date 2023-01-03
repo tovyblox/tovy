@@ -85,14 +85,14 @@ const Notices: pageWithLayout<pageProps> = (props) => {
 			`/api/workspace/${id}/activity/quotas/new`,
 			{ value: Number(requirement), type, roles: selectedRoles, name }
 		).then(req => {
-			setQuotas([...quotas, req.data.notice])
+
 		});
 		toast.promise(
 			axiosPromise,
 			{
 				loading: "Creating your quota...",
 				success: () => {
-					setIsOpen(false);
+					router.reload()
 					return "Quota created!";
 				},
 				error: "Quota was not created due to an unknown error."

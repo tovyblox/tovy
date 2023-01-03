@@ -24,13 +24,15 @@ export async function handler(
 	try {
 		await prisma.activitySession.deleteMany({
 			where: {
-				userId: req.session.userid
+				workspaceGroupId: Number(req.query.id as string	)
 			}
 		});
 
 		await prisma.session.deleteMany({
 			where: {
-				ownerId: req.session.userid,
+				sessionType: {
+					workspaceGroupId: Number(req.query.id)
+				},
 				date: {
 					lte: new Date()
 				}

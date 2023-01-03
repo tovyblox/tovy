@@ -91,7 +91,7 @@ export async function handler(
 							id: findSession.id
 						},
 						data: {
-							ownerId: BigInt(req.session.userid)
+							ownerId: BigInt(req.session.userid),
 						}
 				   }
 			   }
@@ -124,6 +124,7 @@ export async function handler(
 					date: dateTime,
 					sessionTypeId: schedule.sessionTypeId,
 					ownerId: req.session.userid,
+					startedAt: dateTime
 				}
 			}
 		},

@@ -661,13 +661,12 @@ const Views: pageWithLayout<pageProps> = ({ usersInGroup, ranks }) => {
 
 		<div className="pagePadding">
 
-			<div className="flex flex-row gap-2">
-			<Popover as="div" className="relative inline-block text-left pb-2">
-					<div className="w-full flex flex-col lg:flex-row lg:space-x-2 space-y-2 lg:space-y-0">
-						<Popover.Button as={Button} classoverride="ml-0 min-w-fit" >
+			<div className="flex flex-col md:flex-row gap-2">
+				<div className="flex flex-row gap-2">
+				<Popover as="div" className="relative inline-block text-left pb-2">
+						<Popover.Button as={Button} classoverride="ml-0" >
 							Rows
 						</Popover.Button>
-					</div>
 					<Popover.Panel className="absolute left-0 z-20 mt-2 w-80 origin-top-left rounded-xl bg-white dark:bg-gray-800 shadow-lg ring-1 ring-gray-300 focus-visible:outline-none p-3">
 						<div className="flex flex-col gap-1">
 								{table.getAllLeafColumns().map((column: any) => {
@@ -688,20 +687,11 @@ const Views: pageWithLayout<pageProps> = ({ usersInGroup, ranks }) => {
 					</Popover.Panel>
 				</Popover>
 				<Popover as="div" className="relative inline-block text-left pb-2">
-					<div className="w-full flex flex-col lg:flex-row lg:space-x-2 space-y-2 lg:space-y-0">
-						<Popover.Button as={Button} classoverride="ml-0" >
-							Filters
-						</Popover.Button>
-						{table.getSelectedRowModel().flatRows.length > 0 && (
-							<div className="grid grid-cols-1 gap-2 auto-cols-max md:grid-cols-5">
-								<Button classoverride="bg-green-500 hover:bg-green-500/50 ml-0" onPress={() => { setType("promotion"); setIsOpen(true) }}>Mass promote {table.getSelectedRowModel().flatRows.length} users</Button>
-								<Button classoverride="bg-orange-500 hover:bg-orange-500/50 ml-0" onPress={() => { setType("warning"); setIsOpen(true) }}>Mass warn {table.getSelectedRowModel().flatRows.length} users</Button>
-								<Button classoverride="bg-gray-800 hover:bg-gray-800/50 ml-0" onPress={() => { setType("suspension"); setIsOpen(true) }}>Mass suspend {table.getSelectedRowModel().flatRows.length} users</Button>
-								<Button classoverride="bg-red-500 hover:bg-red-500/50 ml-0" onPress={() => { setType("fire"); setIsOpen(true) }}>Mass fire {table.getSelectedRowModel().flatRows.length} users</Button>
-								<Button classoverride="bg-emerald-500 hover:bg-emerald-500/50 ml-0" onPress={() => { setType("add"); setIsOpen(true) }}>Add minutes to {table.getSelectedRowModel().flatRows.length} users</Button>
-							</div>
-						)}
-					</div>
+					
+					<Popover.Button as={Button} classoverride="ml-0" >
+						Filters
+					</Popover.Button>
+					
 					<Popover.Panel className="absolute left-0 z-20 mt-2 w-80 origin-top-left rounded-xl bg-white dark:bg-gray-800 shadow-lg ring-1 ring-gray-300 focus-visible:outline-none p-3">
 						<Button onClick={newfilter}> Add filter </Button>
 						{colFilters.map((filter) => (
@@ -709,6 +699,17 @@ const Views: pageWithLayout<pageProps> = ({ usersInGroup, ranks }) => {
 						))}
 					</Popover.Panel>
 				</Popover>
+				</div>
+			
+				{table.getSelectedRowModel().flatRows.length > 0 && (
+							<div className="flex flex-row flex-wrap gap-2 mb-2">
+								<Button classoverride="bg-green-500 hover:bg-green-500/50 ml-0" onPress={() => { setType("promotion"); setIsOpen(true) }}>Mass promote {table.getSelectedRowModel().flatRows.length} users</Button>
+								<Button classoverride="bg-orange-500 hover:bg-orange-500/50 ml-0" onPress={() => { setType("warning"); setIsOpen(true) }}>Mass warn {table.getSelectedRowModel().flatRows.length} users</Button>
+								<Button classoverride="bg-gray-800 hover:bg-gray-800/50 ml-0" onPress={() => { setType("suspension"); setIsOpen(true) }}>Mass suspend {table.getSelectedRowModel().flatRows.length} users</Button>
+								<Button classoverride="bg-red-500 hover:bg-red-500/50 ml-0" onPress={() => { setType("fire"); setIsOpen(true) }}>Mass fire {table.getSelectedRowModel().flatRows.length} users</Button>
+								<Button classoverride="bg-emerald-500 hover:bg-emerald-500/50 ml-0" onPress={() => { setType("add"); setIsOpen(true) }}>Add minutes to {table.getSelectedRowModel().flatRows.length} users</Button>
+							</div>
+						)}
 				{table.getSelectedRowModel().flatRows.length == 0 && (
 					<div className="relative inline-block w-full pb-2">
 					<input type="text" value={searchQuery} onChange={(e:any) => { updateSearchQuery(e.target.value) }} className="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full h-full" placeholder="Search Username" />

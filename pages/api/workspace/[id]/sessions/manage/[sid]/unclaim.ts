@@ -85,7 +85,8 @@ export async function handler(
 			id: findSession.id
 		},
 		data: {
-			ownerId: null
+			ownerId: null,
+			startedAt: null
 		}
 	})
 
