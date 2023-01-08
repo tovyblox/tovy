@@ -4,6 +4,7 @@ import { loginState } from "@/state";
 import { Fragment, useEffect, useState } from "react";
 import { Dialog, Popover, Transition } from "@headlessui/react";
 import { GetServerSidePropsContext, InferGetServerSidePropsType } from "next";
+import { getThumbnail } from "@/utils/userinfoEngine";
 import { useRecoilState } from "recoil";
 import noblox from "noblox.js";
 import Input from "@/components/input";
@@ -37,6 +38,7 @@ type User = {
 	info: {
 		userId: BigInt
 		username: string | null
+		picture: string | null
 	}
 	book: userBook[]
 	wallPosts: wallPost[]
@@ -118,6 +120,7 @@ export const getServerSideProps = withPermissionCheckSsr(async ({ params }: GetS
 		computedUsers.push({
 			info: {
 				userId: Number(user.userid),
+				picture: user.picture || await getThumbnail(user.userid),
 				username: user.username,
 			},
 			book: user.book,
@@ -253,7 +256,7 @@ const Views: pageWithLayout<pageProps> = ({ usersInGroup, ranks }) => {
 			cell: (row) => {
 				return (
 					<div className="flex flex-row cursor-pointer" onClick={() => router.push(`/workspace/${router.query.id}/profile/${row.getValue().userId}`)}>
-						<img src={`https://www.roblox.com/headshot-thumbnail/image?userId=${row.getValue().userId}&width=512&height=512&format=jpg`} className="w-10 h-10 rounded-full bg-primary " alt="profile image" />
+						<img src={row.getValue().picture!} className="w-10 h-10 rounded-full bg-primary " alt="profile image" />
 						<p className="leading-5 my-auto px-2 font-semibold">
 							{row.getValue().username} <br />
 						</p>

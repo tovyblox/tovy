@@ -7,6 +7,7 @@ import Button from "@/components/button";
 import type { Session, user } from "@/utils/database";
 import { useRouter } from "next/router";
 import { IconChevronRight } from '@tabler/icons'
+import { getThumbnail } from "@/utils/userinfoEngine";
 
 
 const Color: React.FC = () => {
@@ -40,7 +41,7 @@ const Color: React.FC = () => {
 									<div className="px-5 py-4 backdrop-blur flex">
 										<div><p className="text-xl font-bold"> Training session </p>
 											<div className="flex mt-1">
-												<img src={`https://www.roblox.com/headshot-thumbnail/image?userId=${session.ownerId}&width=100&height=100&format=png`} className="bg-primary rounded-full w-8 h-8 my-auto" />
+												<img src={String(session.owner.picture)} className="bg-primary rounded-full w-8 h-8 my-auto" />
 												<p className="font-semibold pl-2 leading-5 my-auto"> Hosted by {session.owner.username} <br /> <span className="text-red-500"> Slocked </span> </p>
 											</div>
 										</div>

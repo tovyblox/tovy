@@ -328,7 +328,7 @@ const Home: pageWithLayout<{
 																				<Menu as="div" className="relative inline-block ml-auto">
 																					<div className="w-full">
 																						<Menu.Button className="ml-auto disabled:bg-gray-200 disabled:cursor-default my-auto hover:bg-gray-300 text-gray-500 transition rounded-md px-2 py-1 flex" tabIndex={0} role="button">
-																							<img className="w-6 bg-primary rounded-full mr-1 h-6" src={`https://www.roblox.com/headshot-thumbnail/image?userId=${session?.users.find(e => (e.roleID === slot.id && e.slot === i))?.userid}&width=512&height=512&format=png`} />
+																							<img className="w-6 bg-primary rounded-full mr-1 h-6" src={String(session?.users.find(e => (e.roleID === slot.id && e.slot === i))?.user.picture)} />
 																							{session?.users?.find(e => (e.roleID === slot.id && e.slot === i))?.user?.username}
 																						</Menu.Button>
 																					</div>

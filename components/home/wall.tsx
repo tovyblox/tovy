@@ -40,7 +40,7 @@ const Color: React.FC = () => {
 				{posts.slice(0, 2).map((post) => (
 					<div className="bg-white p-4 rounded-md" key={post.id}>
 						<div className="flex">
-							<img alt="avatar headshot" src={`https://www.roblox.com/headshot-thumbnail/image?userId=${post.authorId}&width=100&height=100&format=png`} className="rounded-full h-12 w-12 my-auto bg-primary" />
+							<img alt="avatar headshot" src={String(post.author.picture)} className="rounded-full h-12 w-12 my-auto bg-primary" />
 							<p className="font-semibold ml-2 break-normal leading-5 my-auto">
 								{post.author.username!}
 								<br />

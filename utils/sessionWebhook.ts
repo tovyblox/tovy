@@ -1,6 +1,6 @@
 import { WebhookClient, EmbedBuilder, ActionRowBuilder, ButtonBuilder } from 'discord.js';
 import prisma, { Session, SessionType } from '@/utils/database';
-import { getUsername } from './userinfoEngine';
+import { getThumbnail, getUsername } from './userinfoEngine';
 export const sendWebhook = async (session: (Session & {
 	sessionType: SessionType
 })) => {
@@ -13,7 +13,7 @@ export const sendWebhook = async (session: (Session & {
 		.setTimestamp()
 		.setAuthor({
 			name: await getUsername(session.ownerId!),
-			iconURL: `https://www.roblox.com/headshot-thumbnail/image?userId=${session.ownerId}&width=420&height=420&format=png`,
+			iconURL: await getThumbnail(session.ownerId!),
 			url: `https://www.roblox.com/users/${session.ownerId}/profile`
 		})
 		.setDescription(
@@ -72,7 +72,7 @@ export const deleteWebhook = async (session: (Session & {
 		.setTimestamp()
 		.setAuthor({
 			name: await getUsername(session.ownerId!),
-			iconURL: `https://www.roblox.com/headshot-thumbnail/image?userId=${session.ownerId}&width=420&height=420&format=png`,
+			iconURL: await getThumbnail(session.ownerId!),
 			url: `https://www.roblox.com/users/${session.ownerId}/profile`
 		})
 		.setDescription(

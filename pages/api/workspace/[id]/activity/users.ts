@@ -17,6 +17,7 @@ type TopStaff = {
 	userId: number;
 	username: string;
 	ms: number;
+	picture: string
 }
 
 export default withPermissionCheck(handler);
@@ -62,16 +63,17 @@ export async function handler(
 	})
 
 	var activeUsers: {
-		userId: number, username: string
+		userId: number, username: string, picture: string
 	}[] = [];
 	var inactiveUsers: {
-		userId: number, username: string, reason: string, from: Date, to: Date
+		userId: number, username: string, reason: string, from: Date, to: Date, picture: string
 	}[] = [];
 	
 	for (const user of activeSession) {
 		activeUsers.push({
 			userId: Number(user.userId),
-			username: await getUsername(user.userId)
+			username: await getUsername(user.userId),
+			picture: await getThumbnail(user.userId)
 		})
 	}
 	for (const session of inactiveSession) {
@@ -81,6 +83,7 @@ export async function handler(
 			from: session.startTime,
 			to: session.endTime!,
 			username: await getUsername(session.userId),
+			picture: await getThumbnail(session.userId)
 		})
 	}
 
@@ -110,7 +113,8 @@ export async function handler(
 		topStaff.push({
 			userId: min.userId,
 			username: await getUsername(min.userId),
-			ms: minSum
+			ms: minSum,
+			picture: await getThumbnail(min.userId)
 		});
 	}
 

@@ -87,7 +87,7 @@ const Activity: pageWithLayout = () => {
 					{activeUsers.map((user: any) => (
 						<Tooltip key={user.userId} tooltipText={`${user.username} (${user.userId})`} orientation="top">
 							<img
-								src={`https://www.roblox.com/headshot-thumbnail/image?userId=${user.userId}&width=512&height=512&format=png`}
+								src={user.picture}
 								alt="User thumbnail"
 								className="rounded-full w-10 h-10 bg-primary"
 							/>
@@ -105,7 +105,7 @@ const Activity: pageWithLayout = () => {
 						{topStaff.map((user: any) => (
 							<Tooltip key={user.userId} tooltipText={`${user.username} (${user.userId}) - ${Math.floor(user.ms / 1000 / 60)} minutes`} orientation="bottom">
 								<img
-									src={`https://www.roblox.com/headshot-thumbnail/image?userId=${user.userId}&width=512&height=512&format=png`}
+									src={user.picture}
 									alt="User thumbnail"
 									className="rounded-full w-10 h-10 bg-primary"
 								/>
@@ -121,7 +121,7 @@ const Activity: pageWithLayout = () => {
 						{inactiveUsers.map((user: any) => (
 							<Tooltip key={user.userId} tooltipText={`${user.username} (${user.userId}) | ${moment(user.from).format("DD MMM")} - ${moment(user.to).format("DD MMM")} for ${user.reason} `} orientation="bottom">
 								<img
-									src={`https://www.roblox.com/headshot-thumbnail/image?userId=${user.userId}&width=512&height=512&format=png`}
+									src={user.picture}
 									alt="User thumbnail"
 									className="rounded-full w-10 h-10 bg-primary"
 								/>

@@ -95,7 +95,7 @@ const Home: pageWithLayout<pageProps> = (props) => {
 						<div className="px-5 py-4 backdrop-blur flex">
 							<div><p className="text-xl font-bold"> {session.sessionType.name} </p>
 								<div className="flex mt-1">
-									<img src={`https://www.roblox.com/headshot-thumbnail/image?userId=${session.ownerId}&width=50&height=50&format=png`} className="bg-primary rounded-full w-8 h-8 my-auto" />
+									<img src={String(session.owner.picture)} className="bg-primary rounded-full w-8 h-8 my-auto" />
 									<p className="font-semibold pl-2 leading-5 my-auto"> {session.owner.username} <br /> {statues.get(session.id)}  </p>
 								</div>
 							</div>
