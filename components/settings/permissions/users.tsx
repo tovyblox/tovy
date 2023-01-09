@@ -29,14 +29,15 @@ const Button: FC<Props> = (props) => {
 
 	//set users role to the role with the same role id passed 
 	const updateRole = async (id: number, roleid: string) => {
-		const user = users.find((user: any) => user.userid === id);
+		const user = users.findIndex((user: any) => user.userid === id);
 		console.log(id, roleid)
+		const usi = users
 		if (!user) return;
 		const role = roles.find((role: any) => role.id === roleid);
 		console.log(role)
 		if (!role) return;
-		user.roles = [role];
-		setUsers([...users.slice(0, users.findIndex(user => user.userid === id)), user]);
+		usi[user].roles = [role];
+		setUsers([...usi]);
 		await axios.post(
 			`/api/workspace/${workspace.groupId}/settings/users/${id}/update`,
 			{ role: role.id }

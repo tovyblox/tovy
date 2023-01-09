@@ -118,5 +118,7 @@ export async function handler(
 		});
 	}
 
-	return res.status(200).json({ success: true, message: { activeUsers, inactiveUsers, topStaff } });
+	 const bestStaff = topStaff.sort((a, b) => b.ms - a.ms).slice(0, 5);
+
+	return res.status(200).json({ success: true, message: { activeUsers, inactiveUsers, topStaff: bestStaff } });
 }

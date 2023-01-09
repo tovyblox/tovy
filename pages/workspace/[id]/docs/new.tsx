@@ -54,11 +54,15 @@ const Home: pageWithLayout<InferGetServerSidePropsType<GetServerSideProps>> = ({
 		],
 		editorProps: {
 			attributes: {
-				class: 'prose lg:prose-lg xl:prose-2xl max-w-full leading-normal outline outline-1 focus:outline-blue-400 mt-2 focus:ring-blue-400 focus:ring-1 focus:ring outline-gray-300 bg-white rounded-md p-5',
+				class: 'prose lg:prose-lg  max-w-full leading-normal outline outline-1 focus:outline-blue-400 mt-2 focus:ring-blue-400 focus:ring-1 focus:ring outline-gray-300 bg-white rounded-md p-5',
 			},
 		},
 		content: '',
 	});
+
+	const goback = () => {
+		window.history.back();
+	}
 
 	const createDoc = async () => {
 		const session = await axios.post(`/api/workspace/${workspace.groupId}/guides/create`, {
@@ -175,7 +179,7 @@ const Home: pageWithLayout<InferGetServerSidePropsType<GetServerSideProps>> = ({
 		<EditorContent editor={editor} />
 
 		<div className="flex mt-2">
-			<Button classoverride="ml-0" workspace> Back </Button>
+			<Button classoverride="ml-0" workspace onClick={() => goback()}> Back </Button>
 			<Button onPress={form.handleSubmit(createDoc)} workspace> Create </Button>
 		</div>
 

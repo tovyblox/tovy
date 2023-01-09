@@ -88,7 +88,7 @@ const Settings: pageWithLayout<Props> = ({ document }) => {
 			<img src={document.owner.picture} className="bg-primary rounded-full w-12 h-12 my-auto" />
 			<p className="font-semibold pl-2 leading-5 my-auto"> Created by {document.owner.username} <br /> <span className="text-primary"> Updated {friendlyDate} </span> </p>
 		</div>
-		<div className="prose lg:prose-lg xl:prose-2xl max-w-full break-words mx-auto">
+		<div className="prose max-w-full break-words mx-auto">
 			<div className="leading-normal outline outline-1 -mt-3 outline-gray-300 bg-white rounded-md py-5 p-5" dangerouslySetInnerHTML={{ __html: output }} />
 		</div>
 		<div className="flex mt-6">
