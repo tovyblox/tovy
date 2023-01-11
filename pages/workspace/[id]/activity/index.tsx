@@ -83,7 +83,7 @@ const Activity: pageWithLayout = () => {
 			<div className="bg-white p-4 rounded-md">
 				<p className="font-bold text-2xl leading-4 mt-1">In-game</p>
 				<p className="text-gray-500 text-xl mt-2 mb-1">Staff which are in-game</p>
-				<div className="grid gap-1 grid-cols-12">
+				<div className="flex flex-row gap-2 flex-wrap">
 					{activeUsers.map((user: any) => (
 						<Tooltip key={user.userId} tooltipText={`${user.username} (${user.userId})`} orientation="top">
 							<img
