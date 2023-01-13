@@ -3,6 +3,7 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 import prisma from '@/utils/database';
 import { withSessionRoute } from '@/lib/withSession'
 import { red } from 'tailwindcss/colors';
+import { getThumbnail } from '@/utils/userinfoEngine';
 import * as noblox from 'noblox.js'
 type Data = {
 	success: boolean
@@ -48,11 +49,13 @@ export async function handler(
 			userid: BigInt(req.body.userid)
 		},
 		update: {
-			username: await noblox.getUsernameFromId(req.body.userid)
+			username: await noblox.getUsernameFromId(req.body.userid),
+			picture: await getThumbnail(req.body.userid)
 		},
 		create: {
 			userid: BigInt(req.body.userid),
-			username: await noblox.getUsernameFromId(req.body.userid)
+			username: await noblox.getUsernameFromId(req.body.userid),
+			picture: await getThumbnail(req.body.userid)
 		}
 	})
 

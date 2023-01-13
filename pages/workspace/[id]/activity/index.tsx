@@ -102,7 +102,7 @@ const Activity: pageWithLayout = () => {
 					<p className="font-bold text-2xl leading-4 mt-1">Top staff</p>
 					<p className="text-gray-500 text-xl mt-2">Leading members of the staff team in activity</p>
 					<div className="flex gap-2">
-						{topStaff.map((user: any) => (
+						{topStaff.slice(0, 5).map((user: any) => (
 							<Tooltip key={user.userId} tooltipText={`${user.username} (${user.userId}) - ${Math.floor(user.ms / 1000 / 60)} minutes`} orientation="bottom">
 								<img
 									src={user.picture}

@@ -62,6 +62,16 @@ export async function handler(
 		}
 	})
 
+	const users = await prisma.user.findMany({
+		where: {},
+		select: {
+			userid: true,
+			username: true,
+			picture: true
+		}
+	})
+
+
 	var activeUsers: {
 		userId: number, username: string, picture: string
 	}[] = [];
@@ -70,20 +80,24 @@ export async function handler(
 	}[] = [];
 	
 	for (const user of activeSession) {
+		const u = users.find(u => u.userid === user.userId);
 		activeUsers.push({
 			userId: Number(user.userId),
-			username: await getUsername(user.userId),
-			picture: await getThumbnail(user.userId)
+			username: u?.username || "Unknown",
+			picture: u?.picture || ""
 		})
+		
+
 	}
 	for (const session of inactiveSession) {
+		const u = users.find(u => u.userid === session.userId);
 		inactiveUsers.push({
 			userId: Number(session.userId),
 			reason: session.reason,
 			from: session.startTime,
 			to: session.endTime!,
-			username: await getUsername(session.userId),
-			picture: await getThumbnail(session.userId)
+			username: u?.username || "Unknown",
+			picture: u?.picture || ""
 		})
 	}
 
@@ -110,15 +124,17 @@ export async function handler(
 	const topStaff: TopStaff[] = [];
 	for (const min of combinedMinutes) {
 		const minSum = min.ms.reduce((partial, a) => partial + a, 0);
+		const found = users.find(x => x.userid === BigInt(min.userId));
 		topStaff.push({
 			userId: min.userId,
-			username: await getUsername(min.userId),
+			username: found?.username || "Unknown",
 			ms: minSum,
-			picture: await getThumbnail(min.userId)
+			picture: found?.picture || "Unknown"
 		});
+
 	}
 
-	 const bestStaff = topStaff.sort((a, b) => b.ms - a.ms).slice(0, 5);
+	 const bestStaff = topStaff.sort((a, b) => b.ms - a.ms)
 
 	return res.status(200).json({ success: true, message: { activeUsers, inactiveUsers, topStaff: bestStaff } });
 }
