@@ -1,6 +1,6 @@
 {
   "name": "tovy",
-  "version": "2.2.0-beta4",
+  "version": "2.2.0-beta5",
   "private": true,
   "scripts": {
     "dev": "next dev",
