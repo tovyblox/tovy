@@ -120,7 +120,7 @@ export const getServerSideProps = withPermissionCheckSsr(async ({ params }: GetS
 		computedUsers.push({
 			info: {
 				userId: Number(user.userid),
-				picture: user.picture || await getThumbnail(user.userid),
+				picture: user.picture || '',
 				username: user.username,
 			},
 			book: user.book,
@@ -134,6 +134,40 @@ export const getServerSideProps = withPermissionCheckSsr(async ({ params }: GetS
 			messages: messages.length ? Math.round(messages.reduce((p, c) => p + c)) : 0
 		})
 	}
+
+	//find users who have an activity session not on computedUsers
+	const usersNotInComputedUsers = allActivity.filter((x: any) => !computedUsers.find((y: any) => BigInt(y.info.userId) == BigInt(x.userId)))
+	//map them to the computedUsers array
+	usersNotInComputedUsers.forEach((x: any) => {
+		if (computedUsers.find((y: any) => BigInt(y.info.userId) == BigInt(x.userId))) return;
+		const ms: number[] = [];
+		allActivity.filter((y: any) => BigInt(y.userId) == BigInt(x.userId) && !y.active).forEach((session) => {
+			ms.push(session.endTime?.getTime() as number - session.startTime.getTime());
+		});
+
+		const messages: number[] = []
+		allActivity.filter((y: any) => BigInt(y.userId) == BigInt(x.userId)).forEach((s: any) => {
+			messages.push(s.messages)
+		})
+
+
+		computedUsers.push({
+			info: {
+				userId: Number(x.userId),
+				picture: x.user.picture || null,
+				username: x.user.username,
+			},
+			book: [],
+			wallPosts: [],
+			inactivityNotices: [],
+			sessions: [],
+			rankID: x.user.ranks[0]?.rankId ? Number(x.user.ranks[0]?.rankId) : 0,
+			minutes: ms.length ? Math.round(ms.reduce((p, c) => p + c) / 60000) : 0,
+			idleMinutes: 0,
+			hostedSessions: [],
+			messages: messages.length ? Math.round(messages.reduce((p, c) => p + c)) : 0
+		})
+	})
 
 	return {
 		props: {

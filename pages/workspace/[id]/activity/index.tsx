@@ -3,10 +3,12 @@ import { pageWithLayout } from "@/layoutTypes";
 import { loginState, workspacestate } from "@/state";
 import axios from "axios";
 import { useRouter } from "next/router";
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, Fragment} from "react";
 import { useRecoilState } from "recoil";
+import Button from "@/components/button";
+import { Dialog, Transition } from "@headlessui/react";
 import moment from "moment";
-import { IconChevronRight  } from "@tabler/icons";
+import { IconChevronRight } from "@tabler/icons";
 import Tooltip from "@/components/tooltip";
 import randomText from "@/utils/randomText";
 import toast, { Toaster } from 'react-hot-toast';
@@ -20,11 +22,14 @@ const Activity: pageWithLayout = () => {
 	const text = useMemo(() => randomText(login.displayname), []);
 	const [activeUsers, setActiveUsers] = useState([]);
 	const [inactiveUsers, setInactiveUsers] = useState([]);
+	const [isOpen, setIsOpen] = useState(false);
+
 	const [topStaff, setTopStaff] = useState([]);
 	const [messages, setMessages] = useState(0);
 	const [idleTime, setIdleTime] = useState(0);
 
 	async function resetActivity() {
+		setIsOpen(false);
 		toast.promise(
 			axios.post(`/api/workspace/${id}/activity/reset`),
 			{
@@ -152,7 +157,7 @@ const Activity: pageWithLayout = () => {
 					<p className="font-bold text-2xl leading-6 mt-1">View my notices</p>
 					<p className="text-gray-500 text-xl mt-2">View your pending and past notices</p>
 				</div>
-				{workspace.yourPermission.includes('manage_activity') && <div className="cardBtn" onClick={resetActivity}>
+				{workspace.yourPermission.includes('manage_activity') && <div className="cardBtn" onClick={() => setIsOpen(true)}>
 					<p className="font-bold text-2xl leading-6 mt-1">New timeframe</p>
 					<p className="text-gray-500 text-xl mt-2">This will create a new timeframe</p>
 				</div>}
@@ -161,6 +166,59 @@ const Activity: pageWithLayout = () => {
 					<p className="text-gray-500 text-xl mt-2">Manage your workspaces quotas</p>
 				</div>}
 			</div>
+
+			<Transition appear show={isOpen} as={Fragment}>
+				<Dialog as="div" className="relative z-10" onClose={() => setIsOpen(false)}>
+					<Transition.Child
+						as={Fragment}
+						enter="ease-out duration-300"
+						enterFrom="opacity-0"
+						enterTo="opacity-100"
+						leave="ease-in duration-200"
+						leaveFrom="opacity-100"
+						leaveTo="opacity-0"
+					>
+						<div className="fixed inset-0 bg-black bg-opacity-25" />
+					</Transition.Child>
+
+					<div className="fixed inset-0 overflow-y-auto">
+						<div className="flex min-h-full items-center justify-center p-4 text-center">
+							<Transition.Child
+								as={Fragment}
+								enter="ease-out duration-300"
+								enterFrom="opacity-0 scale-95"
+								enterTo="opacity-100 scale-100"
+								leave="ease-in duration-200"
+								leaveFrom="opacity-100 scale-100"
+								leaveTo="opacity-0 scale-95"
+							>
+								<Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-xl bg-white p-6 text-left align-middle shadow-xl transition-all">
+									<Dialog.Title
+										as="p"
+										className="my-auto text-2xl font-bold"
+									>
+										Reset activity
+									</Dialog.Title>
+									<Dialog.Description
+										as="p"
+										className="mb-10 text-sm text-gray-500"
+									>
+										Are you sure you want to create a new timeframe? This will reset all activity 
+									</Dialog.Description>
+
+
+
+									<div className="mt-4 flex">
+										<Button classoverride="" onPress={() => setIsOpen(false)}> Cancel </Button>
+										<Button classoverride="bg-red-500 hover:bg-red-300 ml-2" onPress={() => resetActivity()}> Reset </Button>
+
+									</div>
+								</Dialog.Panel>
+							</Transition.Child>
+						</div>
+					</div>
+				</Dialog>
+			</Transition>
 
 			<Toaster position="bottom-center" />
 		</div>

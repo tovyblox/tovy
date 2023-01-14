@@ -2,6 +2,8 @@ import prisma from "./database";
 import type { NextApiRequest, NextApiResponse, NextApiHandler, GetServerSidePropsContext } from 'next'
 import { withSessionRoute, withSessionSsr } from '@/lib/withSession'
 import * as noblox from 'noblox.js'
+import { getConfig } from "./configEngine";
+import { getThumbnail } from "./userinfoEngine";
 
 type MiddlewareData = {
 	handler: NextApiHandler
@@ -91,13 +93,22 @@ export function withPermissionCheckSsr(
 
 
 export async function checkGroupRoles(groupID: number) {
-	const ranks = await noblox.getRoles(groupID).catch(() => null);
+	const rss = await noblox.getRoles(groupID).catch(() => null);
+	if (!rss) return;
+	const ranks: noblox.Role[] = [];
 
 	const rs = await prisma.role.findMany({
 		where: {
 			workspaceGroupId: groupID
 		}
 	});
+	const config = await getConfig('activity', groupID)
+	const minTrackedRole = config?.role || 0;
+	for (const role of rss) {
+		if (role.rank < minTrackedRole) continue;
+		ranks.push(role);
+	}
+	console.log(ranks)
 	if (ranks && ranks.length) {
 		for (const rank of ranks) {
 			const role = rs.find(r => r.groupRoles?.includes(rank.id));
@@ -199,7 +210,8 @@ export async function checkGroupRoles(groupID: number) {
 									id: role.id
 								}
 							},
-							username: member.username
+							username: member.username,
+							picture: await getThumbnail(member.userId)
 						},
 						update: {
 							roles: {
@@ -210,6 +222,24 @@ export async function checkGroupRoles(groupID: number) {
 							username: member.username
 						}
 					});
+
+					await prisma.rank.upsert({
+						where: {
+							userId_workspaceGroupId: {
+								userId: BigInt(member.userId),
+								workspaceGroupId: groupID
+							}
+						},
+						update: {
+							rankId: BigInt(rank.rank)
+						},
+						create: {
+							userId: BigInt(member.userId),
+							workspaceGroupId: groupID,
+							rankId: BigInt(rank.rank)
+						}
+					});
+
 				};
 			}
 		}

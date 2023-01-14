@@ -25,7 +25,8 @@ export async function getThumbnail (userId: number | bigint): Promise<string> {
 	if (cachedThumbnail) {
 		return cachedThumbnail as string;
 	} else {
-		const thumbnail = await noblox.getPlayerThumbnail(Number(userId), '60x60', undefined, undefined, "headshot");
+		const thumbnail = await noblox.getPlayerThumbnail(Number(userId), '60x60', undefined, undefined, "headshot").catch(e => null);
+		if (!thumbnail) return 'https://www.roblox.com/headshot-thumbnail/image?userId=' + userId + '&width=420&height=420&format=png';
 		thumbnails.set(Number(userId), thumbnail[0].imageUrl);
 		return thumbnail[0].imageUrl as string;
 	}

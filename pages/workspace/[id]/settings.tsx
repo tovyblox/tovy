@@ -50,7 +50,7 @@ export const getServerSideProps: GetServerSideProps = withPermissionCheckSsr(asy
 	//promise all to get user with username, displayname and thumbnail
 	const usersWithInfo = await Promise.all(users.map(async (user) => {
 		const username = user.username || await getUsername(user.userid);
-		const thumbnail = user.picture || await getThumbnail(user.userid);
+		const thumbnail = user.picture || '';
 		const displayName = user.username || await getDisplayName(user.userid);
 		return {
 			...user,
