@@ -29,6 +29,7 @@ const Button: FC<Props> = ({ roles, setRoles, grouproles }) => {
 	const permissions = {
 		"Admin (Manage workspace)": "admin",
 		"Manage sessions": "manage_sessions",
+		'View all activity': 'view_entire_groups_activity',
 		"Manage activity & members": "manage_activity",
 		"Post on wall": "post_on_wall",
 		"View members": "view_members",

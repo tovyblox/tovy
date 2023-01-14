@@ -10,7 +10,7 @@ type Data = {
 	error?: string
 }
 
-export default withPermissionCheck(handler);
+export default withPermissionCheck(handler, 'view_entire_groups_activity');
 
 export async function handler(
 	req: NextApiRequest,

@@ -29,6 +29,7 @@ const Topbar: NextPage = () => {
 			href: "/workspace/[id]/activity",
 			icon: IconClipboardList,
 			current: false,
+			accessible: workspace.yourPermission.includes('view_entire_groups_activity'),
 		},
 		{
 			name: "Allies",
