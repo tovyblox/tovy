@@ -245,3 +245,83 @@ export async function checkGroupRoles(groupID: number) {
 		}
 	}
 }
+
+export async function checkSpecificUser(userID: number) {
+	const ws = await prisma.workspace.findMany({});
+	for (const w of ws) {
+		const rankId = await noblox.getRankInGroup(w.groupId, userID).catch(() => null);
+		await prisma.rank.upsert({
+			where: {
+				userId_workspaceGroupId: {
+					userId: BigInt(userID),
+					workspaceGroupId: w.groupId
+				}
+			},
+			update: {
+				rankId: BigInt(rankId || 0)
+			},
+			create: {
+				userId: BigInt(userID),
+				workspaceGroupId: w.groupId,
+				rankId: BigInt(rankId || 0)
+			}
+		});
+
+		if (!rankId) continue;
+		const rankInfo = await noblox.getRole(w.groupId, rankId).catch(() => null);
+		if (!rankInfo) continue;
+		const rank = rankInfo.id
+
+		if (!rank) continue;
+		const role = await prisma.role.findFirst({
+			where: {
+				workspaceGroupId: w.groupId,
+				groupRoles: {
+					hasSome: [rank]
+				}
+			}
+		});
+		if (!role) continue;
+		const user = await prisma.user.findFirst({
+			where: {
+				userid: BigInt(userID),
+				
+			},
+			include: {
+				roles: {
+					where: {
+						workspaceGroupId: w.groupId
+					}
+				}
+			}
+		});
+		if (!user) continue;
+		if (user.roles.length) {
+			await prisma.user.update({
+				where: {
+					userid: BigInt(userID)
+				},
+				data: {
+					roles: {
+						disconnect: {
+							id: user.roles[0].id
+						}
+					}
+				}
+			});
+		}
+		await prisma.user.update({
+			where: {
+				userid: BigInt(userID)
+			},
+			data: {
+				roles: {
+					connect: {
+						id: role.id
+					}
+				}
+			}
+		});
+		return true;
+	}
+}

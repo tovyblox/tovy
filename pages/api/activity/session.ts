@@ -5,6 +5,7 @@ import { withSessionRoute } from '@/lib/withSession'
 import { red } from 'tailwindcss/colors';
 import { getThumbnail } from '@/utils/userinfoEngine';
 import * as noblox from 'noblox.js'
+import { checkSpecificUser } from '@/utils/permissionsManager';
 type Data = {
 	success: boolean
 	error?: string
@@ -33,8 +34,9 @@ export async function handler(
 	if (typeof req.body.userid !== "number") return res.status(400).json({ success: false, error: "User ID not a number" });
 	console.log(`${req.body.userid} is creating a session`)
 	const value = JSON.parse(JSON.stringify(config.value));
+	const userank = await noblox.getRankInGroup(config.workspaceGroupId, req.body.userid);
+	await checkSpecificUser(req.body.userid)
 	if (value.role) {
-		const userank = await noblox.getRankInGroup(config.workspaceGroupId, req.body.userid);
 		//check if the user is above value.role
 		
 		if (userank <= value.role) {

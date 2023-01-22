@@ -9,6 +9,7 @@ import Button from "@/components/button";
 import axios from "axios";
 import Input from "@/components/input";
 import Tooltip from "@/components/tooltip";
+import { Toast, Toaster } from "react-hot-toast";
 import { useForm, FormProvider } from "react-hook-form";
 import { useRecoilState } from "recoil";
 import { toast } from "react-hot-toast";
@@ -45,6 +46,8 @@ const Home: NextPage = () => {
 			}
 		});
 
+		
+
 		if (request) {
 			toast.success("Workspace created!", {
 				id: t
@@ -52,6 +55,20 @@ const Home: NextPage = () => {
 			setIsOpen(false);
 			router.push(`/workspace/${methods.getValues("groupID")}?new=true`);
 		}
+	}
+
+	const checkRoles = async () => {
+		const request = axios.post('/api/auth/checkRoles', {}).then((res) => {
+			router.reload();
+		}).catch((err) => {
+			console.log(err);
+		})
+
+		toast.promise(request, {
+			loading: 'Checking roles...',
+			success: 'Roles checked!',
+			error: 'An error occured'
+		})
 	}
 
 	return (
@@ -68,6 +85,9 @@ const Home: NextPage = () => {
 						<div className="ml-auto">
 							<Button  onClick={() => setIsOpen(true)}>
 								New Workspace
+							</Button>
+							<Button onClick={() => checkRoles()}> 
+								Check roles
 							</Button>
 						</div>
 					</div>
@@ -106,6 +126,8 @@ const Home: NextPage = () => {
 							<p className="text-center text-xl font-semibold">No workspaces available.</p>
 						</div>
 					)}
+
+					<Toaster />
 
 					<Transition appear show={isOpen} as={Fragment}>
 						<Dialog as="div" className="relative z-10" onClose={() => setIsOpen(false)}>
