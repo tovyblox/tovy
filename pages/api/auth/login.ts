@@ -32,7 +32,7 @@ export async function handler(
 	res: NextApiResponse<response>
 ) {
 	if (req.method !== 'POST') return res.status(405).json({ success: false, error: 'Method not allowed' })
-	const id = await noblox.getIdFromUsername(req.body.username).catch(e => null)
+	const id = await noblox.getIdFromUsername(req.body.username).catch(e => null) as number | undefined;
 	if (!id) return res.status(404).json({ success: false, error: 'Please enter a valid username' })
 	const user = await prisma.user.findUnique({
 		where: {
