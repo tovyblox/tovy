@@ -61,6 +61,10 @@
       Completely open source
     </li>
   </ul>
+  <h2>Don't want to host yourself?</h2>
+    <p>
+    Tovy has a service dedicated to providing Tovy hosting at a low price per month. -- <a href="https://tovyblox.xyz/">Find out more!</a>
+  </p>
   <h2>Quicklinks</h2>
   <ul>
     <li>
