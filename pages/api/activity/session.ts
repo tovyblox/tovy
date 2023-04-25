@@ -6,6 +6,7 @@ import { red } from 'tailwindcss/colors';
 import { getThumbnail } from '@/utils/userinfoEngine';
 import * as noblox from 'noblox.js'
 import { checkSpecificUser } from '@/utils/permissionsManager';
+import { getRobloxUsername, getRobloxThumbnail, getRobloxDisplayName, getRobloxUserId } from "@/utils/roblox";
 type Data = {
 	success: boolean
 	error?: string
@@ -51,12 +52,12 @@ export async function handler(
 			userid: BigInt(req.body.userid)
 		},
 		update: {
-			username: await noblox.getUsernameFromId(req.body.userid),
+			username: await getRobloxUsername(req.body.userid),
 			picture: await getThumbnail(req.body.userid)
 		},
 		create: {
 			userid: BigInt(req.body.userid),
-			username: await noblox.getUsernameFromId(req.body.userid),
+			username: await getRobloxUsername(req.body.userid),
 			picture: await getThumbnail(req.body.userid)
 		}
 	})

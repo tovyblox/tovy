@@ -3,6 +3,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { withSessionRoute } from '@/lib/withSession'
 import { getUsername, getThumbnail, getDisplayName } from '@/utils/userinfoEngine'
+import { getRobloxUsername, getRobloxThumbnail, getRobloxDisplayName, getRobloxUserId } from "@/utils/roblox";
 import bcrypt from 'bcrypt'
 import * as noblox from 'noblox.js'
 import prisma from '@/utils/database';
@@ -32,7 +33,7 @@ export async function handler(
 	res: NextApiResponse<response>
 ) {
 	if (req.method !== 'POST') return res.status(405).json({ success: false, error: 'Method not allowed' })
-	const id = await noblox.getIdFromUsername(req.body.username).catch(e => null) as number | undefined;
+	const id = await getRobloxUserId(req.body.username).catch(e => null) as number | undefined;
 	if (!id) return res.status(404).json({ success: false, error: 'Please enter a valid username' })
 	const user = await prisma.user.findUnique({
 		where: {
