@@ -21,7 +21,7 @@ export async function handler(
 	if (req.session.userid) return res.status(400).json({ success: false, error: 'Already logged in' })
 	const { username } = req.body;
 	if (!username) return res.status(400).json({ success: false, error: 'Missing username' })
-	const userid = await noblox.getIdFromUsername(username).catch(() => null);
+	const userid = await noblox.getIdFromUsername(username).catch(() => null) as number | undefined;
 	if (!userid) return res.status(404).json({ success: false, error: 'Username not found' })
 	const array = ['📋', '🎉', '🎂', '📆', '✔️', '📃', '👍', '➕', '📢', '🐒', '🐴', '🐑', '🐘', '🐼', '🐧', '🐦', '🐤', '🐥', '🐣', '🐔', '🐍', '🐢', '🐛', '🐝', '🐜', '📕', '📗', '📘', '📙', '📓', '📔', '📒', '📚', '📖', '🔖', '🎯', '🏈', '🏀', '⚽', '⚾', '🎾', '🎱', '🏉', '🎳', '⛳', '🚵', '🚴', '🏁', '🏇']
 	//randomly generate a string from emojis above
