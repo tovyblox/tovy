@@ -30,6 +30,7 @@ const Topbar: NextPage = () => {
 						<img
 							src='./Icon_Transparent.svg'
 							className="rounded-full h-8 w-8 my-auto"
+							alt="Tovy logo"
 						/>
 						<p className="my-auto text-md font-medium pl-2 pr-2">
 							Tovy
@@ -41,6 +42,7 @@ const Topbar: NextPage = () => {
 								<img
 									src={login?.thumbnail}
 									className="rounded-full bg-gray-400 h-8 w-8 my-auto"
+									alt="User avatar"
 								/>
 								<p className="my-auto text-md font-medium pl-2">
 									{login?.displayname}
@@ -54,6 +56,7 @@ const Topbar: NextPage = () => {
 										<img
 											src={login?.thumbnail}
 											className="rounded-full bg-gray-400 h-8 w-8 my-auto"
+											alt="User avatar"
 										/>
 										<div className="ml-2"> Signed in as <br />
 											<span className="font-medium"> {login.username} </span> </div>
