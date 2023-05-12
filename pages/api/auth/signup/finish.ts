@@ -6,6 +6,7 @@ import { withSessionRoute } from '@/lib/withSession'
 import { getUsername, getThumbnail, getDisplayName } from '@/utils/userinfoEngine'
 import bcrypt from 'bcrypt'
 import * as noblox from 'noblox.js'
+import { getRobloxThumbnail } from '@/utils/roblox';
 type Data = {
 	success: boolean
 	error?: string
@@ -29,6 +30,9 @@ export async function handler(
 	req.session.userid = userid;
 	await req.session.save();
 
+	let thumbnail = await getRobloxThumbnail(userid);
+	if(!thumbnail) thumbnail = null;
+
 	await prisma.user.upsert({
 		where: {
 			userid: BigInt(userid)
@@ -47,6 +51,7 @@ export async function handler(
 		},
 		create: {
 			userid: BigInt(userid),
+			picture: thumbnail,
 			info: {
 				create: {
 					passwordhash: await bcrypt.hash(password, 10)

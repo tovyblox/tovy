@@ -7,6 +7,7 @@ import { getRobloxUsername, getRobloxThumbnail, getRobloxDisplayName, getRobloxU
 import bcrypt from 'bcrypt'
 import * as noblox from 'noblox.js'
 import prisma from '@/utils/database';
+import axios from "axios";
 
 export default withSessionRoute(handler);
 
@@ -33,7 +34,7 @@ export async function handler(
 	res: NextApiResponse<response>
 ) {
 	if (req.method !== 'POST') return res.status(405).json({ success: false, error: 'Method not allowed' })
-	const id = await getRobloxUserId(req.body.username).catch(e => null) as number | undefined;
+	const id = await getRobloxUserId(req.body.username, req.headers.origin).catch(e => null) as number | undefined;
 	if (!id) return res.status(404).json({ success: false, error: 'Please enter a valid username' })
 	const user = await prisma.user.findUnique({
 		where: {

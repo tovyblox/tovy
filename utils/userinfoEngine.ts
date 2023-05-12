@@ -28,17 +28,18 @@ export async function getThumbnail (userId: number | bigint): Promise<string> {
 	} else {
 		const thumbnail = await getRobloxThumbnail(Number(userId)).catch(e => null);
 		if (!thumbnail) return 'https://www.roblox.com/headshot-thumbnail/image?userId=' + userId + '&width=420&height=420&format=png';
-		thumbnails.set(Number(userId), thumbnail[0].imageUrl);
-		return thumbnail[0].imageUrl as string;
+		thumbnails.set(Number(userId), thumbnail);
+		return thumbnail as string;
 	}
 }
 
 export async function getDisplayName (userId: number | bigint): Promise<string> {
 	const cachedDisplayName = displaynames.get(Number(userId));
+	console.log(cachedDisplayName)
 	if (cachedDisplayName) {
 		return cachedDisplayName as string;
 	} else {
-		const displayName = (await getRobloxDisplayName(Number(userId))).displayName;
+		const displayName = (await getRobloxDisplayName(Number(userId)));
 		displaynames.set(Number(userId), displayName);
 		return displayName as string;
 	}

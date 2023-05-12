@@ -172,8 +172,6 @@ export const getServerSideProps = withPermissionCheckSsr(
 			}
 		});
 
-
-
 		return {
 			props: {
 				notices: (JSON.parse(JSON.stringify(notices, (_key, value) => (typeof value === 'bigint' ? value.toString() : value))) as typeof notices),
