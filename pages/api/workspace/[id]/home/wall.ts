@@ -28,6 +28,7 @@ export async function handler(
 			author: {
 				select: {
 					username: true,
+					picture: true
 				}
 			}
 		},
