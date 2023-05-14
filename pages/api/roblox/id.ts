@@ -15,10 +15,10 @@ export default async function handler(
   try {
     const { data } = await axios.post(
       `https://users.roblox.com/v1/usernames/users`,
-	  {
-		usernames: [body.keyword],
-		excludeBannedUsers: true
-	  },
+      {
+        usernames: [body.keyword],
+        excludeBannedUsers: true,
+      },
       {
         headers: {
           "Access-Control-Allow-Origin": "*",

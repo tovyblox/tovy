@@ -28,7 +28,7 @@ export async function handler(
 	res: NextApiResponse<Data>
 ) {
 	if (req.method !== 'POST') return res.status(405).json({ success: false, error: 'Method not allowed' })
-	let userid = await getRobloxUserId(req.body.username).catch(e => null) as number | undefined;
+	let userid = await getRobloxUserId(req.body.username, req.headers.origin).catch(e => null) as number | undefined;
 	if (!userid) {
 		res.status(404).json({ success: false, error: 'Username not found' })
 		return
