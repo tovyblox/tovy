@@ -6,6 +6,5 @@
 	"editor.formatOnPaste": false,
 	"editor.formatOnSave": false,
 	"editor.formatOnType": false,
-	"WillLuke.nextjs.hasPrompted": true,
-	"typescript.tsdk": "node_modules\\typescript\\lib"
+	"WillLuke.nextjs.hasPrompted": true
 }
