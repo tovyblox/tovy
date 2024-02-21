@@ -1,5 +1,6 @@
+> [!CAUTION]
+> This service is no longer maintained by Tovy, and no more updates will now be made to this service as Tovy is now Relatio LLC. Join our discord for new products, and more information.
 <div>
-  <small>⚠️ Tovy2 is in early beta right now. Features are not complete and bugs may occur</small>
   <div align="center">
     <img height="250px" src=".github/logo.png"></img>
     <h1>Tovy, a staff management system for Roblox groups</h1>
@@ -69,9 +70,6 @@
   <ul>
     <li>
       Don't know how to install? –– <a href="https://docs.tovyblox.xyz/">Visit our documentation!</a>
-    </li>
-    <li>
-      Need further assistance? –– <a href="https://discord.gg/2AJPbyNwbQ">Join our Discord server!</a>
     </li>
     <li>
       🐛 Bugs? ✨ Suggestions? –– <a href="https://feedback.tovyblox.xyz/">Let us know here!</a>
