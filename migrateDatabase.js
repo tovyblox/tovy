@@ -1,6 +1,6 @@
-import { exec } from "child_process";
-import * as dotenv from 'dotenv'
-dotenv.config()
+const { exec } = require("child_process");
+const dotenv = require("dotenv");
+dotenv.config();
 
 if (process.env.MIGRATE_DATABASE_URL) {
 	const migrate = exec(`DATABASE_URL="${process.env.MIGRATE_DATABASE_URL}" npx prisma migrate deploy`);
@@ -8,7 +8,7 @@ if (process.env.MIGRATE_DATABASE_URL) {
 		process.stdout.write(data);
 	});
 	//on error
-	
+
 	migrate.on("close", (code) => {
 		process.stdout.write("Migrate exited with code " + code);
 		if (code !== 0) {
@@ -23,7 +23,7 @@ if (process.env.MIGRATE_DATABASE_URL) {
 		process.stdout.write(data);
 	});
 	//on error
-	
+
 	migrate.on("close", (code) => {
 		process.stdout.write("Migrate exited with code " + code);
 		if (code !== 0) {
