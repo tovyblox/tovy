@@ -51,7 +51,7 @@
     "recoil-nexus": "^0.4.0",
     "sass": "^1.56.1",
     "tailwind-merge": "^1.6.1",
-    "ts-node": "^10.9.1",
+    "ts-node": "^10.9.2",
     "uuid": "^3.4.0"
   },
   "devDependencies": {
