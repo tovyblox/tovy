@@ -116,7 +116,7 @@ const Login: NextPage = ({ }) => {
 				</div>
 				<div >
 					<p className="font-bold text-2xl" id="2">
-						Make your Tovy account
+						Make your RSMS account
 					</p>
 					<p className="text-md -mt-1 text-gray-500 dark:text-gray-200">
 						You need to create a Tovy account to continue
