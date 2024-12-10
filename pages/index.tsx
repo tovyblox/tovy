@@ -74,7 +74,7 @@ const Home: NextPage = () => {
 	return (
 		<div>
 			<Head>
-				<title>Tovy</title>
+				<title>RSMS</title>
 			</Head>
 
 			<div className="h-screen bg-gray-100 dark:bg-gray-700">
