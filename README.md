@@ -1,5 +1,5 @@
 > [!CAUTION]
-> **This service is no longer maintained by Tovy**, and no more updates will now be made to this service as **Tovy is now Relatio LLC**. Join our [**Discord**](https://relatio.cc/discord) for new products, and more information.
+> **This service is no longer maintained by Tovy**, and no more updates will now be made to this service as **Tovy is now Relatio**. Join our [**Discord**](https://relatio.cc/discord) for new products, and more information.
 <div>
   <div align="center">
     <img height="250px" src=".github/logo.png"></img>
