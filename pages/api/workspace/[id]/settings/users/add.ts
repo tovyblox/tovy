@@ -20,8 +20,8 @@ export async function handler(
 	res: NextApiResponse<Data>
 ) {
 	if (req.method !== 'POST') return res.status(405).json({ success: false, error: 'Method not allowed' });
-	const userid = await getRobloxUserId(req.body.username).catch(() => null) as number | undefined;
-	if (!userid) return res.status(400).json({ success: false, error: 'Invalid username' });
+	const userid = await getRobloxUserId(req.body.username).catch(() => null);
+	if (!userid || Array.isArray(userid)) return res.status(400).json({ success: false, error: 'Invalid username' });
 
 	const role = await prisma.role.findFirst({
 		where: {
