@@ -34,8 +34,8 @@ export async function handler(
 	res: NextApiResponse<response>
 ) {
 	if (req.method !== 'POST') return res.status(405).json({ success: false, error: 'Method not allowed' })
-	const id = await getRobloxUserId(req.body.username, req.headers.origin).catch(e => null) as number | undefined;
-	if (!id) return res.status(404).json({ success: false, error: 'Please enter a valid username' })
+	const id = await getRobloxUserId(req.body.username, req.headers.origin).catch(() => null);
+	if (!id || Array.isArray(id)) return res.status(404).json({ success: false, error: 'Please enter a valid username' })
 	const user = await prisma.user.findUnique({
 		where: {
 			userid: id

@@ -31,7 +31,7 @@ export async function handler(
 	await req.session.save();
 
 	let thumbnail = await getRobloxThumbnail(userid);
-	if(!thumbnail) thumbnail = null;
+	if(!thumbnail) thumbnail = undefined;
 
 	await prisma.user.upsert({
 		where: {
