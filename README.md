@@ -1,7 +1,7 @@
 > [!CAUTION]  
-> **This service is now maintained by Firefli.**  
-> All future updates and support will be provided by Firefli.**.  
-> Join our [**Discord**](https://discord.gg/firefli) for the latest news, updates, and support.
+> **This service is now maintained by Planetary & FireFli.**  
+> All future updates and support will be provided by Planetary & FireFli.**.  
+> Join our [**Discord**](https://discord.gg/firefli & https://discord.gg/NybP2QTY) for the latest news, updates, and support.
 <div>
   <div align="center">
     <img height="250px" src=".github/logo.png"></img>
