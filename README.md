@@ -1,7 +1,7 @@
 > [!CAUTION]  
-> **This service is now maintained by Firefli.**  
-> All future updates and support will be provided by Firefli.**.  
-> Join our [**Discord**](https://discord.gg/firefli) for the latest news, updates, and support.
+> **Tovy has been discontinued and will no longer get updates.**  
+> There is an unaffiliated fork of Tovy called Orbit that is still maintained.**.  
+> https://github.com/PlanetaryOrbit/orbit
 <div>
   <div align="center">
     <img height="250px" src=".github/logo.png"></img>
